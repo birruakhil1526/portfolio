@@ -1,0 +1,11 @@
+# secrets: never commit
+*.pem
+*.key
+.htpasswd*
+*password*
+.env
+
+# build output
+*.gz
+*.docx
+__pycache__/

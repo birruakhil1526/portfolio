@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Birru's Space</title>
+<meta name="description" content="Akhil Birru — Senior Software Engineer in Bengaluru. Angular, Spring Boot, PostgreSQL and AI/LLM developer tooling.">
+<meta property="og:title" content="Birru&#39;s Space · Akhil Birru">
+<meta property="og:description" content="Angular · Spring Boot · PostgreSQL · Claude. Building fintech lending platforms and AI dev tools.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Birru&#39;s Space">
+<meta name="theme-color" content="#0b0e14">
+<script>try { if (localStorage.getItem('theme') === 'light') document.documentElement.dataset.theme = 'light'; } catch (e) {}</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230b0e14'/><text x='10' y='42' font-family='monospace' font-size='30' font-weight='700' fill='%237ee787'>&gt;_</text></svg>">
+<style>
+:root {
+	--bg: #0b0e14;
+	--surface: #11151c;
+	--surface-2: #161b24;
+	--line: #222a36;
+	--text: #d6dde6;
+	--muted: #8b96a5;
+	--faint: #5c6675;
+	--green: #7ee787;
+	--blue: #79c0ff;
+	--purple: #d2a8ff;
+	--orange: #ffa657;
+	--yellow: #e3b341;
+	--string: #a5d6ff;
+	--red: #ff7b72;
+	--mono: ui-monospace, 'SF Mono', SFMono-Regular, 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+	--sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	color-scheme: dark;
+}
+:root[data-theme="light"] {
+	--bg: #f6f8fa;
+	--surface: #ffffff;
+	--surface-2: #f0f3f6;
+	--line: #d8dee4;
+	--text: #1f2328;
+	--muted: #59636e;
+	--faint: #8c959f;
+	--green: #1a7f37;
+	--blue: #0550ae;
+	--purple: #8250df;
+	--orange: #bc4c00;
+	--yellow: #9a6700;
+	--string: #0a3069;
+	--red: #cf222e;
+	color-scheme: light;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+body {
+	background: var(--bg);
+	color: var(--text);
+	font: 15px/1.65 var(--sans);
+	-webkit-font-smoothing: antialiased;
+	padding-bottom: 28px;
+}
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+::selection { background: color-mix(in srgb, var(--blue) 30%, transparent); }
+.wrap { max-width: 1000px; margin: 0 auto; padding: 0 16px; }
+.mono, code, pre, kbd { font-family: var(--mono); }
+.c-g { color: var(--green); } .c-b { color: var(--blue); } .c-p { color: var(--purple); }
+.c-o { color: var(--orange); } .c-y { color: var(--yellow); } .c-s { color: var(--string); }
+.c-r { color: var(--red); } .c-m { color: var(--muted); } .c-f { color: var(--faint); }
+
+/* editor tabs nav */
+nav {
+	position: sticky; top: 0; z-index: 10;
+	background: color-mix(in srgb, var(--bg) 88%, transparent);
+	backdrop-filter: blur(8px);
+	border-bottom: 1px solid var(--line);
+	font-family: var(--mono); font-size: 13px;
+}
+nav .wrap { display: flex; align-items: center; height: 48px; gap: 4px; }
+.brand { color: var(--green); font-weight: 700; margin-right: 12px; white-space: nowrap; }
+.brand:hover { text-decoration: none; }
+.tabs { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; flex: 1; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabs a { color: var(--muted); padding: 6px 10px; border-radius: 6px; white-space: nowrap; }
+.tabs a:hover { background: var(--surface-2); color: var(--text); text-decoration: none; }
+.tabs a.on { color: var(--text); background: var(--surface-2); }
+#theme {
+	display: inline-flex; gap: 2px; padding: 2px; flex-shrink: 0;
+	font: 12px var(--mono); background: var(--surface); color: var(--faint);
+	border: 1px solid var(--line); border-radius: 999px; cursor: pointer;
+}
+#theme span { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px; transition: background .2s, color .2s; }
+#theme .d, :root[data-theme="light"] #theme .l { background: var(--surface-2); color: var(--text); box-shadow: 0 0 0 1px var(--line); }
+:root[data-theme="light"] #theme .d { background: none; color: var(--faint); box-shadow: none; }
+#theme:hover span:not(.d) { color: var(--muted); }
+#theme em { font-style: normal; }
+#theme:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+@media (max-width: 640px) { #theme em { display: none; } #theme span { padding: 4px 7px; } }
+body, nav, .win, .code, .repo, .metric, .status { transition: background-color .2s, border-color .2s, color .2s; }
+
+/* hero */
+header { padding: 64px 0 48px; display: grid; grid-template-columns: 1fr 1.1fr; gap: 40px; align-items: center; }
+@media (max-width: 860px) { header { grid-template-columns: 1fr; padding-top: 40px; } }
+.hello { font-family: var(--mono); color: var(--green); font-size: 14px; }
+h1 { font-size: clamp(38px, 6vw, 56px); line-height: 1.05; letter-spacing: -0.035em; margin: 10px 0 14px; font-weight: 750; }
+.role { font-family: var(--mono); font-size: 15px; color: var(--muted); min-height: 1.6em; }
+.role b { color: var(--text); font-weight: 500; }
+.caret { display: inline-block; width: 8px; height: 1.1em; background: var(--green); vertical-align: -0.18em; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.lede { margin-top: 18px; color: var(--muted); max-width: 460px; }
+.cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+.btn {
+	font-family: var(--mono); font-size: 13px;
+	display: inline-flex; align-items: center; gap: 6px;
+	padding: 9px 14px; border-radius: 8px;
+	border: 1px solid var(--line); color: var(--text); background: var(--surface);
+}
+.btn:hover { text-decoration: none; border-color: var(--faint); }
+.btn.primary { background: var(--green); border-color: var(--green); color: var(--bg); font-weight: 600; }
+
+/* terminal window */
+.win { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px -20px rgba(0,0,0,.45); }
+.win-bar { display: flex; align-items: center; gap: 7px; padding: 10px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2); font-family: var(--mono); font-size: 12px; color: var(--faint); }
+.dot { width: 11px; height: 11px; border-radius: 50%; background: var(--line); }
+.dot.r { background: #ff5f57; } .dot.y { background: #febc2e; } .dot.g { background: #28c840; }
+.win-bar span { margin-left: 8px; }
+.term { font-family: var(--mono); font-size: 13px; line-height: 1.7; padding: 16px; height: 330px; overflow-y: auto; cursor: text; }
+.term .ps { color: var(--green); }
+.term .out { color: var(--muted); white-space: pre-wrap; margin-bottom: 6px; }
+.term .out b { color: var(--text); font-weight: 500; }
+.term-in { display: flex; gap: 8px; }
+.term-in input { flex: 1; min-width: 0; background: none; border: 0; outline: 0; color: var(--text); font: inherit; caret-color: var(--green); }
+.hint { font-family: var(--mono); font-size: 12px; color: var(--faint); margin-top: 10px; }
+kbd { font-size: 11px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; color: var(--muted); background: var(--surface); }
+
+/* metrics */
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--line); gap: 1px; }
+.metric { background: var(--surface); padding: 16px 18px; }
+.metric b { display: block; font-family: var(--mono); font-size: 24px; color: var(--text); letter-spacing: -0.02em; }
+.metric small { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+@media (max-width: 640px) { .metrics { grid-template-columns: repeat(2, 1fr); } }
+
+/* sections */
+section { padding: 56px 0 8px; }
+.sh { display: flex; align-items: baseline; gap: 10px; margin-bottom: 20px; font-family: var(--mono); }
+.sh h2 { font-size: 15px; font-weight: 600; color: var(--text); }
+.sh .num { color: var(--faint); font-size: 13px; }
+.sh .rule { flex: 1; height: 1px; background: var(--line); align-self: center; }
+
+/* code block */
+.code { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.code-h { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--faint); padding: 8px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.code pre { font-size: 13px; line-height: 1.75; padding: 14px 0; overflow-x: auto; counter-reset: ln; }
+.code pre .l { display: block; padding: 0 16px 0 0; }
+.code pre .l::before { counter-increment: ln; content: counter(ln); display: inline-block; width: 40px; padding-right: 14px; text-align: right; color: var(--faint); opacity: .6; user-select: none; }
+
+.about { display: grid; grid-template-columns: 1.3fr 1fr; gap: 20px; }
+.about p { color: var(--muted); }
+.about p + p { margin-top: 12px; }
+.about p b { color: var(--text); font-weight: 600; }
+@media (max-width: 860px) { .about { grid-template-columns: 1fr; } }
+
+/* repo cards */
+.repos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (max-width: 760px) { .repos { grid-template-columns: 1fr; } }
+.repo { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; transition: border-color .15s; }
+.repo:hover { border-color: var(--faint); }
+.repo.pin { grid-column: 1 / -1; border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
+.repo-h { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 14px; flex-wrap: wrap; }
+.repo-h .name { color: var(--blue); font-weight: 600; }
+.badge { font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; color: var(--muted); }
+.badge.g { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
+.repo p { color: var(--muted); font-size: 14px; }
+.diff { font-family: var(--mono); font-size: 12.5px; line-height: 1.7; background: var(--surface-2); border-radius: 8px; padding: 8px 12px; }
+.diff div { color: var(--muted); padding-left: 16px; text-indent: -16px; }
+.diff div::first-letter { color: var(--green); }
+.repo-f { display: flex; flex-wrap: wrap; gap: 14px; margin-top: auto; padding-top: 6px; font-family: var(--mono); font-size: 12px; color: var(--faint); }
+.lang { display: inline-flex; align-items: center; gap: 6px; }
+.lang i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+/* git log */
+.log { font-family: var(--mono); font-size: 13px; }
+.commit { display: grid; grid-template-columns: 22px 1fr; column-gap: 12px; }
+.rail { position: relative; }
+.rail::before { content: ''; position: absolute; left: 10px; top: 0; bottom: 0; width: 2px; background: var(--line); }
+.commit:first-child .rail::before { top: 8px; }
+.commit:last-child .rail::before { bottom: auto; height: 8px; }
+.rail::after { content: ''; position: absolute; left: 5px; top: 5px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg); border: 2px solid var(--yellow); }
+.commit:first-child .rail::after { background: var(--green); border-color: var(--green); }
+.cbody { padding-bottom: 28px; }
+.cmeta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.hash { color: var(--yellow); }
+.ref { color: var(--green); }
+.ref .t { color: var(--purple); }
+.date { color: var(--faint); }
+.msg { font-family: var(--sans); font-size: 17px; font-weight: 600; color: var(--text); margin-top: 4px; }
+.msg span { color: var(--muted); font-weight: 400; }
+.cbody ul { list-style: none; margin-top: 8px; font-family: var(--sans); font-size: 14px; color: var(--muted); }
+.cbody li { padding-left: 16px; position: relative; }
+.cbody li + li { margin-top: 4px; }
+.cbody li::before { content: '-'; position: absolute; left: 0; color: var(--faint); font-family: var(--mono); }
+
+.two { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; }
+@media (max-width: 860px) { .two { grid-template-columns: 1fr; } }
+
+/* contact */
+.contact { padding-bottom: 56px; }
+.contact .lede { max-width: 560px; }
+
+/* status bar */
+.status {
+	position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; height: 26px;
+	display: flex; align-items: center; gap: 16px; padding: 0 12px;
+	font-family: var(--mono); font-size: 11.5px; color: var(--muted);
+	background: var(--surface-2); border-top: 1px solid var(--line);
+	white-space: nowrap; overflow: hidden;
+}
+.status .live { color: var(--green); }
+.status .sp { flex: 1; }
+@media (max-width: 640px) { .status .hide-sm { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+	html { scroll-behavior: auto; }
+	.caret { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+	<div class="wrap">
+		<a class="brand" href="#top">~/birru&#39;s-space</a>
+		<div class="tabs">
+			<a href="#about">about.ts</a>
+			<a href="#work">work/</a>
+			<a href="#experience">git log</a>
+			<a href="#skills">package.json</a>
+			<a href="#contact">contact.sh</a>
+		</div>
+		<button id="theme" type="button" aria-label="Switch to light theme"><span class="d"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><em>dark</em></span><span class="l"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><em>light</em></span></button>
+	</div>
+</nav>
+
+<main class="wrap" id="top">
+	<header>
+		<div>
+			<div class="hello">// hello, world</div>
+			<h1>Akhil Birru</h1>
+			<div class="role"><b>&gt;</b> <span id="role"></span><span class="caret"></span></div>
+			<p class="lede">
+				I build fintech lending platforms with Angular and Spring Boot, and AI tools on Claude that write tests and fix bugs for the developers using them.
+			</p>
+			<div class="cta">
+				<a class="btn primary" href="mailto:birruakhil1526@gmail.com">$ mail me</a>
+				<a class="btn" href="/Akhil_Birru_Resume.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>resume.pdf</a>
+				<a class="btn" href="https://github.com/birruakhil1526" target="_blank" rel="noopener">github</a>
+				<a class="btn" href="https://linkedin.com/in/akhil-birru" target="_blank" rel="noopener">linkedin</a>
+			</div>
+		</div>
+		<div>
+			<div class="win">
+				<div class="win-bar"><i class="dot r"></i><i class="dot y"></i><i class="dot g"></i><span>akhil@birrus-space: ~</span></div>
+				<div class="term" id="term" aria-live="polite">
+					<div id="tlog"></div>
+					<label class="term-in" id="tin" hidden><span class="ps">➜ ~</span><input id="cmd" autocomplete="off" spellcheck="false" aria-label="Terminal command"></label>
+				</div>
+			</div>
+			<div class="hint">try <kbd>help</kbd> · <kbd>/</kbd> focuses the terminal · <kbd>↑</kbd> history</div>
+		</div>
+	</header>
+
+	<div class="metrics">
+		<div class="metric"><b>5y 3m</b><small>in production</small></div>
+		<div class="metric"><b>4</b><small>products @ trustt</small></div>
+		<div class="metric"><b>65+</b><small>lazy-loaded modules</small></div>
+		<div class="metric"><b>3</b><small>stacks w/ AI test-gen</small></div>
+	</div>
+
+	<section id="about">
+		<div class="sh"><span class="num">01</span><h2>about.ts</h2><span class="rule"></span></div>
+		<div class="about">
+			<div class="code">
+				<div class="code-h"><span>src/about.ts</span><span>TypeScript</span></div>
+<pre><span class="l"><span class="c-p">import type</span> { Engineer, Status } <span class="c-p">from</span> <span class="c-s">'./types'</span>;</span><span class="l"></span><span class="l"><span class="c-f">// solve problems at the root, not the surface.</span></span><span class="l"><span class="c-p">export const</span> <span class="c-b">akhil</span>: <span class="c-o">Engineer</span> = {</span><span class="l">  role: <span class="c-s">'Senior Software Engineer'</span>,</span><span class="l">  location: <span class="c-s">'Bengaluru, IN'</span>,</span><span class="l">  experience: <span class="c-s">'5y 3m'</span>,</span><span class="l">  stack: [<span class="c-s">'Angular'</span>, <span class="c-s">'Spring Boot'</span>, <span class="c-s">'Postgres'</span>],</span><span class="l">  ai: [<span class="c-s">'Claude API'</span>, <span class="c-s">'LLM workflows'</span>],</span><span class="l">  domain: <span class="c-s">'fintech / lending'</span>,</span><span class="l">  interests: [<span class="c-s">'scalable web architecture'</span>, <span class="c-s">'AI/LLM systems'</span>,</span><span class="l">    <span class="c-s">'developer productivity tools'</span>],</span><span class="l">  languages: [<span class="c-s">'English'</span>, <span class="c-s">'Telugu'</span>, <span class="c-s">'Hindi'</span>],</span><span class="l">  openTo: [<span class="c-s">'Bengaluru'</span>, <span class="c-s">'Hyderabad'</span>, <span class="c-s">'Remote'</span>],</span><span class="l">  status: <span class="c-g">Status</span>.<span class="c-g">OPEN_TO_WORK</span>,</span><span class="l">};</span></pre>
+			</div>
+			<div>
+				<p>I'm a Software Engineer focused on building <b>scalable systems</b> across frontend, backend, and AI-driven workflows, with strong experience in designing production-grade applications and a solid foundation in system design and backend architecture.</p>
+				<p>In my previous role as a <b>Lead Engineer</b>, I designed and developed critical modules from the ground up, including implementing secure Single Sign-On (SSO), and drove architectural decisions that improved performance, scalability, and maintainability.</p>
+				<p>Currently at <b>Trustt</b>, I build complex UI systems using Angular while also working on backend-integrated and AI-driven solutions. I independently developed an AI system to generate test cases for Java, Angular, and Android applications, and architected an AI workflow to automate bug detection and resolution, improving development efficiency and reducing manual effort.</p>
+				<p>I'm particularly interested in building systems at the intersection of <b>scalable web architecture</b>, <b>AI/LLM systems</b> and <b>developer productivity tools</b>. Solve problems at the root, not the surface.</p>
+			</div>
+		</div>
+	</section>
+
+	<section id="work">
+		<div class="sh"><span class="num">02</span><h2>work/</h2><span class="rule"></span></div>
+		<div class="repos">
+			<article class="repo pin">
+				<div class="repo-h"><span class="c-f">trustt /</span><span class="name">aitdp</span><span class="badge g">★ featured</span><span class="badge">private</span></div>
+				<p>In-house AI orchestration platform built on Claude. It puts an LLM to work on the engineering team's day-to-day: writing tests and chasing down bugs.</p>
+				<div class="diff">
+					<div>+ Designed and built, solo, a unit-test generator for Java, Angular and Android codebases, shipped as editor plugins.</div>
+					<div>+ Architected a Claude workflow that detects and resolves bugs automatically, cutting manual debugging time.</div>
+				</div>
+				<div class="repo-f"><span class="lang"><i style="background:#d97757"></i>Claude API</span><span>prompt-engineering</span><span>editor-plugins</span><span>llm-workflows</span></div>
+			</article>
+
+			<article class="repo">
+				<div class="repo-h"><span class="c-f">trustt /</span><span class="name">lending-suite</span><span class="badge">LOS · LMS · LCS</span></div>
+				<p>Loan origination, management and collections for an enterprise lending platform. I own epics from backend to UI.</p>
+				<div class="diff">
+					<div>+ Spring Boot services on PostgreSQL + YugabyteDB, scheduled CRON batch jobs.</div>
+					<div>+ Angular admin app, 65+ lazy modules, CRUD base classes, maker-checker approvals, RBAC.</div>
+				</div>
+				<div class="repo-f"><span class="lang"><i style="background:#dd0031"></i>Angular</span><span class="lang"><i style="background:#6db33f"></i>Spring Boot</span><span class="lang"><i style="background:#336791"></i>PostgreSQL</span></div>
+			</article>
+
+			<article class="repo">
+				<div class="repo-h"><span class="c-f">maveric /</span><span class="name">delivery-excellence</span><span class="badge">lead</span></div>
+				<p>A dashboard where employees report project status and feedback, with scoring and stakeholder tracking.</p>
+				<div class="diff">
+					<div>+ Built core modules from scratch, including secure SSO.</div>
+					<div>+ Led the team for 3 months; fixed perf bottlenecks, faster load times.</div>
+					<div>+ Certificate of Appreciation for contribution and leadership.</div>
+				</div>
+				<div class="repo-f"><span class="lang"><i style="background:#dd0031"></i>Angular</span><span>sso</span><span>rest</span></div>
+			</article>
+
+			<article class="repo">
+				<div class="repo-h"><span class="c-f">accenture /</span><span class="name">agri-supply-chain</span></div>
+				<p>Inventory system for an international agricultural company: stock, items in transit, storage and processing stages.</p>
+				<div class="diff">
+					<div>+ Java / Spring Boot REST APIs and SQL data access for inventory modules.</div>
+					<div>+ Swagger docs and API contracts agreed with the frontend team.</div>
+				</div>
+				<div class="repo-f"><span class="lang"><i style="background:#b07219"></i>Java</span><span class="lang"><i style="background:#6db33f"></i>Spring Boot</span><span>swagger</span></div>
+			</article>
+
+			<article class="repo">
+				<div class="repo-h"><span class="c-f">akhil /</span><span class="name">job-search-agent</span><span class="badge">side project</span></div>
+				<p>Personal agent that scores job listings against my profile with Claude, writes interview-prep notes for good fits, and builds an ATS-friendly resume. Runs daily on cron.</p>
+				<div class="repo-f"><span class="lang"><i style="background:#3572a5"></i>Python</span><span>claude-api</span><span>playwright</span><span>cron</span></div>
+			</article>
+		</div>
+	</section>
+
+	<section id="experience">
+		<div class="sh"><span class="num">03</span><h2>git log --career</h2><span class="rule"></span></div>
+		<div class="log">
+			<div class="commit">
+				<div class="rail"></div>
+				<div class="cbody">
+					<div class="cmeta"><span class="hash">a1f3c2e</span><span class="ref">(HEAD -&gt; trustt)</span><span class="date">Oct 2024 — present · Bengaluru</span></div>
+					<div class="msg">Senior Software Engineer <span>@ Trustt</span></div>
+					<ul>
+						<li>Ship features across three lending products (LOS, LMS, LCS) and AiTDP, the in-house AI platform.</li>
+						<li>Own epics from Spring Boot + PostgreSQL/YugabyteDB backend through to the Angular UI.</li>
+						<li>Built the AI test generator and the Claude bug-resolution workflow.</li>
+						<li>Maintain scheduled CRON jobs for backend batch processing.</li>
+					</ul>
+				</div>
+			</div>
+			<div class="commit">
+				<div class="rail"></div>
+				<div class="cbody">
+					<div class="cmeta"><span class="hash">7b9e014</span><span class="ref">(<span class="t">tag: lead-engineer</span>)</span><span class="date">Mar 2023 — Sep 2024 · Bengaluru</span></div>
+					<div class="msg">Software Developer <span>@ Maveric Systems</span></div>
+					<ul>
+						<li>Built core modules including SSO; led a development team for 3 months and delivered on schedule.</li>
+						<li>Drove architecture decisions that improved performance, scalability and maintainability.</li>
+						<li>Ran code reviews and mentored junior developers on Angular practices.</li>
+					</ul>
+				</div>
+			</div>
+			<div class="commit">
+				<div class="rail"></div>
+				<div class="cbody">
+					<div class="cmeta"><span class="hash">3c0d5aa</span><span class="date">Apr 2021 — Oct 2022 · Hyderabad</span></div>
+					<div class="msg">Associate, Backend Developer <span>@ Accenture</span></div>
+					<ul>
+						<li>Developed Java / Spring Boot services and REST APIs for inventory and supply-chain tracking.</li>
+						<li>Worked with frontend and design to define API contracts and integrate end to end.</li>
+					</ul>
+				</div>
+			</div>
+			<div class="commit">
+				<div class="rail"></div>
+				<div class="cbody">
+					<div class="cmeta"><span class="hash">0e1c4b2</span><span class="date">2015 — 2019</span></div>
+					<div class="msg">feat: B.Tech, Electronics &amp; Communication <span>@ Christu Jyothi Institute of Technology and Science</span></div>
+				</div>
+			</div>
+			<div class="commit">
+				<div class="rail"></div>
+				<div class="cbody">
+					<div class="cmeta"><span class="hash">0000001</span><span class="ref">(<span class="t">tag: root</span>)</span><span class="date">2013</span></div>
+					<div class="msg">init: SSC <span>@ St Paul's High School</span></div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section id="skills">
+		<div class="sh"><span class="num">04</span><h2>package.json</h2><span class="rule"></span></div>
+		<div class="two">
+			<div class="code">
+				<div class="code-h"><span>package.json</span><span>JSON</span></div>
+<pre><span class="l">{</span><span class="l">  <span class="c-b">"name"</span>: <span class="c-s">"akhil-birru"</span>,</span><span class="l">  <span class="c-b">"version"</span>: <span class="c-s">"5.3.0"</span>,</span><span class="l">  <span class="c-b">"dependencies"</span>: {</span><span class="l">    <span class="c-b">"angular"</span>: <span class="c-s">"^21 · 3y"</span>,</span><span class="l">    <span class="c-b">"@angular/cli"</span>: <span class="c-s">"daily"</span>,</span><span class="l">    <span class="c-b">"typescript"</span>: <span class="c-s">"daily"</span>,</span><span class="l">    <span class="c-b">"rxjs"</span>: <span class="c-s">"daily"</span>,</span><span class="l">    <span class="c-b">"java"</span>: <span class="c-s">"2y"</span>,</span><span class="l">    <span class="c-b">"spring-boot"</span>: <span class="c-s">"2y"</span>,</span><span class="l">    <span class="c-b">"postgresql"</span>: <span class="c-s">"prod"</span>,</span><span class="l">    <span class="c-b">"yugabytedb"</span>: <span class="c-s">"prod"</span>,</span><span class="l">    <span class="c-b">"claude-api"</span>: <span class="c-s">"prod"</span></span><span class="l">  },</span><span class="l">  <span class="c-b">"peerDependencies"</span>: {</span><span class="l">    <span class="c-b">"react"</span>: <span class="c-s">"*"</span>, <span class="c-b">"redux"</span>: <span class="c-s">"*"</span>, <span class="c-b">"node"</span>: <span class="c-s">"*"</span>, <span class="c-b">"mongodb"</span>: <span class="c-s">"*"</span></span><span class="l">  },</span><span class="l">  <span class="c-b">"devDependencies"</span>: {</span><span class="l">    <span class="c-b">"karma"</span>: <span class="c-s">"*"</span>, <span class="c-b">"jasmine"</span>: <span class="c-s">"*"</span>, <span class="c-b">"git"</span>: <span class="c-s">"*"</span>,</span><span class="l">    <span class="c-b">"jenkins"</span>: <span class="c-s">"*"</span>, <span class="c-b">"docker"</span>: <span class="c-s">"*"</span>, <span class="c-b">"jira"</span>: <span class="c-s">"*"</span></span><span class="l">  }</span><span class="l">}</span></pre>
+			</div>
+			<div class="code">
+				<div class="code-h"><span>~/certs</span><span>bash</span></div>
+<pre><span class="l"><span class="c-g">$</span> ls -l ~/certs</span><span class="l"><span class="c-f">-rw-r--r--</span> pgp-full-stack-software-engineering</span><span class="l"><span class="c-f">-rw-r--r--</span> angular</span><span class="l"><span class="c-f">-rw-r--r--</span> java</span><span class="l"><span class="c-f">-rw-r--r--</span> javascript</span><span class="l"><span class="c-f">-rw-r--r--</span> sql</span><span class="l"></span><span class="l"><span class="c-g">$</span> cat ~/practices</span><span class="l">system design · sso / auth · rbac</span><span class="l">lazy loading · agile · code review</span><span class="l">maker-checker workflows</span></pre>
+			</div>
+		</div>
+	</section>
+
+	<section id="contact" class="contact">
+		<div class="sh"><span class="num">05</span><h2>contact.sh</h2><span class="rule"></span></div>
+		<div class="two">
+			<div class="code">
+				<div class="code-h"><span>contact.sh</span><span>bash</span></div>
+<pre><span class="l"><span class="c-f">#!/usr/bin/env bash</span></span><span class="l"><span class="c-f"># open to senior full stack, angular and ai/llm roles</span></span><span class="l"></span><span class="l"><span class="c-p">mail</span>  <a href="mailto:birruakhil1526@gmail.com">birruakhil1526@gmail.com</a></span><span class="l"><span class="c-p">open</span>  <a href="https://linkedin.com/in/akhil-birru" target="_blank" rel="noopener">linkedin.com/in/akhil-birru</a></span><span class="l"><span class="c-p">open</span>  <a href="https://github.com/birruakhil1526" target="_blank" rel="noopener">github.com/birruakhil1526</a></span><span class="l"></span><span class="l"><span class="c-p">echo</span> <span class="c-s">"Bengaluru · Hyderabad · Remote"</span></span></pre>
+			</div>
+			<div>
+				<p class="lede" style="margin-top:0">Hiring for a senior full stack, Angular or AI/LLM engineering role? I'm happy to talk, especially with product, fintech or AI-focused teams.</p>
+				<div class="cta">
+					<a class="btn primary" href="mailto:birruakhil1526@gmail.com">$ ./contact.sh</a>
+					<a class="btn" href="/Akhil_Birru_Resume.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>resume.pdf</a>
+					<a class="btn" href="https://linkedin.com/in/akhil-birru" target="_blank" rel="noopener">linkedin</a>
+				</div>
+			</div>
+		</div>
+	</section>
+</main>
+
+<div class="status" role="contentinfo">
+	<span>⎇ main</span>
+	<span class="live">● open to work</span>
+	<span class="hide-sm">✓ 0 problems</span>
+	<span class="sp"></span>
+	<span class="hide-sm">Bengaluru, IN</span>
+	<span class="hide-sm">nginx · azure</span>
+	<span>© <span id="yr"></span> akhil birru</span>
+</div>
+
+<script>
+(() => {
+	const $ = (id) => document.getElementById(id);
+	const root = document.documentElement;
+	const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+	$('yr').textContent = new Date().getFullYear();
+
+	// theme
+	const meta = document.querySelector('meta[name="theme-color"]');
+	const setTheme = (t) => {
+		root.dataset.theme = t;
+		$('theme').setAttribute('aria-label', `Switch to ${t === 'light' ? 'dark' : 'light'} theme`);
+		meta.content = t === 'light' ? '#f6f8fa' : '#0b0e14';
+		try { localStorage.setItem('theme', t); } catch (e) {}
+	};
+	const isLight = () => root.dataset.theme === 'light';
+	setTheme(isLight() ? 'light' : 'dark');
+	$('theme').onclick = () => setTheme(isLight() ? 'dark' : 'light');
+
+	// rotating role line
+	const roles = ['senior software engineer', 'angular + spring boot', 'building ai dev tools on claude', 'fintech lending platforms'];
+	let ri = 0;
+	const typeRole = () => {
+		const word = roles[ri++ % roles.length];
+		if (still) { $('role').textContent = word; return setTimeout(typeRole, 3000); }
+		let i = 0;
+		const tick = () => {
+			$('role').textContent = word.slice(0, ++i);
+			if (i < word.length) setTimeout(tick, 45);
+			else setTimeout(typeRole, 2200);
+		};
+		tick();
+	};
+	typeRole();
+
+	// terminal
+	const log = $('tlog'), input = $('cmd'), term = $('term');
+	const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+	const go = (id) => { document.getElementById(id).scrollIntoView(); return `opening ${id}…`; };
+	const mail = 'birruakhil1526@gmail.com';
+
+	const cmds = {
+		help: () => [
+			'<b>available commands</b>',
+			'  whoami      who is this',
+			'  about       jump to about.ts',
+			'  work        selected projects',
+			'  experience  git log --career',
+			'  skills      package.json',
+			'  contact     how to reach me',
+			'  interests   what i like building',
+			'  languages   languages i speak',
+			'  email       open a new mail',
+			'  resume      open my resume (pdf)',
+			'  github      open github',
+			'  linkedin    open linkedin',
+			'  theme       toggle, or theme light | dark',
+			'  clear       clear the screen',
+		].join('\n'),
+		whoami: () => '<b>akhil birru</b> — senior software engineer @ trustt, bengaluru\n<span class="c-f">// solve problems at the root, not the surface.</span>',
+		about: () => go('about'),
+		work: () => go('work'),
+		ls: () => 'about.ts  work/  experience.log  package.json  contact.sh  resume.pdf',
+		experience: () => go('experience'),
+		skills: () => go('skills'),
+		contact: () => `mail      <a href="mailto:${mail}">${mail}</a>\nlinkedin  <a href="https://linkedin.com/in/akhil-birru" target="_blank" rel="noopener">in/akhil-birru</a>\ngithub    <a href="https://github.com/birruakhil1526" target="_blank" rel="noopener">birruakhil1526</a>`,
+		email: () => { location.href = `mailto:${mail}`; return 'opening mail client…'; },
+		resume: () => { window.open('/Akhil_Birru_Resume.pdf', '_blank', 'noopener'); return 'opening <b>Akhil_Birru_Resume.pdf</b>…'; },
+		github: () => { window.open('https://github.com/birruakhil1526', '_blank', 'noopener'); return 'opening github…'; },
+		linkedin: () => { window.open('https://linkedin.com/in/akhil-birru', '_blank', 'noopener'); return 'opening linkedin…'; },
+		theme: (a) => { setTheme(/^(light|dark)$/.test(a[0]) ? a[0] : isLight() ? 'dark' : 'light'); return `theme set to <b>${root.dataset.theme}</b>`; },
+		languages: () => 'english   full professional\ntelugu    full professional\nhindi     limited working',
+		interests: () => 'scalable web architecture\nai / llm systems\ndeveloper productivity tools',
+		date: () => new Date().toString(),
+		uptime: () => 'up 5 years, 3 months, load average: shipping',
+		sudo: (a) => a.join(' ') === 'hire-me' ? `<b>[sudo] permission granted.</b>\nsend the offer to <a href="mailto:${mail}">${mail}</a> 🚀` : 'nice try. maybe `sudo hire-me`?',
+		cat: (a) => a[0] === 'about.ts' ? go('about') : a[0] === 'package.json' ? go('skills') : a[0] === 'contact.sh' ? go('contact') : `cat: ${esc(a[0] || '')}: no such file`,
+		cd: (a) => /^work\/?$/.test(a[0] || '') ? go('work') : 'cd: only work/ exists here',
+		echo: (a) => esc(a.join(' ')),
+		exit: () => 'there is no escape. try `contact` instead.',
+		clear: () => { log.innerHTML = ''; return null; },
+	};
+
+	const print = (cmd, out) => {
+		const line = document.createElement('div');
+		line.innerHTML = '<span class="ps">➜ ~</span> ';
+		line.append(cmd);
+		log.append(line);
+		if (out != null) {
+			const o = document.createElement('div');
+			o.className = 'out';
+			o.innerHTML = out;
+			log.append(o);
+		}
+		term.scrollTop = term.scrollHeight;
+	};
+
+	const run = (raw) => {
+		const [name, ...args] = raw.trim().split(/\s+/);
+		if (!name) return print('', null);
+		const fn = cmds[name.toLowerCase()];
+		const out = fn ? fn(args) : `<span class="c-r">command not found:</span> ${esc(name)}. type <b>help</b>`;
+		if (name.toLowerCase() === 'clear') return;
+		print(raw, out);
+	};
+
+	const hist = [];
+	let hi = 0;
+	input.addEventListener('keydown', (e) => {
+		if (e.key === 'Enter') {
+			const v = input.value;
+			if (v.trim()) hist.push(v);
+			hi = hist.length;
+			input.value = '';
+			run(v);
+		} else if (e.key === 'ArrowUp' && hi > 0) {
+			input.value = hist[--hi]; e.preventDefault();
+		} else if (e.key === 'ArrowDown') {
+			hi = Math.min(hist.length, hi + 1);
+			input.value = hist[hi] || '';
+		} else if (e.key === 'Tab') {
+			e.preventDefault();
+			const m = Object.keys(cmds).filter((k) => k.startsWith(input.value));
+			if (m.length === 1) input.value = m[0];
+		}
+	});
+	term.addEventListener('click', () => { if (!getSelection().toString()) input.focus({ preventScroll: true }); });
+	document.addEventListener('keydown', (e) => {
+		if (e.key === '/' && document.activeElement !== input) {
+			e.preventDefault();
+			$('term').scrollIntoView({ block: 'center' });
+			input.focus({ preventScroll: true });
+		}
+	});
+
+	// scripted intro
+	const intro = [
+		['whoami', cmds.whoami()],
+		['cat stack.txt', 'angular 21 · typescript · rxjs\nspring boot · postgresql · yugabytedb\nclaude api · llm workflows'],
+		['uptime', cmds.uptime()],
+		['git log --oneline -3', '<span class="c-y">a1f3c2e</span> senior swe @ trustt\n<span class="c-y">7b9e014</span> lead engineer @ maveric\n<span class="c-y">3c0d5aa</span> backend dev @ accenture'],
+	];
+	const done = () => {
+		const o = document.createElement('div');
+		o.className = 'out';
+		o.innerHTML = 'type <b>help</b> to explore';
+		log.append(o);
+		$('tin').hidden = false;
+		term.scrollTop = term.scrollHeight;
+	};
+	if (still) { intro.forEach(([c, o]) => print(c, o)); return done(); }
+	let n = 0;
+	const next = () => {
+		if (n >= intro.length) return done();
+		const [c, o] = intro[n++];
+		const line = document.createElement('div');
+		line.innerHTML = '<span class="ps">➜ ~</span> ';
+		const t = document.createElement('span');
+		line.append(t);
+		log.append(line);
+		let i = 0;
+		const tick = () => {
+			t.textContent = c.slice(0, ++i);
+			if (i < c.length) return setTimeout(tick, 40);
+			setTimeout(() => {
+				const out = document.createElement('div');
+				out.className = 'out';
+				out.innerHTML = o;
+				log.append(out);
+				term.scrollTop = term.scrollHeight;
+				setTimeout(next, 450);
+			}, 200);
+		};
+		setTimeout(tick, 250);
+	};
+	next();
+
+	// highlight the active nav tab
+	const tabs = [...document.querySelectorAll('.tabs a')];
+	const io = new IntersectionObserver((es) => es.forEach((e) => {
+		if (e.isIntersecting) tabs.forEach((a) => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id));
+	}), { rootMargin: '-45% 0px -50% 0px' });
+	document.querySelectorAll('section[id]').forEach((s) => io.observe(s));
+})();
+</script>
+</body>
+</html>
