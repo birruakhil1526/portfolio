@@ -1,7 +1,7 @@
 #!/bin/sh
 # pull the repo and publish site/ when main has new commits
 set -e
-REPO=/opt/portfolio
+REPO=/home/akhilbirru/portfolio
 WEB=/var/www/html
 
 cd "$REPO"
