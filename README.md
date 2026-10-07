@@ -45,6 +45,8 @@ python resume/build_public.py   # writes site/Akhil_Birru_Resume.pdf (needs pyth
 - nginx config: `server/nginx-portfolio.conf` -> `/etc/nginx/sites-available/portfolio`
 - Visitor stats: GoAccess builds `/stats/` from nginx logs every 10 minutes
   (`server/goaccess-update.sh`), behind basic auth
-- Changes in `server/` are not applied automatically; copy them to the VM by hand
+- Auto-deploy: `server/site-pull.sh` is installed as `/usr/local/bin/site-pull` and run
+  every 5 minutes by `/etc/cron.d/site-pull` (as akhilbirru). Log: `/var/log/site-pull.log`
+- Changes in `server/` are not applied automatically; install them on the VM by hand
 
 Never commit the VM key (`*.pem`) or the stats password.
