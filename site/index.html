@@ -101,7 +101,7 @@ body, nav, .win, .code, .repo, .metric, .status { transition: background-color .
 header { padding: 64px 0 48px; display: grid; grid-template-columns: 1fr 1.1fr; gap: 40px; align-items: center; }
 @media (max-width: 860px) { header { grid-template-columns: 1fr; padding-top: 40px; } }
 .hello { font-family: var(--mono); color: var(--green); font-size: 14px; }
-h1 { font-size: clamp(38px, 6vw, 56px); line-height: 1.05; letter-spacing: -0.035em; margin: 10px 0 14px; font-weight: 750; }
+h1 { touch-action: manipulation; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; font-size: clamp(38px, 6vw, 56px); line-height: 1.05; letter-spacing: -0.035em; margin: 10px 0 14px; font-weight: 750; }
 .role { font-family: var(--mono); font-size: 15px; color: var(--muted); min-height: 1.6em; }
 .role b { color: var(--text); font-weight: 500; }
 .caret { display: inline-block; width: 8px; height: 1.1em; background: var(--green); vertical-align: -0.18em; margin-left: 2px; animation: blink 1s steps(1) infinite; }
@@ -467,8 +467,13 @@ section { padding: 56px 0 8px; }
 		location.href = '/study/';
 	};
 	try { if (localStorage.getItem('study') === '1') $('study-tab').hidden = false; } catch (e) {}
-	document.querySelector('h1').addEventListener('click', (e) => {
-		if (e.detail !== 3) return;
+	// count taps ourselves: mobile browsers report every tap as a single click
+	let taps = [];
+	document.querySelector('h1').addEventListener('click', () => {
+		const now = Date.now();
+		taps = taps.filter((t) => now - t < 1500).concat(now);
+		if (taps.length < 3) return;
+		taps = [];
 		getSelection().removeAllRanges();
 		openStudy();
 	});
