@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preview · Birru's Space</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='16' fill='%234f46e5'/><text x='32' y='42' font-family='Arial' font-size='26' font-weight='700' fill='white' text-anchor='middle'>AB</text></svg>">
+<style>
+:root {
+	--bg: #f7f6f3;
+	--surface: #ffffff;
+	--surface-2: #f1efea;
+	--text: #17171a;
+	--muted: #5f6068;
+	--faint: #9a9aa2;
+	--line: #e7e5df;
+	--accent: #4f46e5;
+	--accent-soft: #eef0ff;
+	--on-accent: #ffffff;
+	--shadow: 0 1px 2px rgba(23, 23, 26, .04), 0 8px 24px -12px rgba(23, 23, 26, .12);
+	--sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+	color-scheme: light;
+}
+:root[data-accent="teal"] { --accent: #0f766e; --accent-soft: #e6f4f2; }
+:root[data-theme="dark"] {
+	--bg: #111214;
+	--surface: #1a1b1f;
+	--surface-2: #222328;
+	--text: #ececef;
+	--muted: #a0a1a9;
+	--faint: #6c6d75;
+	--line: #2a2b31;
+	--accent: #8b87ff;
+	--accent-soft: #24243a;
+	--on-accent: #111214;
+	--shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 10px 30px -14px rgba(0, 0, 0, .6);
+	color-scheme: dark;
+}
+:root[data-theme="dark"][data-accent="teal"] { --accent: #2dd4bf; --accent-soft: #15302d; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font: 16px/1.6 var(--sans); -webkit-font-smoothing: antialiased; transition: background-color .25s, color .25s; }
+a { color: inherit; text-decoration: none; }
+.wrap { max-width: 1080px; margin: 0 auto; padding: 0 16px; }
+
+/* preview controls */
+.bar { background: var(--text); color: var(--bg); font: 13px var(--sans); }
+.bar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; padding-top: 8px; padding-bottom: 8px; }
+.bar b { font-weight: 600; }
+.bar .sp { flex: 1; }
+.seg { display: inline-flex; border: 1px solid color-mix(in srgb, var(--bg) 35%, transparent); border-radius: 999px; padding: 2px; }
+.seg button { font: inherit; color: inherit; background: none; border: 0; padding: 3px 11px; border-radius: 999px; cursor: pointer; opacity: .7; }
+.seg button.on { background: var(--bg); color: var(--text); opacity: 1; }
+
+/* nav */
+nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+.logo { font-weight: 700; letter-spacing: -.02em; font-size: 17px; }
+.links { display: flex; gap: 26px; font-size: 15px; color: var(--muted); }
+.links a:hover { color: var(--text); }
+@media (max-width: 560px) { .links { gap: 16px; font-size: 14px; } }
+
+/* hero */
+.hero { padding: 48px 0 40px; display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: center; }
+.avatar {
+	width: 112px; height: 112px; border-radius: 28px; display: grid; place-items: center;
+	background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 45%, #f59e0b));
+	color: #fff; font-size: 38px; font-weight: 700; letter-spacing: -.02em; box-shadow: var(--shadow);
+}
+.eyebrow { font-size: 14px; color: var(--muted); font-weight: 500; }
+h1 { font-size: clamp(32px, 5.2vw, 52px); line-height: 1.08; letter-spacing: -.035em; font-weight: 700; margin: 8px 0 0; max-width: 760px; }
+h1 em { font-style: normal; color: var(--accent); }
+.cta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 22px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 12px; font-weight: 600; font-size: 15px; border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn:hover { transform: translateY(-1px); }
+.pill { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); padding: 8px 12px; }
+.pill i { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 4px color-mix(in srgb, #22c55e 22%, transparent); }
+@media (max-width: 640px) { .hero { grid-template-columns: 1fr; gap: 18px; padding-top: 24px; } .avatar { width: 84px; height: 84px; border-radius: 22px; font-size: 30px; } }
+
+/* bento */
+.bento { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: minmax(170px, auto); gap: 14px; padding-bottom: 56px; }
+.tile {
+	background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 22px;
+	box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px; min-width: 0;
+	transition: transform .2s, box-shadow .2s;
+}
+.tile:hover { transform: translateY(-2px); }
+.span2 { grid-column: span 2; }
+.tall { grid-row: span 2; }
+.kicker { font-size: 12.5px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--accent); }
+.tile h2 { font-size: 22px; line-height: 1.2; letter-spacing: -.02em; }
+.tile h3 { font-size: 17px; line-height: 1.3; letter-spacing: -.01em; }
+.tile p { color: var(--muted); font-size: 15px; }
+.more { margin-top: auto; font-size: 14px; font-weight: 600; color: var(--accent); }
+.big { font-size: 44px; font-weight: 700; letter-spacing: -.04em; line-height: 1; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tags span { font: 12.5px var(--mono); padding: 4px 9px; border-radius: 8px; background: var(--surface-2); color: var(--muted); }
+.flow { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 4px 0; }
+.flow span { font-weight: 600; font-size: 14px; padding: 8px 12px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); }
+.flow b { color: var(--faint); font-weight: 400; }
+.quote { background: var(--accent); border-color: var(--accent); color: var(--on-accent); justify-content: space-between; }
+.quote q { font-size: 21px; line-height: 1.3; font-weight: 600; letter-spacing: -.01em; quotes: '“' '”'; }
+.quote small { opacity: .8; font-size: 13px; }
+.now i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); margin-right: 6px; }
+
+/* ai diagram inside the feature tile */
+.mini { margin: 6px 0; border-radius: 16px; background: var(--surface-2); padding: 16px; }
+.mini svg { width: 100%; height: auto; display: block; }
+.m-box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+.m-acc { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.m-t { fill: var(--text); font: 600 12px var(--sans); }
+.m-s { fill: var(--muted); font: 11px var(--sans); }
+.m-a { fill: var(--accent); font: 600 12px var(--sans); }
+.m-ln { stroke: var(--faint); stroke-width: 1.5; fill: none; }
+.m-ok { fill: #22c55e; font: 700 12px var(--sans); }
+
+@media (max-width: 900px) { .bento { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) {
+	.bento { grid-template-columns: 1fr; grid-auto-rows: auto; }
+	.span2, .tall { grid-column: auto; grid-row: auto; }
+}
+
+.next { border-top: 1px dashed var(--line); padding: 28px 0 56px; color: var(--faint); font-size: 14px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="bar">
+	<div class="wrap">
+		<b>Design preview</b>
+		<span>hero + bento only</span>
+		<span class="sp"></span>
+		<span class="seg" id="theme"><button type="button" data-v="light" class="on">Light</button><button type="button" data-v="dark">Dark</button></span>
+		<span class="seg" id="accent"><button type="button" data-v="indigo" class="on">Indigo</button><button type="button" data-v="teal">Teal</button></span>
+	</div>
+</div>
+
+<nav>
+	<div class="wrap">
+		<a class="logo" href="#">Akhil Birru</a>
+		<div class="links"><a href="#">Work</a><a href="#">About</a><a href="#">Contact</a></div>
+	</div>
+</nav>
+
+<main class="wrap">
+	<header class="hero">
+		<div class="avatar" aria-hidden="true">AB</div>
+		<div>
+			<div class="eyebrow">Senior Software Engineer · Bengaluru</div>
+			<h1>I build lending platforms and the <em>AI tools</em> that make developers faster.</h1>
+			<div class="cta">
+				<a class="btn primary" href="mailto:birruakhil1526@gmail.com">Email me</a>
+				<a class="btn" href="/Akhil_Birru_Resume.pdf" target="_blank" rel="noopener">Resume</a>
+				<span class="pill"><i></i>Open to work</span>
+			</div>
+		</div>
+	</header>
+
+	<section class="bento" aria-label="Highlights">
+		<article class="tile span2 tall">
+			<div class="kicker">Featured · AI</div>
+			<h2>AiTDP: AI that writes tests and fixes bugs</h2>
+			<p>An in-house platform on Claude. I built its unit-test generator for Java, Angular and Android, and a workflow that finds and fixes bugs on its own.</p>
+			<div class="mini">
+				<svg viewBox="0 0 420 120" role="img" aria-label="Code goes to Claude, which returns tests and fixes">
+					<rect class="m-box" x="4" y="34" width="104" height="52" rx="12"/>
+					<text class="m-t" x="56" y="56" text-anchor="middle">your code</text>
+					<text class="m-s" x="56" y="73" text-anchor="middle">Java · Angular</text>
+					<path class="m-ln" d="M110 60 H150"/><path class="m-ln" d="M144 55 L150 60 L144 65"/>
+					<rect class="m-acc" x="152" y="26" width="116" height="68" rx="14"/>
+					<text class="m-a" x="210" y="56" text-anchor="middle">Claude</text>
+					<text class="m-s" x="210" y="73" text-anchor="middle">orchestration</text>
+					<path class="m-ln" d="M270 50 L310 30"/><path class="m-ln" d="M270 70 L310 90"/>
+					<rect class="m-box" x="312" y="8" width="104" height="44" rx="12"/>
+					<text class="m-t" x="364" y="35" text-anchor="middle">unit tests <tspan class="m-ok">✓</tspan></text>
+					<rect class="m-box" x="312" y="68" width="104" height="44" rx="12"/>
+					<text class="m-t" x="364" y="95" text-anchor="middle">bug fixes <tspan class="m-ok">✓</tspan></text>
+				</svg>
+			</div>
+			<a class="more" href="#">Read the case study →</a>
+		</article>
+
+		<article class="tile">
+			<div class="big">5+</div>
+			<h3>years shipping to production</h3>
+			<p>Trustt · Maveric · Accenture</p>
+		</article>
+
+		<article class="tile">
+			<div class="kicker">Stack</div>
+			<div class="tags"><span>Angular</span><span>TypeScript</span><span>Spring Boot</span><span>PostgreSQL</span><span>YugabyteDB</span><span>Claude API</span></div>
+		</article>
+
+		<article class="tile span2">
+			<div class="kicker">Fintech</div>
+			<h3>Lending suite, end to end</h3>
+			<div class="flow"><span>Origination</span><b>→</b><span>Management</span><b>→</b><span>Collections</span></div>
+			<p>Spring Boot services on Postgres and YugabyteDB, with an Angular app of 65+ modules.</p>
+		</article>
+
+		<article class="tile quote">
+			<q>Solve problems at the root, not the surface.</q>
+			<small>how I work</small>
+		</article>
+
+		<article class="tile">
+			<div class="kicker">Leadership</div>
+			<h3>Led a team at Maveric</h3>
+			<p>Built secure SSO, fixed performance bottlenecks. Certificate of Appreciation.</p>
+		</article>
+
+		<article class="tile now">
+			<div class="kicker">Now</div>
+			<h3><i></i>Trustt, Bengaluru</h3>
+			<p>Open to Bengaluru, Hyderabad or remote.</p>
+		</article>
+
+		<article class="tile">
+			<div class="kicker">Say hi</div>
+			<h3>Let's talk</h3>
+			<p>Email, LinkedIn or GitHub.</p>
+			<a class="more" href="mailto:birruakhil1526@gmail.com">Get in touch →</a>
+		</article>
+	</section>
+
+	<div class="next">Next in the full build: two case studies, a clean experience timeline, contact, and the terminal as a hidden extra.</div>
+</main>
+
+<script>
+(() => {
+	const root = document.documentElement;
+	const bind = (id, attr, light) => {
+		const seg = document.getElementById(id);
+		seg.addEventListener('click', (e) => {
+			const b = e.target.closest('button');
+			if (!b) return;
+			seg.querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
+			if (b.dataset.v === light) delete root.dataset[attr]; else root.dataset[attr] = b.dataset.v;
+		});
+	};
+	bind('theme', 'theme', 'light');
+	bind('accent', 'accent', 'indigo');
+})();
+</script>
+</body>
+</html>
