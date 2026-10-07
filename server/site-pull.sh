@@ -19,5 +19,8 @@ git reset -q --hard "$TARGET"
 # --delete drops files removed from the repo; the *.gz copies are made here, so leave them alone
 sudo rsync -a --delete --exclude '*.gz' --exclude '*.docx' --chown=root:root --chmod=D755,F644 "$REPO/site/" "$WEB/"
 sudo find "$WEB" -name '*.html' -exec gzip -9 -k -f {} \;
+# drop .gz copies of removed pages and the folders they leave behind
+sudo find "$WEB" -name '*.html.gz' -exec sh -c '[ -e "${1%.gz}" ] || rm "$1"' _ {} \;
+sudo find "$WEB" -mindepth 1 -type d -empty -delete
 echo "$TARGET" > "$STATE"
 echo "$(date -Is) deployed $(git rev-parse --short HEAD)" | sudo tee -a /var/log/site-pull.log >/dev/null
