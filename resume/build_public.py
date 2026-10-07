@@ -17,7 +17,7 @@ CONTACT = "Bengaluru, India | birruakhil1526@gmail.com | linkedin.com/in/akhil-b
 
 SUMMARY = (
     "Full Stack Developer with 5+ years of experience building scalable, production-grade web applications "
-    "across frontend, backend, and AI-driven workflows. Strong in Angular (up to v19), TypeScript, and RxJS, with "
+    "across frontend, backend, and AI-driven workflows. Strong in Angular (up to v21), TypeScript, and RxJS, with "
     "hands-on Java, Spring Boot, PostgreSQL, and YugabyteDB experience. Built AI-powered developer tools using LLMs (Claude) for automated "
     "test generation and bug resolution. Led a development team, implemented secure Single Sign-On (SSO), and drove "
     "architecture decisions that improved performance, scalability, and maintainability."
@@ -25,12 +25,12 @@ SUMMARY = (
 
 HIGHLIGHTS = [
     "Built AiTDP features – an in-house Claude (LLM) orchestration platform for AI test generation and automated bug fixing.",
-    "Full stack ownership of epics on fintech lending products (LOS, LMS, Collections): Spring Boot, PostgreSQL/YugabyteDB, Angular 19.",
+    "Full stack ownership of epics on fintech lending products (LOS, LMS, Collections): Spring Boot, PostgreSQL/YugabyteDB, Angular.",
     "Implemented secure Single Sign-On (SSO) and led a development team; recognised with a Certificate of Appreciation.",
 ]
 
 SKILLS = [
-    ("Frontend", "Angular (v19), TypeScript, JavaScript, RxJS, ReactJS, Redux, HTML5, CSS3, SCSS, Angular Material, Bootstrap"),
+    ("Frontend", "Angular (up to v21), TypeScript, JavaScript, RxJS, ReactJS, Redux, HTML5, CSS3, SCSS, Angular Material, Bootstrap"),
     ("Backend", "Java, Spring Boot, CRON / scheduled jobs, Node.js, RESTful APIs, Swagger"),
     ("AI / LLM", "LLM workflow orchestration, Claude API, prompt engineering, AI-powered developer tools, editor plugins"),
     ("Databases", "PostgreSQL, YugabyteDB (distributed SQL), SQL, MongoDB"),
@@ -54,7 +54,7 @@ EXPERIENCE = [
             "debugging effort for the engineering team.",
             "Own epics end to end – Spring Boot backend services with PostgreSQL and YugabyteDB, plus the supporting Angular UI.",
             "Built and maintained scheduled CRON jobs in Spring Boot for automated backend batch processing.",
-            "Developed complex Angular 19 modules (65+ lazy-loaded features) with reusable base classes for CRUD, "
+            "Developed complex Angular modules (65+ lazy-loaded features) with reusable base classes for CRUD, "
             "maker-checker approval workflows, and role-based permissions.",
         ],
     },
