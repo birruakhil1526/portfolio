@@ -1,52 +1,62 @@
 # Birru's Space
 
-Personal portfolio of Akhil Birru: a single static page with a developer theme
-(terminal intro, `git log` career timeline, `package.json` skills), served by nginx
-from a small Azure VM.
+Personal portfolio of Akhil Birru: static pages served by nginx from a small Azure VM.
+No framework, no external requests, everything inline.
 
 Live: http://68.221.25.41/
 
 ## Layout
 
 ```
-site/        what gets published (index.html, resume PDF)
-server/      nginx config, stats script, auto-deploy script for the VM
-resume/      builds the public resume PDF (no phone number)
-study/       study guides (markdown), diagrams and the page builder
+site/            published as-is to the web root
+  index.html     the portfolio (hand-written, self-contained)
+  study/         hidden study page (generated, do not edit by hand)
+  *.pdf          public resume (generated, no phone number)
+study/           sources for site/study/: markdown guides, diagrams, page template, builder
+resume/          builds the public resume PDF
+server/          VM setup: nginx config, stats script, auto-deploy script
+build.sh         builds generated pages; --check is what CI runs
 ```
 
-## Editing
+## Quick start
 
-Edit `site/index.html` and push to `main`. The VM checks GitHub every 5 minutes
-and publishes `site/` when there is a new commit (`server/site-pull.sh`).
+```
+./build.sh                          # rebuild site/study/ after editing study/
+./build.sh --check                  # also verify site/ is committed up to date
+python3 -m http.server -d site      # preview at http://localhost:8000
+```
 
-The page is one self-contained file: no build step, no external requests.
+Commit `site/` together with the source change. CI (`.github/workflows/check.yml`)
+fails a push when the generated page is stale or a phone number appears in `site/`.
+
+## Deploy
+
+Push to `main`. The VM checks GitHub every 5 minutes and publishes `site/`
+(`server/site-pull.sh`, installed as `/usr/local/bin/site-pull`, cron `/etc/cron.d/site-pull`,
+log `/var/log/site-pull.log`). Files deleted from `site/` are removed from the server too.
+
+`server/` changes are not applied automatically; install them on the VM by hand.
 
 ## Study page
 
-`/study/` is a hidden page (triple-click the name on the portfolio, or type `study`
-in its terminal). It is built from the markdown guides in `study/src/`:
-
-```
-python3 study/build_study.py   # writes site/study/index.html
-```
-
-Diagrams live in `study/diagrams.py` and are placed per heading in `build_study.py`.
-Hidden only means unlinked: anyone with the URL can open it.
+`/study/` is unlinked: triple-click or tap the name on the portfolio, or type `study` in its
+terminal. Add a guide by dropping a markdown file in `study/src/` and listing it in `GUIDES` in
+`study/build_study.py`; diagrams live in `study/diagrams.py` and are attached per heading there.
+Unlinked is not private: anyone with the URL can open it.
 
 ## Resume
 
 ```
-python resume/build_public.py   # writes site/Akhil_Birru_Resume.pdf (needs python-docx + LibreOffice)
+python3 resume/build_public.py      # writes site/Akhil_Birru_Resume.pdf (needs python-docx + LibreOffice)
 ```
 
 ## Server
 
-- nginx config: `server/nginx-portfolio.conf` -> `/etc/nginx/sites-available/portfolio`
-- Visitor stats: GoAccess builds `/stats/` from nginx logs every 10 minutes
+- nginx: `server/nginx-portfolio.conf` -> `/etc/nginx/sites-available/portfolio`
+- Visitor stats: GoAccess rebuilds `/stats/` from nginx logs every 10 minutes
   (`server/goaccess-update.sh`), behind basic auth
-- Auto-deploy: `server/site-pull.sh` is installed as `/usr/local/bin/site-pull` and run
-  every 5 minutes by `/etc/cron.d/site-pull` (as akhilbirru). Log: `/var/log/site-pull.log`
-- Changes in `server/` are not applied automatically; install them on the VM by hand
 
-Never commit the VM key (`*.pem`) or the stats password.
+## Never commit
+
+The VM key (`*.pem`), the stats password, a phone number, salary or notice-period details.
+This repo is public.

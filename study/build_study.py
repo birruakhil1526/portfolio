@@ -221,7 +221,7 @@ def build_guide(g):
 		ends.setdefault(hits[nth - 1], []).extend(extra(it) for it in items)
 
 	used, out, toc = set(), [], []
-	title, hidx, open_sec, open_qa, figs = '', -1, False, False, 0
+	title, hidx, open_sec, open_qa = '', -1, False, False
 
 	def close_end():
 		if hidx >= 0:
