@@ -12,31 +12,37 @@ from docx.shared import Inches, Pt
 OUT = Path(__file__).resolve().parent.parent / "site" / "Akhil_Birru_Resume.docx"  # public copy, no phone
 
 NAME = "Akhil Birru"
-TITLE = "Full Stack Developer | Angular · Spring Boot · PostgreSQL · AI / LLM (Claude)"
+TITLE = "Senior Angular Developer | Full Stack: Java · Spring Boot · PostgreSQL · AI / LLM (Claude)"
 CONTACT = "Bengaluru, India | birruakhil1526@gmail.com | linkedin.com/in/akhil-birru | github.com/birruakhil1526"
 
 SUMMARY = (
-    "Full Stack Developer with 5+ years of experience building scalable, production-grade web applications "
-    "across frontend, backend, and AI-driven workflows. Strong in Angular (up to v21), TypeScript, and RxJS, with "
-    "hands-on Java, Spring Boot, PostgreSQL, and YugabyteDB experience. Built AI-powered developer tools using LLMs (Claude) for automated "
-    "test generation and bug resolution. Led a development team, implemented secure Single Sign-On (SSO), and drove "
-    "architecture decisions that improved performance, scalability, and maintainability."
+    "Senior Angular Developer with 5+ years of experience building production-grade web applications, including "
+    "3+ years of Angular (up to v21), TypeScript, and RxJS: lazy-loaded feature modules, reusable base-class "
+    "architecture, role-based access, and performance tuning. Full stack background in Java / Spring Boot, "
+    "PostgreSQL, and YugabyteDB to own features end to end, from API and database to UI. Builds AI developer "
+    "tools on Claude for test generation and bug resolution."
 )
 
 HIGHLIGHTS = [
-    "Built AiTDP features – an in-house Claude (LLM) orchestration platform for AI test generation and automated bug fixing.",
-    "Full stack ownership of epics on fintech lending products (LOS, LMS, Collections): Spring Boot, PostgreSQL/YugabyteDB, Angular.",
-    "Implemented secure Single Sign-On (SSO) and led a development team; recognised with a Certificate of Appreciation.",
+    "Develop complex Angular modules for an enterprise lending admin app with 65+ lazy-loaded features, built on reusable "
+    "base classes for CRUD, maker-checker approval workflows, and role-based permissions.",
+    "Built core Angular modules from the ground up, including secure Single Sign-On (SSO), and fixed performance "
+    "bottlenecks to improve load times; led the team as Lead Engineer and received a Certificate of Appreciation.",
+    "Full stack ownership of epics on fintech lending products (LOS, LMS, Collections): Spring Boot services on "
+    "PostgreSQL / YugabyteDB through to the Angular UI.",
+    "Built AI developer tools on Claude (AiTDP): unit test generation for Java, Angular, and Android, and automated bug resolution.",
 ]
 
 SKILLS = [
-    ("Frontend", "Angular (up to v21), TypeScript, JavaScript, RxJS, ReactJS, Redux, HTML5, CSS3, SCSS, Angular Material, Bootstrap"),
-    ("Backend", "Java, Spring Boot, CRON / scheduled jobs, Node.js, RESTful APIs, Swagger"),
-    ("AI / LLM", "LLM workflow orchestration, Claude API, prompt engineering, AI-powered developer tools, editor plugins"),
+    ("Frontend", "Angular (up to v21), TypeScript, JavaScript (ES6+), RxJS, Angular Material, Bootstrap, HTML5, CSS3, SCSS, ReactJS, Redux"),
+    ("Frontend Architecture", "Lazy-loaded modules, reusable components and base classes, route guards, RBAC, "
+     "SSO / authentication, performance optimisation"),
+    ("Frontend Testing", "Karma, Jasmine, unit testing"),
+    ("Backend", "Java, Spring Boot, RESTful APIs, Swagger, CRON / scheduled jobs, Node.js"),
     ("Databases", "PostgreSQL, YugabyteDB (distributed SQL), SQL, MongoDB"),
-    ("Testing", "Karma, Jasmine, unit testing"),
+    ("AI / LLM", "Claude API, LLM workflows, prompt engineering, AI developer tools, editor plugins"),
     ("Tools & DevOps", "Git, Jenkins, Docker, Jira, VS Code, IntelliJ"),
-    ("Practices", "System design, SSO / authentication, role-based access control, lazy loading, Agile / Scrum, code reviews"),
+    ("Practices", "System design, Agile / Scrum, code reviews, mentoring"),
 ]
 
 EXPERIENCE = [
@@ -46,16 +52,17 @@ EXPERIENCE = [
         "dates": "Oct 2024 – Present",
         "location": "Bengaluru",
         "bullets": [
-            "Delivered features across 3 fintech lending products – Loan Origination (LOS), Loan Management (LMS), and "
+            "Build complex Angular UI for an enterprise lending platform (loans, savings, accounting): an admin app with "
+            "65+ lazy-loaded feature modules and reusable base classes for CRUD, maker-checker approval workflows, and "
+            "role-based permissions.",
+            "Deliver features across 3 fintech lending products – Loan Origination (LOS), Loan Management (LMS), and "
             "Loan Collection System (LCS) – plus AiTDP, an in-house AI (Claude) orchestration platform.",
-            "AiTDP: independently designed and built an AI system that generates unit test cases for Java, Angular, and "
+            "Own epics end to end: Spring Boot services and REST APIs on PostgreSQL and YugabyteDB, plus the Angular UI that uses them.",
+            "AiTDP: independently designed and built an AI system that generates unit test cases for Angular, Java, and "
             "Android applications, delivered as editor plugins for developers.",
             "AiTDP: architected an LLM-based (Claude) workflow that automates bug detection and resolution, reducing manual "
             "debugging effort for the engineering team.",
-            "Own epics end to end – Spring Boot backend services with PostgreSQL and YugabyteDB, plus the supporting Angular UI.",
             "Built and maintained scheduled CRON jobs in Spring Boot for automated backend batch processing.",
-            "Developed complex Angular modules (65+ lazy-loaded features) with reusable base classes for CRUD, "
-            "maker-checker approval workflows, and role-based permissions.",
         ],
     },
     {
@@ -66,10 +73,10 @@ EXPERIENCE = [
         "project": "Delivery Excellence Dashboard – platform for employees to report project status and feedback, "
                    "with scoring and stakeholder tracking.",
         "bullets": [
-            "Designed and developed critical modules from the ground up, including secure Single Sign-On (SSO).",
-            "Led a development team for 3 months as Lead Engineer, delivering all planned tasks on schedule.",
-            "Drove architecture decisions and fixed performance bottlenecks, improving load times, scalability, and maintainability.",
             "Built responsive Angular interfaces from UX/UI wireframes and integrated RESTful APIs and third-party services.",
+            "Designed and developed critical modules from the ground up, including secure Single Sign-On (SSO).",
+            "Fixed performance bottlenecks and drove architecture decisions, improving load times, scalability, and maintainability.",
+            "Led a development team for 3 months as Lead Engineer, delivering all planned tasks on schedule.",
             "Conducted code reviews and mentored junior developers on Angular best practices and coding standards.",
             "Received a Certificate of Appreciation for outstanding contribution and leadership on the project.",
         ],
