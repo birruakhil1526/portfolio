@@ -16,8 +16,8 @@ TITLE = "Senior Angular Developer | Full Stack: Java · Spring Boot · PostgreSQ
 CONTACT = "Bengaluru, India | +91 7989714750 | birruakhil1526@gmail.com | linkedin.com/in/akhil-birru | github.com/birruakhil1526"
 
 SUMMARY = (
-    "Senior Angular Developer with 5+ years of experience building production-grade web applications, including "
-    "3+ years of Angular (up to v21), TypeScript, and RxJS: lazy-loaded feature modules, reusable base-class "
+    "Senior Angular Developer with 5+ years of experience building production-grade web applications in "
+    "Angular (up to v21), TypeScript, and RxJS: lazy-loaded feature modules, reusable base-class "
     "architecture, role-based access, and performance tuning. Full stack background in Java / Spring Boot, "
     "PostgreSQL, and YugabyteDB to own features end to end, from API and database to UI. Strong hands-on "
     "experience with Claude, AI / ML, RAG, and agentic AI frameworks, including a company-wide agentic AI "
@@ -87,16 +87,15 @@ EXPERIENCE = [
     },
     {
         "company": "Accenture",
-        "role": "Associate – Backend Developer",
+        "role": "Associate – Frontend Developer (Angular)",
         "dates": "Apr 2021 – Oct 2022",
         "location": "Hyderabad",
         "project": "Inventory and supply-chain app for an international agricultural company – stock, transit, "
                    "storage, and processing.",
         "bullets": [
-            "Developed backend services and RESTful APIs in Java and Spring Boot for inventory, in-transit tracking, "
-            "and material processing modules.",
-            "Wrote SQL queries and data access logic for product stock, storage, and processing data.",
-            "Worked closely with frontend developers and designers to define API contracts and integrate services end to end.",
+            "Built Angular UI modules for inventory, in-transit tracking, and material processing.",
+            "Integrated RESTful APIs into the Angular UI for product stock, storage, and processing data.",
+            "Worked closely with designers and backend developers to turn wireframes into screens and agree API contracts.",
         ],
     },
 ]
