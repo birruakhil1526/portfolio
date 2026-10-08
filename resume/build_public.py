@@ -12,15 +12,16 @@ from docx.shared import Inches, Pt
 OUT = Path(__file__).resolve().parent.parent / "site" / "Akhil_Birru_Resume.docx"  # public copy, no phone
 
 NAME = "Akhil Birru"
-TITLE = "Senior Angular Developer | Full Stack: Java · Spring Boot · PostgreSQL · AI / LLM (Claude)"
+TITLE = "Senior Angular Developer | Full Stack: Java · Spring Boot · PostgreSQL | AI: Claude · RAG · Agents"
 CONTACT = "Bengaluru, India | birruakhil1526@gmail.com | linkedin.com/in/akhil-birru | github.com/birruakhil1526"
 
 SUMMARY = (
     "Senior Angular Developer with 5+ years of experience building production-grade web applications, including "
     "3+ years of Angular (up to v21), TypeScript, and RxJS: lazy-loaded feature modules, reusable base-class "
     "architecture, role-based access, and performance tuning. Full stack background in Java / Spring Boot, "
-    "PostgreSQL, and YugabyteDB to own features end to end, from API and database to UI. Builds AI developer "
-    "tools on Claude for test generation and bug resolution."
+    "PostgreSQL, and YugabyteDB to own features end to end, from API and database to UI. Strong hands-on "
+    "experience with Claude, AI / ML, RAG, and agentic AI frameworks, building AI developer tools for test "
+    "generation and bug resolution. Experienced in Agile / Scrum delivery."
 )
 
 HIGHLIGHTS = [
@@ -30,7 +31,8 @@ HIGHLIGHTS = [
     "bottlenecks to improve load times; led the team as Lead Engineer and received a Certificate of Appreciation.",
     "Full stack ownership of epics on fintech lending products (LOS, LMS, Collections): Spring Boot services on "
     "PostgreSQL / YugabyteDB through to the Angular UI.",
-    "Built AI developer tools on Claude (AiTDP): unit test generation for Java, Angular, and Android, and automated bug resolution.",
+    "Built AI developer tools on Claude (AiTDP) as agentic LLM workflows: unit test generation for Java, Angular, "
+    "and Android, and automated bug detection and resolution.",
 ]
 
 SKILLS = [
@@ -40,9 +42,10 @@ SKILLS = [
     ("Frontend Testing", "Karma, Jasmine, unit testing"),
     ("Backend", "Java, Spring Boot, RESTful APIs, Swagger, CRON / scheduled jobs, Node.js"),
     ("Databases", "PostgreSQL, YugabyteDB (distributed SQL), SQL, MongoDB"),
-    ("AI / LLM", "Claude API, LLM workflows, prompt engineering, AI developer tools, editor plugins"),
+    ("AI / ML", "Claude (Anthropic API), LLM workflows, RAG (retrieval-augmented generation), agentic AI frameworks, "
+     "AI agents, prompt engineering, AI developer tools"),
     ("Tools & DevOps", "Git, Jenkins, Docker, Jira, VS Code, IntelliJ"),
-    ("Practices", "System design, Agile / Scrum, code reviews, mentoring"),
+    ("Practices", "Agile / Scrum, sprint planning, system design, code reviews, mentoring"),
 ]
 
 EXPERIENCE = [
@@ -63,6 +66,7 @@ EXPERIENCE = [
             "AiTDP: architected an LLM-based (Claude) workflow that automates bug detection and resolution, reducing manual "
             "debugging effort for the engineering team.",
             "Built and maintained scheduled CRON jobs in Spring Boot for automated backend batch processing.",
+            "Work in Agile / Scrum sprints on Jira: planning, estimation, stand-ups, and retrospectives.",
         ],
     },
     {
@@ -78,7 +82,6 @@ EXPERIENCE = [
             "Fixed performance bottlenecks and drove architecture decisions, improving load times, scalability, and maintainability.",
             "Led a development team for 3 months as Lead Engineer, delivering all planned tasks on schedule.",
             "Conducted code reviews and mentored junior developers on Angular best practices and coding standards.",
-            "Received a Certificate of Appreciation for outstanding contribution and leadership on the project.",
         ],
     },
     {
@@ -93,7 +96,6 @@ EXPERIENCE = [
             "and material processing modules.",
             "Wrote SQL queries and data access logic for product stock, storage, and processing data.",
             "Worked closely with frontend developers and designers to define API contracts and integrate services end to end.",
-            "Documented APIs (Swagger) and technical specifications to support knowledge sharing and project continuity.",
         ],
     },
 ]
