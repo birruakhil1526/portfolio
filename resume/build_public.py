@@ -28,9 +28,8 @@ HIGHLIGHTS = [
     "Develop complex Angular modules for an enterprise lending admin app with 65+ lazy-loaded features, built on reusable "
     "base classes for CRUD, maker-checker approval workflows, and role-based permissions.",
     "Built core Angular modules from the ground up, including secure Single Sign-On (SSO), and fixed performance "
-    "bottlenecks to improve load times; led the team as Lead Engineer and received a Certificate of Appreciation.",
-    "Full stack ownership of epics on fintech lending products (LOS, LMS, Collections): Spring Boot services on "
-    "PostgreSQL / YugabyteDB through to the Angular UI.",
+    "bottlenecks to improve load times; led the frontend team as Lead Engineer.",
+    "Full stack ownership of lending epics (LOS, LMS, LCS): Spring Boot on PostgreSQL / YugabyteDB through to Angular UI.",
     "Built AI developer tools on Claude (AiTDP) as agentic LLM workflows: unit test generation for Java, Angular, "
     "and Android, and automated bug detection and resolution.",
 ]
@@ -58,8 +57,8 @@ EXPERIENCE = [
             "Build complex Angular UI for an enterprise lending platform (loans, savings, accounting): an admin app with "
             "65+ lazy-loaded feature modules and reusable base classes for CRUD, maker-checker approval workflows, and "
             "role-based permissions.",
-            "Deliver features across 3 fintech lending products – Loan Origination (LOS), Loan Management (LMS), and "
-            "Loan Collection System (LCS) – plus AiTDP, an in-house AI (Claude) orchestration platform.",
+            "Deliver features across 3 fintech lending products – Loan Origination (LOS), Loan Management (LMS), "
+            "Loan Collections (LCS) – and AiTDP, an in-house Claude platform.",
             "Own epics end to end: Spring Boot services and REST APIs on PostgreSQL and YugabyteDB, plus the Angular UI that uses them.",
             "AiTDP: independently designed and built an AI system that generates unit test cases for Angular, Java, and "
             "Android applications, delivered as editor plugins for developers.",
@@ -80,7 +79,7 @@ EXPERIENCE = [
             "Built responsive Angular interfaces from UX/UI wireframes and integrated RESTful APIs and third-party services.",
             "Designed and developed critical modules from the ground up, including secure Single Sign-On (SSO).",
             "Fixed performance bottlenecks and drove architecture decisions, improving load times, scalability, and maintainability.",
-            "Led a development team for 3 months as Lead Engineer, delivering all planned tasks on schedule.",
+            "Led the frontend team for 3 months as Lead Engineer, delivering all planned tasks on schedule.",
             "Conducted code reviews and mentored junior developers on Angular best practices and coding standards.",
         ],
     },
@@ -89,8 +88,8 @@ EXPERIENCE = [
         "role": "Associate – Backend Developer",
         "dates": "Apr 2021 – Oct 2022",
         "location": "Hyderabad",
-        "project": "Inventory and supply-chain web application for an international agricultural company – tracking "
-                   "product stock, items in transit, material storage, and processing stages.",
+        "project": "Inventory and supply-chain app for an international agricultural company – stock, transit, "
+                   "storage, and processing.",
         "bullets": [
             "Developed backend services and RESTful APIs in Java and Spring Boot for inventory, in-transit tracking, "
             "and material processing modules.",
@@ -105,6 +104,10 @@ EDUCATION = [
 ]
 
 CERTIFICATIONS = "PGP Full Stack Software Engineering; Angular; Java; JavaScript; SQL"
+
+ACHIEVEMENTS = [
+    "Certificate of Appreciation, Maveric Systems – for leading the frontend team.",
+]
 
 
 # ---------- layout ----------
@@ -210,6 +213,10 @@ def build():
     for degree, school, years in EDUCATION:
         job_header(doc, degree, years)
         text_line(doc, school)
+
+    heading(doc, "Awards & Achievements")
+    for a in ACHIEVEMENTS:
+        bullet(doc, a)
 
     heading(doc, "Certifications")
     text_line(doc, CERTIFICATIONS)
