@@ -20,8 +20,8 @@ SUMMARY = (
     "3+ years of Angular (up to v21), TypeScript, and RxJS: lazy-loaded feature modules, reusable base-class "
     "architecture, role-based access, and performance tuning. Full stack background in Java / Spring Boot, "
     "PostgreSQL, and YugabyteDB to own features end to end, from API and database to UI. Strong hands-on "
-    "experience with Claude, AI / ML, RAG, and agentic AI frameworks, building AI developer tools for test "
-    "generation and bug resolution. Experienced in Agile / Scrum delivery."
+    "experience with Claude, AI / ML, RAG, and agentic AI frameworks, including a company-wide agentic AI "
+    "assistant with guardrails. Experienced in Agile / Scrum delivery."
 )
 
 HIGHLIGHTS = [
@@ -30,8 +30,8 @@ HIGHLIGHTS = [
     "Built core Angular modules from the ground up, including secure Single Sign-On (SSO), and fixed performance "
     "bottlenecks to improve load times; led the frontend team as Lead Engineer.",
     "Full stack ownership of lending epics (LOS, LMS, LCS): Spring Boot on PostgreSQL / YugabyteDB through to Angular UI.",
-    "Built AI developer tools on Claude (AiTDP) as agentic LLM workflows: unit test generation for Java, Angular, "
-    "and Android, and automated bug detection and resolution.",
+    "Worked on AiTDP, a company-wide AI assistant: an in-house Claude orchestration platform on an agentic framework, "
+    "with guardrails; built its unit test generation and automated bug resolution.",
 ]
 
 SKILLS = [
@@ -60,11 +60,13 @@ EXPERIENCE = [
             "Deliver features across 3 fintech lending products – Loan Origination (LOS), Loan Management (LMS), "
             "Loan Collections (LCS) – and AiTDP, an in-house Claude platform.",
             "Own epics end to end: Spring Boot services and REST APIs on PostgreSQL and YugabyteDB, plus the Angular UI that uses them.",
-            "AiTDP: independently designed and built an AI system that generates unit test cases for Angular, Java, and "
-            "Android applications, delivered as editor plugins for developers.",
-            "AiTDP: architected an LLM-based (Claude) workflow that automates bug detection and resolution, reducing manual "
-            "debugging effort for the engineering team.",
-            "Built and maintained scheduled CRON jobs in Spring Boot for automated backend batch processing.",
+            "AiTDP: worked on the in-house Claude orchestration platform – an agentic AI assistant used company-wide "
+            "by developers and BAs, with guardrails limiting it to company use.",
+            "AiTDP: independently designed and built unit test generation for Angular, Java, and Android applications, "
+            "delivered as editor plugins for developers.",
+            "AiTDP: architected an agentic Claude workflow that automates bug detection and resolution, reducing manual "
+            "debugging effort.",
+            "Built and maintained scheduled CRON jobs in Spring Boot for backend batch processing.",
             "Work in Agile / Scrum sprints on Jira: planning, estimation, stand-ups, and retrospectives.",
         ],
     },
@@ -214,12 +216,10 @@ def build():
         job_header(doc, degree, years)
         text_line(doc, school)
 
-    heading(doc, "Awards & Achievements")
+    heading(doc, "Awards & Certifications")
     for a in ACHIEVEMENTS:
         bullet(doc, a)
-
-    heading(doc, "Certifications")
-    text_line(doc, CERTIFICATIONS)
+    bullet(doc, "Certifications: " + CERTIFICATIONS)
 
     doc.save(OUT)
     subprocess.run(
