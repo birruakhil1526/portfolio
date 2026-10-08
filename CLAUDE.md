@@ -13,7 +13,7 @@ Akhil's personal portfolio. Requests usually come from the Claude mobile app, so
    If you worked on a branch, open a PR and say it must be merged to go live.
 
 ## Rules
-- The repo and site are public. Never add a phone number, salary/CTC, notice period, passwords, keys or `*.pem`.
+- The repo and site are public. Akhil's own phone number (+91 7989714750) is fine to show; never add anyone else's, salary/CTC, notice period, passwords, keys or `*.pem`.
 - Never add code, diagrams or documents from Akhil's employer (Trustt / novopay).
 - The server's Content-Security-Policy blocks every external request: no Google Fonts, CDNs, analytics or
   remote images. Use system font stacks, inline SVG, or files committed under `site/`.

@@ -11,7 +11,7 @@ Live: http://68.221.25.41/
 site/            published as-is to the web root
   index.html     the portfolio (hand-written, self-contained)
   study/         hidden study page (generated, do not edit by hand)
-  *.pdf          public resume (generated, no phone number)
+  *.pdf          public resume (generated)
 study/           sources for site/study/: markdown guides, diagrams, page template, builder
 resume/          builds the public resume PDF
 server/          VM setup: nginx config, stats script, auto-deploy script
@@ -27,7 +27,7 @@ python3 -m http.server -d site      # preview at http://localhost:8000
 ```
 
 Commit `site/` together with the source change. CI (`.github/workflows/check.yml`)
-fails a push when the generated page is stale or a phone number appears in `site/`.
+fails a push when the generated page is stale or a phone number other than Akhil's appears in `site/`.
 
 ## Deploy
 
@@ -58,5 +58,5 @@ python3 resume/build_public.py      # writes site/Akhil_Birru_Resume.pdf (needs 
 
 ## Never commit
 
-The VM key (`*.pem`), the stats password, a phone number, salary or notice-period details.
+The VM key (`*.pem`), the stats password, salary or notice-period details.
 This repo is public.

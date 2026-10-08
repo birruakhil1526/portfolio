@@ -9,11 +9,11 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt
 
-OUT = Path(__file__).resolve().parent.parent / "site" / "Akhil_Birru_Resume.docx"  # public copy, no phone
+OUT = Path(__file__).resolve().parent.parent / "site" / "Akhil_Birru_Resume.docx"  # public copy
 
 NAME = "Akhil Birru"
 TITLE = "Senior Angular Developer | Full Stack: Java · Spring Boot · PostgreSQL | AI: Claude · RAG · Agents"
-CONTACT = "Bengaluru, India | birruakhil1526@gmail.com | linkedin.com/in/akhil-birru | github.com/birruakhil1526"
+CONTACT = "Bengaluru, India | +91 7989714750 | birruakhil1526@gmail.com | linkedin.com/in/akhil-birru | github.com/birruakhil1526"
 
 SUMMARY = (
     "Senior Angular Developer with 5+ years of experience building production-grade web applications, including "
