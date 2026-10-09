@@ -4,6 +4,7 @@ set -e
 cd "$(dirname "$0")"
 
 python3 study/build_study.py
+python3 jobs/build_jobs.py
 
 [ "$1" = "--check" ] || exit 0
 
