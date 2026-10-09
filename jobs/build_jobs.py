@@ -8,8 +8,8 @@ HERE = Path(__file__).resolve().parent
 OUT = HERE.parent / 'site' / 'jobs' / 'index.html'
 
 GROUPS = [
-	('top', 'Top matches', 'Angular + Java / Spring Boot full stack, Bengaluru · Hyderabad · Remote'),
-	('ai', 'AI / LLM roles', 'Roles that use the Claude and LLM tooling work'),
+	('top', 'Senior Angular roles', 'Angular frontend or Angular + Java / Spring Boot full stack, Bengaluru · Hyderabad · Remote'),
+	('ai', 'Angular + AI / LLM', 'Angular roles that also use the Claude and LLM tooling work'),
 	('other', 'Also worth a look', 'Strong fit, other city or a step up'),
 ]
 
