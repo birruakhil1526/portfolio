@@ -11,7 +11,9 @@ Live: http://68.221.25.41/
 site/            published as-is to the web root
   index.html     the portfolio (hand-written, self-contained)
   study/         hidden study page (generated, do not edit by hand)
+  jobs/          daily job matches, unlisted (generated from jobs/jobs.json)
   *.pdf          public resume (generated)
+jobs/            jobs.json (updated by the daily 7 AM job-match run) and its page builder
 study/           sources for site/study/: markdown guides, diagrams, page template, builder
 resume/          builds the public resume PDF
 server/          VM setup: nginx config, stats script, auto-deploy script
