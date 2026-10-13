@@ -13,7 +13,7 @@ site/            published as-is to the web root
   study/         hidden study page (generated, do not edit by hand)
   jobs/          daily job matches, unlisted (generated from jobs/jobs.json)
   *.pdf          public resume (generated)
-jobs/            jobs.json (updated by the daily 7 AM job-match run) and its page builder
+jobs/            fetch_jobs.py (Apify -> jobs.json, run daily by .github/workflows/jobs.yml) and the page builder
 study/           sources for site/study/: markdown guides, diagrams, page template, builder
 resume/          builds the public resume PDF
 server/          VM setup: nginx config, stats script, auto-deploy script
@@ -62,3 +62,10 @@ python3 resume/build_public.py      # writes site/Akhil_Birru_Resume.pdf (needs 
 
 The VM key (`*.pem`), the stats password, salary or notice-period details.
 This repo is public.
+
+## Jobs page
+
+`.github/workflows/jobs.yml` runs every day at 06:59 IST (and on demand from the Actions tab):
+`jobs/fetch_jobs.py` pulls senior Angular roles from LinkedIn through Apify, ranks them,
+rebuilds `site/jobs/` and pushes to `main`, which the VM then deploys. It needs the repo secret
+`APIFY_TOKEN` (Settings → Secrets and variables → Actions).
