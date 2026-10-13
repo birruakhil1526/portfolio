@@ -8,13 +8,18 @@
 <meta name="theme-color" content="#0b0e14">
 <script>try { if (localStorage.getItem('theme') === 'light') document.documentElement.dataset.theme = 'light'; } catch (e) {}</script>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230b0e14'/><text x='10' y='42' font-family='monospace' font-size='30' font-weight='700' fill='%237ee787'>&gt;_</text></svg>">
+<link rel="preload" href="/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
 <style>
+/* Google Fonts (Inter, JetBrains Mono; SIL OFL, see /fonts/) served from this site: the CSP allows no outside requests */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 400 800; font-display: swap; src: url(/fonts/inter.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/jetbrains-mono.woff2) format('woff2'); }
 :root {
 	--bg: #0b0e14; --surface: #11151c; --surface-2: #161b24; --line: #222a36;
 	--text: #d6dde6; --muted: #8b96a5; --faint: #5c6675;
 	--green: #7ee787; --blue: #79c0ff; --orange: #ffa657;
-	--mono: ui-monospace, 'SF Mono', SFMono-Regular, 'Cascadia Code', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-	--sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--mono: 'JetBrains Mono', ui-monospace, 'SF Mono', SFMono-Regular, 'Cascadia Code', Menlo, Consolas, 'Liberation Mono', monospace;
+	--sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	color-scheme: dark;
 }
 :root[data-theme="light"] {
