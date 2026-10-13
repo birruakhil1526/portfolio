@@ -81,7 +81,7 @@ def main():
 	serve(FakeRoku, 8060)
 	serve(FakeSamsung, 8001)
 	port = free_port()
-	env = dict(os.environ, HOME_PANEL_PASSWORD='test-password', HOME_BRIDGE_TOKEN='t' * 32, HOME_RELAY_PORT=str(port))
+	env = dict(os.environ, HOME_PANEL_PASSWORD='test-password', HOME_BRIDGE_TOKEN='t' * 32, HOME_RELAY_PORT=str(port), HOME_RELAY_DATA=os.path.join(tempfile.mkdtemp(), 'accounts.json'))
 	relay = subprocess.Popen([sys.executable, os.path.join(ROOT, 'home', 'relay.py')], env=env, stderr=subprocess.DEVNULL)
 	tmp = tempfile.mkdtemp()
 	try:
@@ -134,6 +134,24 @@ def main():
 		code, r = call(base, '/cmd', {'device': 'roku:10.0.0.9', 'control': 'power'}, tok)
 		assert code == 502 and 'unknown device' in r['message'], r
 		assert call(base, '/bridge/poll', token='wrong')[0] == 401
+
+		# sign-up: a new home sees only its own bridge's devices, never the owner's
+		code, acc = call(base, '/signup', {'name': 'Friend flat'})
+		assert code == 200 and acc['token'].startswith('hk_') and acc['bridge_token'].startswith('hb_'), acc
+		code, st = call(base, '/state', token=acc['token'])
+		assert code == 200 and st['devices'] == [] and st['home'] == 'Friend flat', st
+		code, r = call(base, '/cmd', {'device': 'roku:127.0.0.1', 'control': 'vol_up'}, acc['token'])
+		assert code == 503 and got['roku'] == ['/keypress/VolumeUp'], '(friend bridge not connected yet) a key must never reach the owner bridge: %s %s' % (code, r)
+		assert call(base, '/bridge/devices', {'devices': [{'id': 'x:1', 'name': 'Friend TV', 'controls': []}]}, acc['bridge_token'])[0] == 200
+		assert [d['name'] for d in call(base, '/state', token=acc['token'])[1]['devices']] == ['Friend TV']
+		assert 'Friend TV' not in json.dumps(call(base, '/state', token=tok)[1]), 'owner must not see other homes'
+		code, r = call(base, '/login', {'password': acc['token']})
+		assert code == 200 and r['token'] == acc['token'], r
+		with open(env['HOME_RELAY_DATA']) as f:
+			assert acc['token'] not in f.read(), 'keys must be stored hashed'
+		for i in range(2):
+			assert call(base, '/signup', {'name': 'spam %d' % i})[0] == 200
+		assert call(base, '/signup', {'name': 'spam 3'})[0] == 429, 'sign-ups must be rate limited'
 		relay.terminate()
 		relay.wait()
 		env['HOME_NO_PASSWORD'] = '1'

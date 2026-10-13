@@ -12,6 +12,7 @@ NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=yes
 PrivateTmp=yes
+StateDirectory=home-relay
 PrivateDevices=yes
 RestrictAddressFamilies=AF_INET AF_INET6
 MemoryMax=100M

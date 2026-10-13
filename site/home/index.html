@@ -69,7 +69,14 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 .primary { background: var(--green); color: var(--bg); border-color: var(--green); font-weight: 700; }
 
 #login { display: grid; gap: 10px; max-width: 380px; }
-#login input { width: 100%; font-size: 16px; }
+#login input, #signup input { width: 100%; font-size: 16px; }
+.login-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.login-grid form { display: grid; gap: 10px; align-content: start; }
+.login-grid p, #keys p { color: var(--muted); font-size: 13.5px; }
+#keys { display: grid; gap: 10px; }
+.secret { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; align-items: center; }
+.secret span { grid-column: 1 / -1; font: 12px var(--mono); color: var(--faint); }
+.secret code { padding: 7px 8px; overflow-wrap: anywhere; color: var(--green); }
 #login p { color: var(--muted); font-size: 13.5px; }
 
 #bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font: 12.5px var(--mono); color: var(--muted); }
@@ -150,20 +157,38 @@ footer { padding: 32px 0 40px; font: 12px var(--mono); color: var(--faint); }
 	</header>
 
 	<section id="login-section" hidden>
-		<form id="login" class="card" autocomplete="on">
-			<label for="pw"><b>Password</b></label>
-			<input id="pw" type="password" autocomplete="current-password" required>
-			<button class="primary" type="submit">Unlock</button>
-			<p id="login-msg">Only Akhil can use this page.</p>
-			<p><a href="/home/?demo">See a demo with sample devices</a></p>
-		</form>
+		<div class="login-grid">
+			<form id="login" class="card" autocomplete="on">
+				<label for="pw"><b>Log in</b></label>
+				<input id="pw" type="password" autocomplete="current-password" placeholder="access key (hk_…)" required>
+				<button class="primary" type="submit">Log in</button>
+				<p id="login-msg">Paste the access key you got when you created your home.</p>
+			</form>
+			<form id="signup" class="card" autocomplete="off">
+				<label for="home-name"><b>New here? Create your home</b></label>
+				<input id="home-name" maxlength="40" placeholder="a name, e.g. Akhil's flat" required>
+				<button type="submit">Create my home</button>
+				<p id="signup-msg">You get an access key to log in and a token for the bridge at your home. Your devices are only visible to you.</p>
+			</form>
+		</div>
+		<div id="keys" class="card" hidden>
+			<b>Your home "<span id="k-name"></span>" is ready</b>
+			<p>Save both now: they are shown only once. This browser is already logged in.</p>
+			<div class="secret"><span>Access key · log in on any phone</span><code id="k-key"></code><button type="button" data-copy="k-key">Copy</button></div>
+			<div class="secret"><span>Bridge token · for bridge.py at home</span><code id="k-bridge"></code><button type="button" data-copy="k-bridge">Copy</button></div>
+			<pre>curl -O http://68.221.25.41/home/bridge.py
+python3 bridge.py setup   # paste token
+python3 bridge.py</pre>
+			<button id="k-done" class="primary" type="button">Open my home</button>
+		</div>
+		<p style="margin-top:12px"><a href="/home/?demo">See a demo with sample devices first</a></p>
 	</section>
 
 	<section id="panel" hidden>
 		<div id="bar" class="card">
 			<span class="grow"><span id="dot" class="dot"></span><span id="status">connecting…</span></span>
 			<button id="rescan" type="button">Rescan</button>
-			<button id="logout" type="button">Lock</button>
+			<button id="logout" type="button">Log out</button>
 		</div>
 		<p id="demo-note" class="demo" hidden><b>Demo</b> · <span id="demo-why">sample devices</span>, nothing is sent. <a href="/home/">Try live</a></p>
 		<div id="devices" style="margin-top:12px"></div>
@@ -219,7 +244,7 @@ footer { padding: 32px 0 40px; font: 12px var(--mono); color: var(--faint); }
 		<details>
 			<summary>Setup</summary>
 			<ol>
-				<li>On the VM, once: <code>sudo sh ~/portfolio/server/home-relay-install.sh</code>. It prints the page password and the bridge token.</li>
+				<li>Create your home above. You get an access key (to log in) and a bridge token.</li>
 				<li>On a machine at home that stays on (laptop, Raspberry Pi, or an Android phone with Termux):
 					<pre>curl -O http://68.221.25.41/home/bridge.py
 python3 bridge.py setup
@@ -324,7 +349,7 @@ python3 bridge.py</pre></li>
 		try { data = await res.json(); } catch (e) {
 			data = { error: res.status === 502 ? 'the relay is not running on the VM' : 'HTTP ' + res.status };
 		}
-		if (res.status === 401 && path !== '/login') { lock('Session ended, unlock again.'); throw new Error('login'); }
+		if (res.status === 401 && path !== '/login') { lock(token ? 'That key no longer works, log in again.' : ''); throw new Error('login'); }
 		if (!res.ok) throw new Error(data.error || data.message || 'HTTP ' + res.status);
 		return data;
 	}
@@ -353,7 +378,39 @@ python3 bridge.py</pre></li>
 			$('login-msg').textContent = err.message;
 		} finally { b.disabled = false; }
 	};
-	$('logout').onclick = async () => { try { await api('/logout', {}); } catch (e) {} lock('Locked.'); };
+	$('signup').onsubmit = async (e) => {
+		e.preventDefault();
+		const btn = e.target.querySelector('button');
+		btn.disabled = true;
+		try {
+			const r = await api('/signup', { name: $('home-name').value });
+			token = r.token;
+			try { localStorage.setItem('home-token', token); } catch (e) {}
+			$('k-name').textContent = r.name;
+			$('k-key').textContent = r.token;
+			$('k-bridge').textContent = r.bridge_token;
+			$('login-section').querySelector('.login-grid').hidden = true;
+			$('keys').hidden = false;
+		} catch (err) {
+			$('signup-msg').textContent = err.message;
+		} finally { btn.disabled = false; }
+	};
+	$('keys').addEventListener('click', async (e) => {
+		const id = e.target.dataset.copy;
+		if (!id) return;
+		try { await navigator.clipboard.writeText($(id).textContent); e.target.textContent = 'Copied'; }
+		catch (err) { getSelection().selectAllChildren($(id)); e.target.textContent = 'Select'; }
+	});
+	$('k-done').onclick = () => {
+		$('keys').hidden = true;
+		$('login-section').querySelector('.login-grid').hidden = false;
+		start();
+	};
+	$('logout').onclick = async () => {
+		if (!demo && token.startsWith('hk_') && !confirm('Log out? You need your access key to get back in.')) return;
+		try { await api('/logout', {}); } catch (e) {}
+		lock('Logged out.');
+	};
 	$('rescan').onclick = async (e) => {
 		e.target.disabled = true;
 		toast('scanning the WiFi…');
@@ -373,9 +430,9 @@ python3 bridge.py</pre></li>
 			const s = await api('/state');
 			const b = s.bridge;
 			$('dot').className = 'dot' + (b.online ? ' on' : '');
-			$('status').textContent = b.online
+			$('status').textContent = (s.home && s.home !== 'owner' ? s.home + ' · ' : '') + (b.online
 				? 'bridge online' + (b.host ? ' · ' + b.host : '')
-				: b.seen ? 'bridge offline · last seen ' + ago(b.seen, s.now) : 'bridge not started yet';
+				: b.seen ? 'bridge offline · last seen ' + ago(b.seen, s.now) : 'bridge not started yet');
 			const next = JSON.stringify(s.devices);
 			if (next !== JSON.stringify(devices)) { devices = s.devices; render(); }
 		} catch (err) {

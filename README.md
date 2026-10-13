@@ -80,8 +80,11 @@ devices on the home WiFi, so `site/home/bridge.py` runs on an always-on machine 
 and long-polls the relay on the VM (`home/relay.py`, nginx `/home/api/`). Nothing is opened on the router.
 
 - VM, once and after `home/relay.py` or nginx changes: `sudo sh ~/portfolio/server/home-relay-install.sh`
-  (installs the `home-relay` systemd unit and nginx config, prints the page password and bridge token
-  kept in `/etc/home-relay.env`)
+  (installs the `home-relay` systemd unit and nginx config; settings in `/etc/home-relay.env`)
+- Accounts: anyone can tap "Create your home" and gets an access key (login) and a bridge token. Each
+  account is a separate home that sees only its own bridge's devices. Hashes of the keys are kept in
+  `/var/lib/home-relay/accounts.json`; `HOME_SIGNUP=0` closes sign-up. The owner home from
+  `HOME_BRIDGE_TOKEN` also opens with `HOME_PANEL_PASSWORD`, or for anyone with `HOME_NO_PASSWORD=1` (testing only).
 - Home: `curl -O http://68.221.25.41/home/bridge.py && python3 bridge.py setup && python3 bridge.py`
 - `bridge.json` and `.bridge-state.json` hold tokens and TV pairing keys: never commit them.
-- The site is plain HTTP, so the password crosses the network unencrypted; add HTTPS before relying on it.
+- The site is plain HTTP, so keys cross the network unencrypted; add HTTPS before relying on it.

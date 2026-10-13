@@ -822,7 +822,7 @@ def setup():
 	cfg = load_json(CONFIG, {})
 	print('Birru Home bridge setup. Press Enter to keep the value in [brackets].')
 	cfg['relay'] = input('Relay address [%s]: ' % cfg.get('relay', DEFAULT_RELAY)).strip() or cfg.get('relay', DEFAULT_RELAY)
-	tok = input('Bridge token (from the VM install script)%s: ' % (' [saved]' if cfg.get('token') else '')).strip()
+	tok = input('Bridge token (from Create your home on the /home/ page)%s: ' % (' [saved]' if cfg.get('token') else '')).strip()
 	cfg['token'] = tok or cfg.get('token', '')
 	st = input('SmartThings personal access token (optional, for Samsung AC / washer)%s: ' % (' [saved]' if cfg.get('smartthings') else '')).strip()
 	if st:
