@@ -1,0 +1,35 @@
+name: jobs
+
+# refresh the /jobs/ page every morning; the VM pulls main within 5 minutes
+on:
+  schedule:
+    - cron: '29 1 * * *' # 06:59 IST
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency: jobs
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch and rank jobs
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: python3 jobs/fetch_jobs.py
+      - name: Build page
+        run: ./build.sh
+      - name: Commit and push
+        run: |
+          git add jobs/jobs.json site/jobs/index.html
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
+          git -c user.name='jobs-bot' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+            commit -m "Jobs: daily refresh $(TZ=Asia/Kolkata date +%F)"
+          ./build.sh --check
+          git push
