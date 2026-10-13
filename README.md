@@ -56,7 +56,7 @@ python3 resume/build_public.py      # writes site/Akhil_Birru_Resume.pdf (needs 
 
 ## Server
 
-- nginx: `server/nginx-portfolio.conf` -> `/etc/nginx/sites-available/portfolio`, plus `server/nginx-portfolio-common.conf` -> `/etc/nginx/snippets/portfolio-common.conf`
+- nginx: `server/nginx-portfolio.conf` -> `/etc/nginx/sites-available/portfolio`
 - Visitor stats: GoAccess rebuilds `/stats/` from nginx logs every 10 minutes
   (`server/goaccess-update.sh`), behind basic auth
 
@@ -84,9 +84,4 @@ and long-polls the relay on the VM (`home/relay.py`, nginx `/home/api/`). Nothin
   kept in `/etc/home-relay.env`)
 - Home: `curl -O http://68.221.25.41/home/bridge.py && python3 bridge.py setup && python3 bridge.py`
 - `bridge.json` and `.bridge-state.json` hold tokens and TV pairing keys: never commit them.
-- Sign-in: Google (only the accounts in `HOME_ALLOWED_EMAILS`), a password, or `HOME_NO_PASSWORD=1` for
-  testing, all set in `/etc/home-relay.env`. Google needs HTTPS: `sudo sh ~/portfolio/server/https-setup.sh <name>.duckdns.org`
-  gets a Let's Encrypt certificate (port 443 must be open in the Azure network security group) and writes
-  `/etc/nginx/snippets/portfolio-https-site.conf`; the bare IP keeps serving plain HTTP.
-- nginx: `server/nginx-portfolio.conf` holds the server blocks, `server/nginx-portfolio-common.conf` the shared
-  headers and locations (`/etc/nginx/snippets/portfolio-common.conf`).
+- The site is plain HTTP, so the password crosses the network unencrypted; add HTTPS before relying on it.

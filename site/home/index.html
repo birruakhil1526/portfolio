@@ -70,9 +70,6 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 
 #login { display: grid; gap: 10px; max-width: 380px; }
 #login input { width: 100%; font-size: 16px; }
-#pw-form { display: grid; gap: 10px; }
-.google { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; border-radius: 8px; font: 600 15px var(--sans); background: #fff; color: #1f1f1f; border: 1px solid #747775; }
-.google:hover { text-decoration: none; box-shadow: 0 1px 3px rgb(0 0 0 / .3); }
 #login p { color: var(--muted); font-size: 13.5px; }
 
 #bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font: 12.5px var(--mono); color: var(--muted); }
@@ -151,15 +148,12 @@ footer { padding: 32px 0 40px; font: 12px var(--mono); color: var(--faint); }
 	</header>
 
 	<section id="login-section" hidden>
-		<div id="login" class="card">
-			<a id="google" class="google" href="/home/api/auth/google" hidden><svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#ea4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.9 6.2C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285f4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 7l7.5 5.8c4.4-4 6.8-10 6.8-17.3z"/><path fill="#fbbc05" d="M10.6 28.6A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.6l-7.9-6.2A24 24 0 0 0 0 24c0 3.9.9 7.5 2.7 10.8l7.9-6.2z"/><path fill="#34a853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.2C6.6 42.6 14.6 48 24 48z"/></svg>Sign in with Google</a>
-			<form id="pw-form" autocomplete="on" hidden>
-				<label for="pw"><b>Password</b></label>
-				<input id="pw" type="password" autocomplete="current-password" required>
-				<button class="primary" type="submit">Unlock</button>
-			</form>
+		<form id="login" class="card" autocomplete="on">
+			<label for="pw"><b>Password</b></label>
+			<input id="pw" type="password" autocomplete="current-password" required>
+			<button class="primary" type="submit">Unlock</button>
 			<p id="login-msg">Only Akhil can use this page.</p>
-		</div>
+		</form>
 	</section>
 
 	<section id="panel" hidden>
@@ -221,8 +215,7 @@ footer { padding: 32px 0 40px; font: 12px var(--mono); color: var(--faint); }
 		<details>
 			<summary>Setup</summary>
 			<ol>
-				<li>On the VM, once: <code>sudo sh ~/portfolio/server/home-relay-install.sh</code>. It prints the bridge token.</li>
-				<li>Google sign-in: <code>sudo sh ~/portfolio/server/https-setup.sh &lt;name&gt;.duckdns.org</code>, then add the Google client ID, secret and allowed email to <code>/etc/home-relay.env</code>.</li>
+				<li>On the VM, once: <code>sudo sh ~/portfolio/server/home-relay-install.sh</code>. It prints the page password and the bridge token.</li>
 				<li>On a machine at home that stays on (laptop, Raspberry Pi, or an Android phone with Termux):
 					<pre>curl -O http://68.221.25.41/home/bridge.py
 python3 bridge.py setup
@@ -279,31 +272,22 @@ python3 bridge.py</pre></li>
 		try { data = await res.json(); } catch (e) {
 			data = { error: res.status === 502 ? 'the relay is not running on the VM' : 'HTTP ' + res.status };
 		}
-		if (res.status === 401 && path !== '/login') { lock(token ? 'Session ended, sign in again.' : '', data); throw new Error('login'); }
+		if (res.status === 401 && path !== '/login') { lock('Session ended, unlock again.'); throw new Error('login'); }
 		if (!res.ok) throw new Error(data.error || data.message || 'HTTP ' + res.status);
 		return data;
 	}
 
-	// info is the relay's 401 answer: which sign-in methods are on, and the https address for Google
-	function lock(msg, info) {
-		info = info || {};
-		if (info.google && info.url && location.protocol === 'http:') { location.replace(info.url + '/home/'); return; }
+	function lock(msg) {
 		token = '';
 		try { localStorage.removeItem('home-token'); } catch (e) {}
 		clearInterval(timer);
 		$('panel').hidden = true;
 		$('login-section').hidden = false;
-		if (info.google !== undefined) {
-			$('google').hidden = !info.google;
-			$('pw-form').hidden = !info.password;
-		} else if (!msg) {
-			$('pw-form').hidden = false;
-		}
 		if (msg) $('login-msg').textContent = msg;
-		if (!$('pw-form').hidden) $('pw').focus();
+		$('pw').focus();
 	}
 
-	$('pw-form').onsubmit = async (e) => {
+	$('login').onsubmit = async (e) => {
 		e.preventDefault();
 		const b = e.target.querySelector('button');
 		b.disabled = true;
@@ -317,7 +301,7 @@ python3 bridge.py</pre></li>
 			$('login-msg').textContent = err.message;
 		} finally { b.disabled = false; }
 	};
-	$('logout').onclick = async () => { try { await api('/logout', {}); } catch (e) {} lock('Signed out.', { google: !$('google').hidden, password: !$('pw-form').hidden }); };
+	$('logout').onclick = async () => { try { await api('/logout', {}); } catch (e) {} lock('Locked.'); };
 	$('rescan').onclick = async (e) => {
 		e.target.disabled = true;
 		toast('scanning the WiFi…');
@@ -449,11 +433,6 @@ python3 bridge.py</pre></li>
 		if (e.target.dataset.t === 'select') send(e.target, e.target.value);
 	});
 
-	const loginError = new URLSearchParams(location.search).get('login_error');
-	if (loginError) {
-		$('login-msg').textContent = loginError;
-		history.replaceState(null, '', location.pathname);
-	}
 	start();
 })();
 </script>

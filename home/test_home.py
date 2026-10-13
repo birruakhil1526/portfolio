@@ -14,7 +14,6 @@ import tempfile
 import threading
 import time
 import urllib.error
-import urllib.parse
 import urllib.request
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
@@ -76,88 +75,6 @@ def call(base, path, body=None, token=''):
 			return r.status, json.loads(r.read())
 	except urllib.error.HTTPError as e:
 		return e.code, json.loads(e.read())
-
-
-class FakeGoogle(BaseHTTPRequestHandler):
-	email = 'akhil@example.com'
-
-	def log_message(self, *a): pass
-
-	def do_POST(self):
-		form = urllib.parse.parse_qs(self.rfile.read(int(self.headers['Content-Length'])).decode())
-		nonce = form['code'][0].split(':', 1)[1]
-		claims = {'iss': 'https://accounts.google.com', 'aud': 'test-client', 'email': FakeGoogle.email,
-			'email_verified': True, 'nonce': nonce, 'exp': time.time() + 300}
-		part = lambda o: base64.urlsafe_b64encode(json.dumps(o).encode()).decode().rstrip('=')
-		body = json.dumps({'id_token': part({'alg': 'RS256'}) + '.' + part(claims) + '.sig'}).encode()
-		self.send_response(200)
-		self.send_header('Content-Length', str(len(body)))
-		self.end_headers()
-		self.wfile.write(body)
-
-
-class NoRedirect(urllib.request.HTTPRedirectHandler):
-	def redirect_request(self, *a, **k):
-		return None
-
-
-def raw(url, headers=None, method='GET', body=None):
-	"""one request without following redirects: (status, headers)"""
-	req = urllib.request.Request(url, headers=headers or {}, method=method, data=body)
-	try:
-		r = urllib.request.build_opener(NoRedirect).open(req, timeout=10)
-		return r.status, r.headers
-	except urllib.error.HTTPError as e:
-		return e.code, e.headers
-
-
-def google_flow(env, port, base):
-	gport = free_port()
-	serve(FakeGoogle, gport)
-	env = dict(env, HOME_PUBLIC_URL='https://birru.example.org', GOOGLE_CLIENT_ID='test-client', GOOGLE_CLIENT_SECRET='s',
-		HOME_ALLOWED_EMAILS='Akhil@example.com', GOOGLE_TOKEN_URL='http://127.0.0.1:%d/token' % gport)
-	env.pop('HOME_NO_PASSWORD', None)
-	env.pop('HOME_PANEL_PASSWORD', None)
-	relay = subprocess.Popen([sys.executable, os.path.join(ROOT, 'home', 'relay.py')], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-	for _ in range(50):
-		try:
-			socket.create_connection(('127.0.0.1', port), timeout=0.2).close()
-			break
-		except OSError:
-			time.sleep(0.1)
-	code, r = call(base, '/state')
-	assert code == 401 and r['google'] and not r['password'] and r['url'] == 'https://birru.example.org', r
-
-	def sign_in():
-		code, h = raw(base + '/auth/google')
-		assert code == 302 and h['Location'].startswith('https://accounts.google.com/'), (code, h)
-		q = urllib.parse.parse_qs(urllib.parse.urlsplit(h['Location']).query)
-		assert q['redirect_uri'] == ['https://birru.example.org/home/api/auth/callback'], q
-		state_cookie = h['Set-Cookie'].split(';')[0]
-		# the fake Google smuggles the nonce through the code so it can echo it back in the id_token
-		cb = base + '/auth/callback?' + urllib.parse.urlencode({'state': q['state'][0], 'code': 'c:' + q['nonce'][0]})
-		return cb, state_cookie
-
-	cb, state_cookie = sign_in()
-	assert raw(cb)[1]['Location'].startswith('/home/?login_error='), 'callback without the state cookie must fail'
-	cb, state_cookie = sign_in()
-	code, h = raw(cb, {'Cookie': state_cookie})
-	assert code == 302 and h['Location'] == '/home/', (code, dict(h))
-	session = h['Set-Cookie'].split(';')[0]
-	assert 'HttpOnly' in h['Set-Cookie'] and 'Secure' in h['Set-Cookie']
-	assert raw(cb, {'Cookie': state_cookie})[1]['Location'].startswith('/home/?login_error='), 'a callback must not be replayable'
-	assert raw(base + '/state', {'Cookie': session})[0] == 200, 'cookie session must work'
-	cmd = json.dumps({'type': 'rescan'}).encode()
-	assert raw(base + '/cmd', {'Cookie': session, 'Origin': 'https://evil.example'}, 'POST', cmd)[0] == 401, 'cross-site POST must be refused'
-	# 200 or 503 depending on whether the bridge from the first part has reconnected yet; either way it got past auth
-	assert raw(base + '/cmd', {'Cookie': session, 'Origin': 'https://birru.example.org'}, 'POST', cmd)[0] in (200, 503), 'own page POST must pass auth'
-
-	FakeGoogle.email = 'someone@example.com'
-	cb, state_cookie = sign_in()
-	code, h = raw(cb, {'Cookie': state_cookie})
-	assert 'not%20allowed' in h['Location'], h['Location']
-	assert call(base, '/login', {'password': 'anything'})[0] == 401, 'password sign-in must be off'
-	return relay
 
 
 def main():
@@ -230,9 +147,6 @@ def main():
 				time.sleep(0.1)
 		assert call(base, '/state')[0] == 200, 'test mode must not need a login'
 		assert call(base, '/bridge/poll', token='wrong')[0] == 401, 'test mode must still check the bridge token'
-		relay.terminate()
-		relay.wait()
-		relay = google_flow(env, port, base)
 		print('home control: ok')
 	finally:
 		relay.terminate()
