@@ -21,6 +21,8 @@ systemctl daemon-reload
 systemctl enable -q home-relay
 systemctl restart home-relay
 
+mkdir -p /var/www/acme
+install -D -m 644 "$REPO/server/nginx-portfolio-common.conf" /etc/nginx/snippets/portfolio-common.conf
 install -m 644 "$REPO/server/nginx-portfolio.conf" /etc/nginx/sites-available/portfolio
 nginx -t
 systemctl reload nginx

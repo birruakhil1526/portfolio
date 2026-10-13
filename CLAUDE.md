@@ -17,7 +17,7 @@ Akhil's personal portfolio. Requests usually come from the Claude mobile app, so
 - Never add code, diagrams or documents from Akhil's employer (Trustt / novopay).
 - The server's Content-Security-Policy blocks every external request: no Google Fonts, CDNs, analytics or
   remote images. Use system font stacks, inline SVG, or files committed under `site/`.
-  A self-hosted web font also needs `font-src 'self'` added to the CSP in `server/nginx-portfolio.conf`,
+  A self-hosted web font also needs `font-src 'self'` in the CSP (now in `server/nginx-portfolio-common.conf`; already there),
   which is installed on the VM by hand; say so in the reply when that's needed.
 - Keep the 3-tap name entrance to `/study/` and the light/dark toggle working.
 - Check the page at 390px width: no horizontal scroll.
