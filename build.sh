@@ -19,4 +19,6 @@ if grep -rnoE '(\+91[ -]?)?\b[6-9][0-9]{9}\b' site/ --include='*.html' | grep -v
 	echo "possible phone number in site/" >&2
 	exit 1
 fi
+# home control: relay + bridge end to end against fake TVs
+python3 home/test_home.py
 echo "site/ is up to date"

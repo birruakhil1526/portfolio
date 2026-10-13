@@ -12,10 +12,12 @@ site/            published as-is to the web root
   index.html     the portfolio (hand-written, self-contained)
   study/         hidden study page (generated, do not edit by hand)
   jobs/          daily job matches, unlisted (generated from jobs/jobs.json)
+  home/          home control page + bridge.py (downloaded and run on a machine at home)
   *.pdf          public resume (generated)
 jobs/            fetch_jobs.py (Apify -> jobs.json, run daily by .github/workflows/jobs.yml) and the page builder
 study/           sources for site/study/: markdown guides, diagrams, page template, builder
 resume/          builds the public resume PDF
+home/            relay.py (runs on the VM behind /home/api/) and its end-to-end test
 server/          VM setup: nginx config, stats script, auto-deploy script
 build.sh         builds generated pages; --check is what CI runs
 ```
@@ -69,3 +71,17 @@ This repo is public.
 `jobs/fetch_jobs.py` pulls senior Angular roles from LinkedIn through Apify, ranks them,
 rebuilds `site/jobs/` and pushes to `main`, which the VM then deploys. It needs the repo secret
 `APIFY_TOKEN` (Settings → Secrets and variables → Actions).
+
+## Home control
+
+`/home/` controls the TV, AC, washer and other devices at home from anywhere. A browser cannot reach
+devices on the home WiFi, so `site/home/bridge.py` runs on an always-on machine at home, finds devices
+(SSDP, Samsung / LG / Roku TVs, Wake-on-LAN, plus SmartThings and Home Assistant for cloud appliances)
+and long-polls the relay on the VM (`home/relay.py`, nginx `/home/api/`). Nothing is opened on the router.
+
+- VM, once and after `home/relay.py` or nginx changes: `sudo sh ~/portfolio/server/home-relay-install.sh`
+  (installs the `home-relay` systemd unit and nginx config, prints the page password and bridge token
+  kept in `/etc/home-relay.env`)
+- Home: `curl -O http://68.221.25.41/home/bridge.py && python3 bridge.py setup && python3 bridge.py`
+- `bridge.json` and `.bridge-state.json` hold tokens and TV pairing keys: never commit them.
+- The site is plain HTTP, so the password crosses the network unencrypted; add HTTPS before relying on it.

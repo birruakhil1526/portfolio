@@ -1,0 +1,20 @@
+[Unit]
+Description=Birru's Space home control relay
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /usr/local/lib/home-relay/relay.py
+EnvironmentFile=/etc/home-relay.env
+DynamicUser=yes
+Restart=always
+RestartSec=3
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+MemoryMax=100M
+
+[Install]
+WantedBy=multi-user.target
