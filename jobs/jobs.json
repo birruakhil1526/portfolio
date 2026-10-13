@@ -1,174 +1,134 @@
 {
-	"updated": "2026-10-09 19:47 IST",
-	"source": "LinkedIn, senior Angular roles posted in the last 7 days (Bengaluru, Hyderabad, remote India)",
+	"updated": "2026-10-13 07:30 IST",
+	"source": "LinkedIn, Angular / Java full stack roles posted in the last 24 hours (Bengaluru, Hyderabad, remote India)",
 	"jobs": [
 		{
-			"group": "top",
-			"title": "Senior Software Engineer – Angular, Cloud",
-			"company": "Cvali",
-			"location": "Bengaluru",
-			"applicants": "28",
-			"url": "https://in.linkedin.com/jobs/view/senior-software-engineer-angular-cloud-at-cvali-4474889552"
-		},
-		{
-			"group": "top",
-			"title": "Senior Lead Full Stack Developer (Java 8 & Angular 19)",
-			"company": "FIS (fintech)",
-			"location": "Bengaluru",
-			"applicants": "41",
-			"url": "https://in.linkedin.com/jobs/view/senior-lead-full-stack-developer-java-8-angular-19-at-fis-4475821631"
-		},
-		{
-			"group": "top",
-			"title": "Principal Software Engineer (UI/Angular) – Digital Assets",
-			"company": "Fidelity Investments",
-			"location": "Bengaluru",
-			"applicants": "162",
-			"url": "https://in.linkedin.com/jobs/view/principal-software-engineer-ui-angular-digital-assets-at-fidelity-investments-4475583261"
-		},
-		{
-			"group": "top",
-			"title": "Sr. Java Full Stack Developer (Angular), Remote",
-			"company": "RELQ Technologies",
-			"location": "Remote, India",
-			"applicants": "<25",
-			"url": "https://in.linkedin.com/jobs/view/sr-java-full-stack-developer-angular-%E2%80%93-india-remote-at-relq-technologies-4477402337"
-		},
-		{
-			"group": "top",
-			"title": "Senior Software Engineer (Angular, Java, Spring Boot)",
-			"company": "Motorola Solutions",
-			"location": "Bengaluru",
-			"applicants": "200+",
-			"url": "https://in.linkedin.com/jobs/view/senior-software-engineer-angular-java-spring-boot-at-motorola-solutions-4450243928"
-		},
-		{
-			"group": "top",
-			"title": "Frontend Lead – Angular",
-			"company": "Future Forge Talent",
-			"location": "Bengaluru",
-			"applicants": "200+",
-			"url": "https://in.linkedin.com/jobs/view/frontend-lead-angular-at-future-forge-talent-4474242488"
-		},
-		{
-			"group": "top",
-			"title": "Senior Software Engineer (Java + Angular)",
-			"company": "IntraEdge",
-			"location": "Hyderabad",
-			"applicants": "70",
-			"url": "https://in.linkedin.com/jobs/view/senior-software-engineer-java%2Bangular-at-intraedge-4475405098"
-		},
-		{
-			"group": "top",
-			"title": "Senior Java Full Stack Developer (Spring Boot & Angular)",
-			"company": "Netcomm IT Solutions",
-			"location": "Hyderabad",
-			"applicants": "200+",
-			"url": "https://in.linkedin.com/jobs/view/senior-java-full-stack-developer-spring-boot-angular-at-netcomm-it-solutions-pvt-ltd-4474496130"
-		},
-		{
-			"group": "top",
-			"title": "Specialist Software Engineer – Java Full Stack Angular",
-			"company": "Societe Generale (bank)",
-			"location": "Bengaluru",
-			"applicants": "102",
-			"url": "https://in.linkedin.com/jobs/view/specialist-software-engineer-java-full-stack-angular-at-societe-generale-global-solution-centre-4465636672"
-		},
-		{
-			"group": "top",
-			"title": "Lead Associate, Software Engg (Angular, Node.js, AWS)",
-			"company": "BetaNXT (fintech)",
-			"location": "Bengaluru",
-			"applicants": "134",
-			"url": "https://in.linkedin.com/jobs/view/lead-associate-software-engg-angular-nodejs-aws-mean-stack-at-betanxt-4459316706"
-		},
-		{
-			"group": "top",
-			"title": "Java Full Stack Developer (Angular)",
-			"company": "ThinkWise Consulting",
-			"location": "Hyderabad",
-			"applicants": "125",
-			"url": "https://in.linkedin.com/jobs/view/java-full-stack-developer-angular-at-thinkwise-consulting-llp-4477103800"
-		},
-		{
-			"group": "top",
-			"title": "Angular Developer (Mid-Senior)",
-			"company": "Technogen India",
-			"location": "Hyderabad",
-			"applicants": "80",
-			"url": "https://in.linkedin.com/jobs/view/angular-developer-at-technogen-india-pvt-ltd-4475943799"
-		},
-		{
-			"group": "top",
-			"title": "Angular + Java Developer",
-			"company": "Synechron",
-			"location": "Bengaluru",
-			"applicants": "92",
-			"url": "https://in.linkedin.com/jobs/view/angular-%2B-java-developer-at-synechron-4475473582"
-		},
-		{
-			"group": "top",
-			"title": "Full Stack Developer (Angular, Java, AWS)",
-			"company": "Baker Hughes",
-			"location": "Bengaluru",
-			"applicants": "195",
-			"url": "https://in.linkedin.com/jobs/view/full-stack-developer-angular-java-aws-at-baker-hughes-4475597569"
-		},
-		{
-			"group": "top",
-			"title": "Java Full Stack with Angular",
+			"title": "Java Full Stack Developer (Java + Spring Boot + Angular)",
 			"company": "Tata Consultancy Services",
 			"location": "Bengaluru",
+			"applicants": "29",
+			"url": "https://in.linkedin.com/jobs/view/java-full-stack-developer-java-%2B-spring-boot-%2B-angular-at-tata-consultancy-services-4477566798",
+			"group": "top"
+		},
+		{
+			"title": "Senior Software Engineer – Java FS (React / Angular)",
+			"company": "CGI",
+			"location": "Bengaluru",
 			"applicants": "<25",
-			"url": "https://in.linkedin.com/jobs/view/java-full-stack-with-angular-at-tata-consultancy-services-4475952929"
+			"url": "https://in.linkedin.com/jobs/view/senior-software-engineer-java-fs-react-angular-at-cgi-4478701126",
+			"group": "top"
 		},
 		{
-			"group": "ai",
-			"title": "Sr Engineer, Software Engineer Lead (Angular, AWS, AI/LLM)",
-			"company": "Nationwide",
+			"title": "Sr. Java Full Stack Developer (Angular)",
+			"company": "RELQ Technologies",
+			"location": "India",
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/sr-java-full-stack-developer-angular-%E2%80%93-india-at-relq-technologies-4478552053",
+			"group": "top"
+		},
+		{
+			"title": "Software Craftsperson – Java/Angular II",
+			"company": "Incubyte",
+			"location": "India",
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/software-craftsperson-java-angular-ii-at-incubyte-4477503653",
+			"group": "top"
+		},
+		{
+			"title": "Lead Java Fullstack Developer",
+			"company": "Fidelity Investments",
+			"location": "Bengaluru",
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/lead-java-fullstack-developer-at-fidelity-investments-4478386478",
+			"group": "top"
+		},
+		{
+			"title": "Senior Specialty Software Engineer – Full Stack Developer",
+			"company": "Wells Fargo",
+			"location": "Bengaluru",
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/senior-specialty-software-engineer-full-stack-developer-at-wells-fargo-4478541791",
+			"group": "top"
+		},
+		{
+			"title": "Senior Full Stack Engineer",
+			"company": "Align Technology",
 			"location": "Hyderabad",
-			"applicants": "63",
-			"url": "https://in.linkedin.com/jobs/view/sr-engineer-software-engineer-lead-india-angular-aws-ci-cd-kubernetes-and-ai-llm-technologies-at-nationwide-4475424632"
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/senior-full-stack-engineer-at-align-technology-4478519567",
+			"group": "top"
 		},
 		{
-			"group": "ai",
-			"title": "Staff SW Engineer (React/Angular, GenAI, Claude, LLM)",
-			"company": "Visa",
+			"title": "Software Engineer III – Java, AWS",
+			"company": "JPMorganChase",
+			"location": "Hyderabad",
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/software-engineer-iii-java-aws-at-jpmorganchase-4478702214",
+			"group": "top"
+		},
+		{
+			"title": "Java Developer",
+			"company": "SS&C Technologies",
+			"location": "Hyderabad",
+			"applicants": "26",
+			"url": "https://in.linkedin.com/jobs/view/java-developer-at-ss-c-technologies-4478555033",
+			"group": "top"
+		},
+		{
+			"title": "Senior Full Stack Engineer",
+			"company": "Multiplier",
 			"location": "Bengaluru",
-			"applicants": "56",
-			"url": "https://in.linkedin.com/jobs/view/staff-sw-engineer-7-9-years-of-exp-in-python-react-angular-strong-genai-solution-development-claude-llm-at-visa-4474784891"
+			"applicants": "80",
+			"url": "https://in.linkedin.com/jobs/view/senior-full-stack-engineer-at-multiplier-4478523448",
+			"group": "top"
 		},
 		{
-			"group": "ai",
-			"title": "Full Stack / AI Developer (Java, Angular, Spring Boot)",
-			"company": "NetApp",
+			"title": "Senior, Software Engineer",
+			"company": "Walmart Global Tech India",
 			"location": "Bengaluru",
-			"applicants": "200+",
-			"url": "https://in.linkedin.com/jobs/view/full-stack-developer-ai-developer-java-angular-spring-boot-at-netapp-4476705044"
+			"applicants": "30",
+			"url": "https://in.linkedin.com/jobs/view/senior-software-engineer-at-walmart-global-tech-india-4476007759",
+			"group": "top"
 		},
 		{
-			"group": "other",
-			"title": "Senior FullStack Developer – Java Angular",
-			"company": "Citi",
+			"title": "Product Developer III (Full stack)",
+			"company": "BMC Software",
+			"location": "Bengaluru",
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/product-developer-iii-full-stack-at-bmc-software-4478531710",
+			"group": "top"
+		},
+		{
+			"title": "Sr. Technical Lead (Java, React, Oracle, AI skills)",
+			"company": "Vertafore",
+			"location": "Hyderabad",
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/sr-technical-lead-software-engineer-java-react-oracle-ai-skills-at-vertafore-4477591116",
+			"group": "ai"
+		},
+		{
+			"title": "Senior AI Engineer",
+			"company": "Cornerstone OnDemand",
+			"location": "Hyderabad",
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/senior-al-engineer-at-cornerstone-ondemand-4478505940",
+			"group": "ai"
+		},
+		{
+			"title": "Senior Full Stack Engineer (Java, Angular & Cloud)",
+			"company": "360tf",
+			"location": "Gandhinagar",
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/senior-full-stack-engineer-java-angular-cloud-infrastructure-at-360tf-4477520616",
+			"group": "other"
+		},
+		{
+			"title": "Java FullStack Developer – Tech Lead",
+			"company": "State Street",
 			"location": "Pune",
-			"applicants": "100",
-			"url": "https://in.linkedin.com/jobs/view/senior-fullstack-developer-java-angular-at-citi-4466588093"
-		},
-		{
-			"group": "other",
-			"title": "Senior Angular Engineer",
-			"company": "Mizuho",
-			"location": "Pune",
-			"applicants": "200+",
-			"url": "https://in.linkedin.com/jobs/view/senior-angular-engineer-at-mizuho-4474230947"
-		},
-		{
-			"group": "other",
-			"title": "Lead I – Software Engineering – Angular",
-			"company": "UST",
-			"location": "Chennai",
-			"applicants": "200+",
-			"url": "https://in.linkedin.com/jobs/view/lead-i-software-engineering-angular-at-ust-4463475762"
+			"applicants": "<25",
+			"url": "https://in.linkedin.com/jobs/view/java-fullstack-developer-tech-lead-at-state-street-4478517141",
+			"group": "other"
 		}
 	]
 }
