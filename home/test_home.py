@@ -134,6 +134,19 @@ def main():
 		code, r = call(base, '/cmd', {'device': 'roku:10.0.0.9', 'control': 'power'}, tok)
 		assert code == 502 and 'unknown device' in r['message'], r
 		assert call(base, '/bridge/poll', token='wrong')[0] == 401
+		relay.terminate()
+		relay.wait()
+		env['HOME_NO_PASSWORD'] = '1'
+		env.pop('HOME_PANEL_PASSWORD')
+		relay = subprocess.Popen([sys.executable, os.path.join(ROOT, 'home', 'relay.py')], env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+		for _ in range(50):
+			try:
+				socket.create_connection(('127.0.0.1', port), timeout=0.2).close()
+				break
+			except OSError:
+				time.sleep(0.1)
+		assert call(base, '/state')[0] == 200, 'test mode must not need a login'
+		assert call(base, '/bridge/poll', token='wrong')[0] == 401, 'test mode must still check the bridge token'
 		print('home control: ok')
 	finally:
 		relay.terminate()

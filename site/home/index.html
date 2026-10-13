@@ -333,6 +333,7 @@ python3 bridge.py</pre></li>
 		}
 	}
 
+	// in test mode (HOME_NO_PASSWORD=1 on the VM) /state answers without a token; otherwise its 401 shows the login form
 	function start() {
 		$('login-section').hidden = true;
 		$('panel').hidden = false;
@@ -432,7 +433,7 @@ python3 bridge.py</pre></li>
 		if (e.target.dataset.t === 'select') send(e.target, e.target.value);
 	});
 
-	if (token) start(); else lock();
+	start();
 })();
 </script>
 </body>

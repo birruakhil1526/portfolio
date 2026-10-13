@@ -8,6 +8,7 @@ bridge on its next long poll. Nothing is stored on disk; a restart only means lo
 
 Environment (from /etc/home-relay.env, never committed):
   HOME_PANEL_PASSWORD  what the /home/ page asks for
+  HOME_NO_PASSWORD=1   test mode: anyone who opens /home/ can control the devices
   HOME_BRIDGE_TOKEN    what bridge.py sends
   HOME_RELAY_PORT      default 8787, bound to 127.0.0.1 only
 """
@@ -21,6 +22,7 @@ import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 PASSWORD = os.environ.get('HOME_PANEL_PASSWORD', '')
+OPEN = os.environ.get('HOME_NO_PASSWORD') == '1'
 BRIDGE_TOKEN = os.environ.get('HOME_BRIDGE_TOKEN', '')
 PORT = int(os.environ.get('HOME_RELAY_PORT', '8787'))
 
@@ -78,6 +80,8 @@ class Handler(BaseHTTPRequestHandler):
 		return h[7:] if h.startswith('Bearer ') else ''
 
 	def user_ok(self):
+		if OPEN:
+			return True
 		t = self.bearer()
 		with lock:
 			exp = sessions.get(t)
@@ -149,7 +153,7 @@ class Handler(BaseHTTPRequestHandler):
 			fails[ip] = recent
 			if len(recent) >= LOGIN_FAILS:
 				return self.send(429, {'error': 'too many tries, wait 15 minutes'})
-		if not same(str(data.get('password', '')), PASSWORD):
+		if not OPEN and not same(str(data.get('password', '')), PASSWORD):
 			with lock:
 				fails[ip].append(now)
 			time.sleep(1)
@@ -209,8 +213,12 @@ def public_state():
 
 
 def main():
-	if len(PASSWORD) < 8 or len(BRIDGE_TOKEN) < 16:
-		sys.exit('set HOME_PANEL_PASSWORD (8+ chars) and HOME_BRIDGE_TOKEN (16+ chars)')
+	if len(BRIDGE_TOKEN) < 16:
+		sys.exit('set HOME_BRIDGE_TOKEN (16+ chars)')
+	if OPEN:
+		print('HOME_NO_PASSWORD=1: /home/ is open to anyone', flush=True)
+	elif len(PASSWORD) < 8:
+		sys.exit('set HOME_PANEL_PASSWORD (8+ chars), or HOME_NO_PASSWORD=1 for test mode')
 	srv = ThreadingHTTPServer(('127.0.0.1', PORT), Handler)
 	srv.daemon_threads = True
 	print('home relay on 127.0.0.1:%d' % PORT, flush=True)
