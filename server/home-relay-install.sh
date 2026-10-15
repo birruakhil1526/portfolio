@@ -6,6 +6,8 @@ REPO=$(cd "$(dirname "$0")/.." && pwd)
 [ "$(id -u)" = 0 ] || { echo "run with sudo" >&2; exit 1; }
 
 install -D -m 644 "$REPO/home/relay.py" /usr/local/lib/home-relay/relay.py
+# the relay runs the SmartThings and LG ThinQ drivers from bridge.py itself
+install -m 644 "$REPO/site/home/bridge.py" /usr/local/lib/home-relay/bridge.py
 install -m 644 "$REPO/server/home-relay.service" /etc/systemd/system/home-relay.service
 
 if [ ! -f /etc/home-relay.env ]; then

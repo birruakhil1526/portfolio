@@ -111,6 +111,20 @@ button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px s
 .readout { font: 12.5px var(--mono); color: var(--muted); display: flex; justify-content: space-between; gap: 8px; width: 100%; }
 .readout span:last-child { color: var(--text); text-align: right; overflow-wrap: anywhere; }
 .empty { color: var(--muted); }
+#connect { margin-top: 12px; }
+#connect > p { color: var(--muted); font-size: 13.5px; }
+.svcs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 10px; }
+.svc { display: grid; gap: 8px; align-content: start; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+.svc-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.svc-head span { font: 12px var(--mono); color: var(--faint); text-align: right; }
+.svc-head span.ok { color: var(--green); }
+.svc-head span.bad { color: var(--red); }
+.svc p, .svc small { color: var(--muted); font-size: 13px; }
+.svc small { font: 12px var(--mono); }
+.svc form { display: grid; grid-template-columns: 1fr auto; gap: 6px; }
+.svc form input { min-width: 0; font-size: 16px; }
+.svc form .wide { grid-column: 1 / -1; }
+.svc .err { color: var(--red); font: 12px var(--mono); overflow-wrap: anywhere; }
 .demo { margin-top: 12px; padding: 9px 12px; border: 1px dashed var(--orange); border-radius: 10px; font: 12.5px var(--mono); color: var(--muted); }
 .demo b { color: var(--orange); }
 details { border: 1px solid var(--line); border-radius: 12px; background: var(--surface); padding: 10px 14px; }
@@ -168,17 +182,15 @@ footer { padding: 32px 0 40px; font: 12px var(--mono); color: var(--faint); }
 				<label for="home-name"><b>New here? Create your home</b></label>
 				<input id="home-name" maxlength="40" placeholder="a name, e.g. Akhil's flat" required>
 				<button type="submit">Create my home</button>
-				<p id="signup-msg">You get an access key to log in and a token for the bridge at your home. Your devices are only visible to you.</p>
+				<p id="signup-msg">You get an access key to log in, then connect your SmartThings or LG ThinQ account. Your devices are only visible to you.</p>
 			</form>
 		</div>
 		<div id="keys" class="card" hidden>
 			<b>Your home "<span id="k-name"></span>" is ready</b>
-			<p>Save both now: they are shown only once. This browser is already logged in.</p>
+			<p>Save the access key now: it is shown only once. This browser is already logged in.</p>
 			<div class="secret"><span>Access key · log in on any phone</span><code id="k-key"></code><button type="button" data-copy="k-key">Copy</button></div>
-			<div class="secret"><span>Bridge token · for bridge.py at home</span><code id="k-bridge"></code><button type="button" data-copy="k-bridge">Copy</button></div>
-			<pre>curl -O http://68.221.25.41/home/bridge.py
-python3 bridge.py setup   # paste token
-python3 bridge.py</pre>
+			<div class="secret"><span>Bridge token · optional, only for the bridge.py program (TVs on your WiFi)</span><code id="k-bridge"></code><button type="button" data-copy="k-bridge">Copy</button></div>
+			<p>Next: connect Samsung SmartThings or LG ThinQ and your appliances show up. Nothing to install.</p>
 			<button id="k-done" class="primary" type="button">Open my home</button>
 		</div>
 		<p style="margin-top:12px"><a href="/home/?demo">See a demo with sample devices first</a></p>
@@ -192,7 +204,39 @@ python3 bridge.py</pre>
 		</div>
 		<p id="demo-note" class="demo" hidden><b>Demo</b> · <span id="demo-why">sample devices</span>, nothing is sent. <a href="/home/">Try live</a></p>
 		<div id="devices" style="margin-top:12px"></div>
-		<p id="none" class="empty" hidden style="margin-top:12px">No controllable devices yet. Start the bridge at home (see setup below), then tap Rescan.</p>
+		<p id="none" class="empty" hidden style="margin-top:12px">No devices yet. Connect the app your appliances use below.</p>
+		<p id="loading" class="empty" hidden style="margin-top:12px">Loading your appliances from the cloud…</p>
+		<details id="connect" hidden>
+			<summary>Connect your appliances</summary>
+			<p>Nothing to install at home: this server talks to the maker's cloud, the same way their phone app does.</p>
+			<div class="svcs">
+				<div class="svc" id="svc-smartthings">
+					<div class="svc-head"><b>Samsung SmartThings</b><span data-state>not connected</span></div>
+					<p>AC, washer, fridge, TV, and anything else you added to the SmartThings app.</p>
+					<button id="st-signin" class="primary" type="button" hidden>Connect SmartThings</button>
+					<form id="st-form" data-svc="smartthings">
+						<input name="token" type="password" autocomplete="off" placeholder="SmartThings token" required>
+						<button type="submit">Connect</button>
+						<small class="wide">Create one at <a href="https://account.smartthings.com/tokens" target="_blank" rel="noopener">account.smartthings.com/tokens</a> with Devices access. SmartThings makes these expire after 24 hours.</small>
+					</form>
+					<p class="err" data-err hidden></p>
+					<button type="button" data-unlink="smartthings" hidden>Disconnect</button>
+				</div>
+				<div class="svc" id="svc-thinq">
+					<div class="svc-head"><b>LG ThinQ</b><span data-state>not connected</span></div>
+					<p>LG AC, washer, dryer, fridge, purifier, and other ThinQ appliances.</p>
+					<form id="lg-form" data-svc="thinq">
+						<input name="token" type="password" autocomplete="off" placeholder="LG personal access token" required>
+						<input name="country" value="IN" maxlength="2" size="3" aria-label="Country code" title="Country of your LG account" required style="width:64px">
+						<button type="submit" class="wide">Connect LG ThinQ</button>
+						<small class="wide">Sign in at <a href="https://connect-pat.lgthinq.com" target="_blank" rel="noopener">connect-pat.lgthinq.com</a> with your LG account, tap Add new token, tick all permissions, and paste it here. It does not expire.</small>
+					</form>
+					<p class="err" data-err hidden></p>
+					<button type="button" data-unlink="thinq" hidden>Disconnect</button>
+				</div>
+			</div>
+			<p style="margin-top:10px">TV remote over WiFi, Wake-on-LAN, or a brand without a cloud: those need the optional bridge program at home (see Setup below).</p>
+		</details>
 		<details id="seen-box" hidden style="margin-top:12px">
 			<summary>Also on the WiFi (<span id="seen-n">0</span>)</summary>
 			<p>Found by the scan but they have no local remote API. A cloud driver (SmartThings, Home Assistant) can usually reach them.</p>
@@ -203,11 +247,18 @@ python3 bridge.py</pre>
 	<section>
 		<h2>How it works</h2>
 		<details>
-			<summary>Why the browser needs a bridge at home</summary>
-			<p>A web page cannot discover or talk to devices on your WiFi: browsers have no raw network sockets,
-			block public sites from calling 192.168.x.x addresses, and this site allows no outside requests at all.
-			The VM is in Azure, not in your house. So a small bridge runs at home and connects <i>out</i> to the VM;
-			nothing on the router is opened.</p>
+			<summary>How the page reaches your home</summary>
+			<p>Your router blocks every connection coming in from the internet, and browsers block websites from
+			calling 192.168.x.x addresses, so neither this page nor this server can reach a device on your WiFi directly.
+			Smart appliances already keep a connection open to their maker's cloud (that is how their app works away
+			from home), so there are two ways in:</p>
+			<ul>
+				<li><b>Cloud, nothing to install:</b> connect SmartThings or LG ThinQ on this page, and this server sends
+				commands to that cloud, which passes them down the appliance's own connection.</li>
+				<li><b>Bridge, optional:</b> for things that only listen on the WiFi (TV remote keys, Wake-on-LAN),
+				a small program on an always-on machine at home connects <i>out</i> to this server and carries commands
+				the last step. Nothing on the router is opened.</li>
+			</ul>
 			<svg class="diagram" viewBox="0 0 640 150" role="img" aria-label="phone to VM relay, bridge at home polls the relay and controls devices">
 				<g font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="currentColor">
 					<rect x="4" y="50" width="120" height="50" rx="10" fill="none" stroke="var(--blue)"/>
@@ -236,7 +287,7 @@ python3 bridge.py</pre>
 				<tr><td>LG TV</td><td>Local, webOS. Accept the pairing prompt on the TV the first time.</td></tr>
 				<tr><td>Roku / TCL Roku TV</td><td>Local, no pairing.</td></tr>
 				<tr><td>Wake</td><td>Wake-on-LAN turns on TVs and PCs that support it.</td></tr>
-				<tr><td>AC</td><td>Wi-Fi ACs go through their cloud: SmartThings (Samsung) or Home Assistant (LG ThinQ, Daikin, Midea, Voltas/Tuya...). An IR-only AC needs an IR blaster (e.g. Broadlink) added to Home Assistant.</td></tr>
+				<tr><td>AC, washer, fridge</td><td>Cloud, no bridge: connect SmartThings (Samsung) or LG ThinQ above. Other brands (Daikin, Midea, Voltas/Tuya...) through Home Assistant on the bridge. An IR-only AC needs an IR blaster (e.g. Broadlink) in Home Assistant.</td></tr>
 				<tr><td>Washer</td><td>Status always; remote start only after pressing Remote Control on the machine (a safety rule from the makers).</td></tr>
 				<tr><td>Android / Google TV, Chromecast</td><td>Via Home Assistant.</td></tr>
 			</table></div>
@@ -245,12 +296,13 @@ python3 bridge.py</pre>
 			<summary>Setup</summary>
 			<ol>
 				<li>Create your home above. You get an access key (to log in) and a bridge token.</li>
-				<li>On a machine at home that stays on (laptop, Raspberry Pi, or an Android phone with Termux):
+				<li>Connect SmartThings or LG ThinQ. For appliances in those apps, that is all.</li>
+				<li>Optional, for TVs over WiFi and Wake-on-LAN: on a machine at home that stays on (laptop, Raspberry Pi, or an Android phone with Termux):
 					<pre>curl -O http://68.221.25.41/home/bridge.py
 python3 bridge.py setup
 python3 bridge.py scan
 python3 bridge.py</pre></li>
-				<li>Optional cloud appliances: a SmartThings token from <code>account.smartthings.com/tokens</code>, or a Home Assistant long-lived token. <code>setup</code> asks for both.</li>
+				<li>The bridge can also use a Home Assistant long-lived token; <code>setup</code> asks for it.</li>
 				<li>Devices the scan misses go in <code>bridge.json</code>:
 					<pre>"devices": [
   {"driver": "samsung", "host": "192.168.1.40", "name": "Hall TV"},
@@ -261,7 +313,7 @@ python3 bridge.py</pre></li>
 		</details>
 	</section>
 </main>
-<footer class="wrap">commands expire after 15 s, so nothing turns on late · the bridge only talks to devices it found or you listed</footer>
+<footer class="wrap">cloud tokens stay on this server and are never shown again · bridge commands expire after 15 s, so nothing turns on late</footer>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
 (() => {
@@ -413,7 +465,7 @@ python3 bridge.py</pre></li>
 	};
 	$('rescan').onclick = async (e) => {
 		e.target.disabled = true;
-		toast('scanning the WiFi…');
+		toast('looking for devices…');
 		try { toast((await api('/cmd', { type: 'rescan' })).message); await refresh(); }
 		catch (err) { if (err.message !== 'login') toast(err.message, true); }
 		finally { e.target.disabled = false; }
@@ -428,19 +480,78 @@ python3 bridge.py</pre></li>
 		if (busy || document.hidden) return;
 		try {
 			const s = await api('/state');
-			const b = s.bridge;
-			$('dot').className = 'dot' + (b.online ? ' on' : '');
-			$('status').textContent = (s.home && s.home !== 'owner' ? s.home + ' · ' : '') + (b.online
-				? 'bridge online' + (b.host ? ' · ' + b.host : '')
-				: b.seen ? 'bridge offline · last seen ' + ago(b.seen, s.now) : 'bridge not started yet');
+			const b = s.bridge, links = s.links || {};
+			const linked = Object.keys(links).map((k) => SERVICES[k] + (links[k].error ? ' (error)' : ''));
+			const parts = linked.slice();
+			if (b.online) parts.push('bridge online' + (b.host ? ' · ' + b.host : ''));
+			else if (b.seen) parts.push('bridge offline · last seen ' + ago(b.seen, s.now));
+			$('dot').className = 'dot' + (linked.length || b.online ? ' on' : '');
+			$('status').textContent = (s.home && s.home !== 'owner' ? s.home + ' · ' : '') + (parts.join(' · ') || 'nothing connected yet');
+			showLinks(s);
 			const next = JSON.stringify(s.devices);
 			if (next !== JSON.stringify(devices)) { devices = s.devices; render(); }
+			$('none').hidden = devices.some((d) => d.controls && d.controls.length) || s.loading;
+			$('loading').hidden = !s.loading;
 		} catch (err) {
 			if (err.message === 'login') return;
 			if (!devices.length && (err.offline || /relay is not running|HTTP 404/.test(err.message))) return startDemo(err.message);
 			$('dot').className = 'dot';
 			$('status').textContent = err.message;
 		}
+	}
+
+	const SERVICES = { smartthings: 'SmartThings', thinq: 'LG ThinQ' };
+	let connectShown = false;
+	function showLinks(s) {
+		const links = s.links || {};
+		$('connect').hidden = demo;
+		// open while nothing is connected, then out of the way unless the user opens it
+		if (!connectShown) { $('connect').open = !Object.keys(links).length; connectShown = true; }
+		for (const svc of Object.keys(SERVICES)) {
+			const box = $('svc-' + svc), l = links[svc];
+			const state = box.querySelector('[data-state]');
+			state.textContent = !l ? 'not connected' : l.error ? 'needs attention' : l.kind === 'token' ? 'connected · token' : 'connected';
+			state.className = !l ? '' : l.error ? 'bad' : 'ok';
+			box.querySelector('form').hidden = !!l && !l.error;
+			box.querySelector('[data-unlink]').hidden = !l;
+			const err = box.querySelector('[data-err]');
+			err.hidden = !(l && l.error);
+			err.textContent = l && l.error ? l.error : '';
+		}
+		$('st-signin').hidden = !s.st_signin || (links.smartthings && !links.smartthings.error);
+	}
+	$('st-signin').onclick = async (e) => {
+		e.target.disabled = true;
+		try { location.href = (await api('/links/smartthings/start', {})).url; }
+		catch (err) { if (err.message !== 'login') toast(err.message, true); e.target.disabled = false; }
+	};
+	for (const form of [$('st-form'), $('lg-form')]) {
+		form.onsubmit = async (e) => {
+			e.preventDefault();
+			const btn = form.querySelector('button');
+			const body = { token: form.token.value };
+			if (form.country) body.country = form.country.value;
+			btn.disabled = true;
+			try {
+				toast((await api('/links/' + form.dataset.svc, body)).message);
+				form.token.value = '';
+				$('loading').hidden = false;
+				await refresh();
+			} catch (err) { if (err.message !== 'login') toast(err.message, true); }
+			finally { btn.disabled = false; }
+		};
+	}
+	$('connect').addEventListener('click', async (e) => {
+		const svc = e.target.dataset.unlink;
+		if (!svc || !confirm('Disconnect ' + SERVICES[svc] + '? Its appliances disappear from this page.')) return;
+		try { toast((await api('/links/remove', { service: svc })).message); await refresh(); }
+		catch (err) { if (err.message !== 'login') toast(err.message, true); }
+	});
+	// back from the SmartThings sign-in page
+	const back = new URLSearchParams(location.search);
+	if (back.has('linked') || back.has('link_error')) {
+		setTimeout(() => back.has('linked') ? toast(SERVICES[back.get('linked')] + ' connected') : toast(back.get('link_error'), true), 300);
+		history.replaceState(null, '', location.pathname);
 	}
 
 	// in test mode (HOME_NO_PASSWORD=1 on the VM) /state answers without a token; otherwise its 401 shows the login form
@@ -493,7 +604,6 @@ python3 bridge.py</pre></li>
 				`<div class="${g === 'nav' ? 'pad' : 'row'}">${cs.map((c) => control(d, c)).join('')}</div>`).join('');
 			return `<article class="card dev"><div class="dev-head">${icon(d.kind)}<div><b>${esc(d.name)}</b><small>${esc(d.info || d.driver)} · ${esc(d.host)}</small></div></div>${body}</article>`;
 		}).join('');
-		$('none').hidden = live.length > 0;
 		$('seen-box').hidden = !seen.length;
 		$('seen-n').textContent = seen.length;
 		$('seen').innerHTML = seen.map((d) => `<li><span>${esc(d.name)}</span><span>${esc(d.host)}</span></li>`).join('');

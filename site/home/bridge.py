@@ -11,8 +11,10 @@ so the /home/ page can control everything from anywhere. Nothing on the router h
   python3 bridge.py           run (keep it running; see the /home/ page for autostart tips)
 
 Local drivers: Roku / Roku TV, Samsung Tizen TV (2016+), LG webOS TV, Wake-on-LAN.
-Cloud drivers: SmartThings (Samsung AC, washer, TV...), Home Assistant (anything HA supports,
-including LG ThinQ, Daikin, Midea, Tuya, and IR blasters for ACs with only an IR remote).
+Cloud drivers: SmartThings (Samsung AC, washer, TV...), LG ThinQ (LG AC, washer, fridge...), Home
+Assistant (anything HA supports, including Daikin, Midea, Tuya, and IR blasters for IR-only ACs).
+The relay on the VM imports this file and runs the SmartThings and LG ThinQ drivers itself, so
+cloud appliances work from the /home/ page without this bridge running at all.
 """
 import base64
 import hashlib
@@ -29,6 +31,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import uuid
 import xml.etree.ElementTree as ET
 
 VERSION = '1.0'
@@ -512,7 +515,7 @@ def manual_devices(cfg):
 
 # ---------------------------------------------------------------- SmartThings (cloud)
 
-ST_API = 'https://api.smartthings.com/v1'
+ST_API = os.environ.get('HOME_ST_API', 'https://api.smartthings.com/v1')
 ST_KINDS = {'television': 'tv', 'airconditioner': 'ac', 'washer': 'washer', 'dryer': 'dryer', 'light': 'light',
 	'switch': 'switch', 'refrigerator': 'fridge', 'dishwasher': 'dishwasher', 'robotcleaner': 'vacuum',
 	'airpurifier': 'purifier', 'fan': 'fan'}
@@ -523,7 +526,13 @@ class SmartThings:
 		self.h = {'Authorization': 'Bearer ' + token}
 
 	def get(self, path):
-		return http('GET', ST_API + path, headers=self.h, timeout=10)
+		return self.call('GET', path)
+
+	def call(self, method, path, body=None):
+		try:
+			return http(method, ST_API + path, body=body, headers=self.h, timeout=10)
+		except urllib.error.HTTPError as e:
+			raise ValueError('SmartThings: ' + cloud_error(e)) from None
 
 	def devices(self):
 		out = []
@@ -609,12 +618,178 @@ class SmartThings:
 			cmd, args = 'setMachineState', [control[6:]]
 		else:
 			raise ValueError('unsupported control')
-		http('POST', ST_API + '/devices/%s/commands' % did, headers=self.h, timeout=10,
-			body={'commands': [{'component': 'main', 'capability': cap, 'command': cmd, 'arguments': args}]})
+		self.call('POST', '/devices/%s/commands' % did,
+			{'commands': [{'component': 'main', 'capability': cap, 'command': cmd, 'arguments': args}]})
 		return 'done'
 
 	def refresh(self, dev):
 		return self.build(self.get('/devices/' + dev['id'][3:]))
+
+
+# ---------------------------------------------------------------- LG ThinQ Connect (cloud)
+
+# public key from LG's official SDK (github.com/thinq-connect/pythinqconnect), not a secret
+THINQ_API_KEY = 'v6GFvkweNo7DK7yD3ylIZ9w52aKBU0eJ7wLXkSR3'
+THINQ_REGIONS = {
+	'kic': 'AU BD CN HK ID IN JP KH KR LA LK MM MY NP NZ PH SG TH TW VN',
+	'aic': 'AG AR AW BB BO BR BS BZ CA CL CO CR CU DM DO EC GD GT GY HN HT JM KN LC MX NI PA PE PR PY SR SV TT US UY VC VE',
+}
+THINQ_KINDS = (('AIR_CONDITIONER', 'ac'), ('WASH', 'washer'), ('DRYER', 'dryer'), ('REFRIGERATOR', 'fridge'),
+	('DISH_WASHER', 'dishwasher'), ('ROBOT_CLEANER', 'vacuum'), ('AIR_PURIFIER', 'purifier'), ('FAN', 'fan'))
+# schedules and per-unit duplicates would only clutter the card
+THINQ_SKIP = {'timer', 'sleepTimer', 'location', 'twoSetTemperature', 'twoSetTemperatureInUnits', 'filterInfo', 'display'}
+THINQ_TEMP = ('temperatureInUnits', 'temperature')
+THINQ_LABELS = {'currentJobMode': 'Mode', 'windStrength': 'Fan', 'windStrengthDetail': 'Fan', 'currentState': 'Status',
+	'remainHour': 'Hours left', 'remainMinute': 'Minutes left', 'remoteControlEnabled': 'Remote start'}
+
+
+def thinq_base(country):
+	region = next((r for r, cs in THINQ_REGIONS.items() if country in cs.split()), 'eic')
+	return os.environ.get('HOME_THINQ_API') or 'https://api-%s.lgthinq.com' % region
+
+
+def words(key):
+	if key in THINQ_LABELS:
+		return THINQ_LABELS[key]
+	return re.sub(r'(?<=[a-z0-9])(?=[A-Z])', ' ', key).capitalize()
+
+
+def pick_unit(v, unit='C'):
+	"""temperature resources come as one dict, or a list with one dict per unit"""
+	if isinstance(v, list):
+		return next((x for x in v if isinstance(x, dict) and x.get('unit') == unit), v[0] if v and isinstance(v[0], dict) else {})
+	return v if isinstance(v, dict) else {}
+
+
+def thinq_controls(prof, state):
+	"""builds controls straight from the device profile, so every LG appliance type works without its own code"""
+	if not isinstance(prof, dict):
+		return [{'id': 'note', 'label': 'Controls', 'type': 'readout', 'group': 'info', 'value': 'use the LG ThinQ app for this one'}]
+	power, out, readouts = [], [], 0
+	for res in THINQ_TEMP:
+		if res not in prof:
+			continue
+		spec, st = pick_unit(prof[res]), pick_unit(state.get(res))
+		target = spec.get('targetTemperatureC') or spec.get('targetTemperature') or {}
+		if st.get('currentTemperature') is not None:
+			out.append({'id': 'room_temp', 'label': 'Room', 'type': 'readout', 'group': 'climate', 'value': st['currentTemperature'], 'unit': '°'})
+		if 'w' in target.get('mode', []):
+			rng = (target.get('value') or {}).get('w') or {}
+			out.append({'id': res + '.targetTemperature', 'label': 'Set to', 'type': 'number', 'group': 'climate', 'unit': '°',
+				'min': rng.get('min', 16), 'max': rng.get('max', 30), 'step': rng.get('step', 1), 'value': st.get('targetTemperature')})
+		break
+	for res, props in prof.items():
+		if res in THINQ_SKIP or res in THINQ_TEMP or not isinstance(props, dict):
+			continue
+		st = state.get(res) if isinstance(state.get(res), dict) else {}
+		for key, spec in props.items():
+			if not isinstance(spec, dict):
+				continue
+			cid, cur, vals = res + '.' + key, st.get(key), (spec.get('value') or {}).get('w')
+			if 'w' not in spec.get('mode', []):
+				if 'r' in spec.get('mode', []) and readouts < 6 and cur is not None and not isinstance(cur, (dict, list)):
+					out.append({'id': cid, 'label': words(key), 'type': 'readout', 'group': 'info', 'value': str(cur).replace('_', ' ').lower()})
+					readouts += 1
+				continue
+			if spec.get('type') == 'enum' and isinstance(vals, list) and vals:
+				if {'POWER_ON', 'POWER_OFF'} <= set(vals):
+					power.append({'id': cid, 'label': 'Power', 'type': 'toggle', 'group': 'power', 'value': cur == 'POWER_ON',
+						'send': ['POWER_ON', 'POWER_OFF']})
+				elif res == 'operation' and len(vals) <= 4:
+					out += [btn('%s=%s' % (cid, v), v.replace('_', ' ').capitalize(), 'cycle') for v in vals]
+				else:
+					out.append({'id': cid, 'label': words(key), 'type': 'select', 'group': 'climate', 'options': vals, 'value': cur})
+			elif spec.get('type') == 'range' and isinstance(vals, dict):
+				out.append({'id': cid, 'label': words(key), 'type': 'number', 'group': 'climate', 'min': vals.get('min', 0),
+					'max': vals.get('max', 100), 'step': vals.get('step', 1), 'value': cur})
+			elif spec.get('type') == 'boolean':
+				out.append({'id': cid, 'label': words(key), 'type': 'toggle', 'group': 'options', 'value': bool(cur)})
+	return power + out
+
+
+class ThinQ:
+	def __init__(self, token, country, client_id):
+		self.token, self.country, self.client_id = token, country, client_id
+		self.base = thinq_base(country)
+		self.profiles = {}
+
+	def call(self, method, path, body=None):
+		headers = {'Authorization': 'Bearer ' + self.token, 'x-country': self.country, 'x-client-id': self.client_id,
+			'x-api-key': THINQ_API_KEY, 'x-service-phase': 'OP',
+			'x-message-id': base64.urlsafe_b64encode(uuid.uuid4().bytes)[:-2].decode()}
+		if body is not None:
+			headers['x-conditional-control'] = 'true'
+		try:
+			r = http(method, self.base + path, body=body, headers=headers, timeout=12)
+		except urllib.error.HTTPError as e:
+			raise ValueError('LG ThinQ: ' + cloud_error(e)) from None
+		return r.get('response') if isinstance(r, dict) else r
+
+	def devices(self):
+		out = []
+		for item in self.call('GET', '/devices') or []:
+			try:
+				out.append(self.build(item['deviceId'], item.get('deviceInfo') or {}))
+			except (OSError, urllib.error.URLError, ValueError, KeyError) as e:
+				log('LG ThinQ: skipping', item.get('deviceId'), e)
+		return out
+
+	def build(self, did, info):
+		if did not in self.profiles:
+			self.profiles[did] = (self.call('GET', '/devices/%s/profile' % did) or {}).get('property')
+		state = self.call('GET', '/devices/%s/state' % did) or {}
+		dtype = str(info.get('deviceType', ''))
+		return {'id': 'lg:' + did, 'name': info.get('alias') or info.get('modelName') or 'LG appliance',
+			'kind': next((k for t, k in THINQ_KINDS if t in dtype), 'other'), 'driver': 'thinq', 'host': 'LG ThinQ',
+			'info': info.get('modelName') or 'cloud', 'controls': thinq_controls(self.profiles[did], state if isinstance(state, dict) else {}),
+			'state': {'info': info}}
+
+	def run(self, dev, control, value):
+		did = dev['id'][3:]
+		c = next((x for x in dev['controls'] if x['id'] == control), {})
+		cid, _, fixed = control.partition('=')
+		res, _, key = cid.partition('.')
+		if fixed:
+			value = fixed
+		elif c.get('send'):
+			value = c['send'][0 if value else 1]
+		body = {res: {key: value}}
+		if res in THINQ_TEMP:
+			body[res]['unit'] = 'C'
+		self.call('POST', '/devices/%s/control' % did, body)
+		return 'done'
+
+	def refresh(self, dev):
+		return self.build(dev['id'][3:], dev.get('state', {}).get('info', {}))
+
+
+def cloud_error(e):
+	"""the useful part of a vendor API error response"""
+	try:
+		body = json.loads(e.read() or b'{}')
+		err = body.get('error') if isinstance(body, dict) else None
+		msg = err.get('message') if isinstance(err, dict) else err or body.get('message')
+	except (OSError, ValueError, AttributeError):
+		msg = None
+	if e.code == 401:
+		return 'the token was rejected or has expired: connect again'
+	return '%s (HTTP %d)' % (msg or e.reason, e.code)
+
+
+def check_value(control, value):
+	"""validates a value from the page against the control it is meant for"""
+	if not control or control['type'] == 'readout':
+		raise ValueError('unknown control')
+	if control['type'] == 'toggle':
+		return bool(value)
+	if control['type'] == 'number':
+		value = float(value)
+		if not control.get('min', -1e9) <= value <= control.get('max', 1e9):
+			raise ValueError('out of range')
+		return int(value) if value == int(value) else value
+	if control['type'] == 'select' and value not in control.get('options', []):
+		raise ValueError('not an option')
+	return value
 
 
 # ---------------------------------------------------------------- Home Assistant (local or cloud)
@@ -692,6 +867,9 @@ class Bridge:
 		self.cloud = {}
 		if cfg.get('smartthings', {}).get('token'):
 			self.cloud['smartthings'] = SmartThings(cfg['smartthings']['token'])
+		lg = cfg.get('thinq', {})
+		if lg.get('token') and lg.get('country'):
+			self.cloud['thinq'] = ThinQ(lg['token'], lg['country'], lg.get('client_id') or 'birru-home-' + socket.gethostname())
 		ha = cfg.get('homeassistant', {})
 		if ha.get('url') and ha.get('token'):
 			self.cloud['homeassistant'] = HomeAssistant(ha['url'], ha['token'])
@@ -720,19 +898,7 @@ class Bridge:
 		if not dev:
 			raise ValueError('unknown device; try Rescan')
 		control = next((c for c in dev['controls'] if c['id'] == cmd.get('control')), None)
-		if not control or control['type'] == 'readout':
-			raise ValueError('unknown control')
-		value = cmd.get('value')
-		if control['type'] == 'toggle':
-			value = bool(value)
-		elif control['type'] == 'number':
-			value = float(value)
-			if not control.get('min', -1e9) <= value <= control.get('max', 1e9):
-				raise ValueError('out of range')
-			value = int(value) if value == int(value) else value
-		elif control['type'] == 'select':
-			if value not in control.get('options', []):
-				raise ValueError('not an option')
+		value = check_value(control, cmd.get('value'))
 		if dev['driver'] in self.cloud:
 			client = self.cloud[dev['driver']]
 			message = client.run(dev, control['id'], value)
