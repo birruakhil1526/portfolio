@@ -10,6 +10,3 @@
 *.docx
 __pycache__/
 
-# home bridge config and TV pairing keys
-bridge.json
-.bridge-state.json
