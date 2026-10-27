@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Speech to Text · Birru's Space</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b0e14">
+<script>try { if (localStorage.getItem('theme') === 'light') document.documentElement.dataset.theme = 'light'; } catch (e) {}</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='12' fill='%230b0e14'/><text x='10' y='42' font-family='monospace' font-size='30' font-weight='700' fill='%237ee787'>&gt;_</text></svg>">
+<link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Google Fonts (Geist, Geist Mono; SIL OFL, see /fonts/) served from this site: the CSP allows no outside requests */
+@font-face { font-family: 'Geist'; font-style: normal; font-weight: 400 800; font-display: swap; src: url(/fonts/geist.woff2) format('woff2'); }
+@font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/geist-mono.woff2) format('woff2'); }
+:root {
+	--bg: #0b0e14; --surface: #11151c; --surface-2: #161b24; --line: #222a36;
+	--text: #d6dde6; --muted: #8b96a5; --faint: #5c6675;
+	--green: #7ee787; --blue: #79c0ff; --orange: #ffa657; --red: #ff7b72;
+	--mono: 'Geist Mono', ui-monospace, 'SF Mono', SFMono-Regular, 'Cascadia Code', Menlo, Consolas, 'Liberation Mono', monospace;
+	--sans: 'Geist', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	color-scheme: dark;
+}
+:root[data-theme="light"] {
+	--bg: #f6f8fa; --surface: #ffffff; --surface-2: #f0f3f6; --line: #d8dee4;
+	--text: #1f2328; --muted: #59636e; --faint: #8c959f;
+	--green: #1a7f37; --blue: #0550ae; --orange: #bc4c00; --red: #cf222e;
+	color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 var(--sans); }
+main { max-width: 720px; margin: 0 auto; padding: 40px 16px 64px; }
+a { color: var(--blue); }
+.back { font: 13px var(--mono); color: var(--muted); text-decoration: none; }
+h1 { font: 700 26px/1.3 var(--sans); margin: 18px 0 6px; }
+.sub { color: var(--muted); margin: 0 0 24px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+button, .file {
+	font: 600 14px var(--mono); padding: 10px 16px; border-radius: 8px; cursor: pointer;
+	border: 1px solid var(--line); background: var(--surface-2); color: var(--text);
+}
+button:disabled { opacity: .45; cursor: not-allowed; }
+button.rec { color: var(--red); }
+button.rec.on { background: var(--red); color: var(--bg); border-color: var(--red); }
+.file input { display: none; }
+.status { font: 13px var(--mono); color: var(--muted); margin: 14px 0 0; min-height: 1.6em; }
+.status.err { color: var(--red); }
+.status.ok { color: var(--green); }
+.out { margin-top: 18px; }
+.out label { display: block; font: 12px var(--mono); color: var(--faint); margin-bottom: 6px; }
+textarea {
+	width: 100%; min-height: 180px; resize: vertical; padding: 12px; border-radius: 8px;
+	border: 1px solid var(--line); background: var(--bg); color: var(--text); font: 15px/1.6 var(--sans);
+}
+.note { font-size: 13px; color: var(--faint); margin-top: 18px; }
+</style>
+</head>
+<body>
+<main>
+	<a class="back" href="/">&larr; birru's space</a>
+	<h1>Speech to Text</h1>
+	<p class="sub">Transcribed by NVIDIA Parakeet, running on NVIDIA's GPUs. This server only relays the audio.</p>
+
+	<div class="card">
+		<div class="actions">
+			<button id="rec" class="rec" type="button">&#9679; Record</button>
+			<label class="file">Upload audio<input id="file" type="file" accept="audio/*"></label>
+			<button id="copy" type="button" disabled>Copy text</button>
+		</div>
+		<p id="status" class="status" role="status"></p>
+		<div class="out">
+			<label for="text">Transcript</label>
+			<textarea id="text" readonly placeholder="Your transcript appears here."></textarea>
+		</div>
+	</div>
+	<p class="note">English, up to about 100 seconds per clip. Audio is converted to 16 kHz mono in your browser before it is sent.</p>
+</main>
+<script>
+(() => {
+	const MAX_SECONDS = 100;
+	const RATE = 16000;
+	const rec = document.getElementById('rec');
+	const file = document.getElementById('file');
+	const copy = document.getElementById('copy');
+	const status = document.getElementById('status');
+	const text = document.getElementById('text');
+	let recorder = null;
+	let stopTimer = null;
+
+	const say = (msg, kind) => { status.textContent = msg; status.className = 'status' + (kind ? ' ' + kind : ''); };
+
+	// microphone access only exists on https (or localhost)
+	if (!window.isSecureContext || !navigator.mediaDevices || !window.MediaRecorder) {
+		rec.disabled = true;
+		rec.title = 'Recording needs HTTPS; upload a file instead';
+		say('Recording needs HTTPS. Upload an audio file instead.');
+	}
+
+	// decode any browser-supported audio and resample it to 16 kHz mono 16-bit WAV
+	async function toWav(blob) {
+		const ctx = new AudioContext();
+		let decoded;
+		try { decoded = await ctx.decodeAudioData(await blob.arrayBuffer()); }
+		finally { ctx.close(); }
+		if (decoded.duration > MAX_SECONDS + 10) throw new Error('Clip is too long: keep it under ' + MAX_SECONDS + ' seconds.');
+		const frames = Math.ceil(decoded.duration * RATE);
+		const offline = new OfflineAudioContext(1, frames, RATE);
+		const src = offline.createBufferSource();
+		src.buffer = decoded;
+		src.connect(offline.destination);
+		src.start();
+		const pcm = (await offline.startRendering()).getChannelData(0);
+
+		const buf = new ArrayBuffer(44 + pcm.length * 2);
+		const v = new DataView(buf);
+		const str = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+		str(0, 'RIFF'); v.setUint32(4, 36 + pcm.length * 2, true); str(8, 'WAVE');
+		str(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+		v.setUint32(24, RATE, true); v.setUint32(28, RATE * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+		str(36, 'data'); v.setUint32(40, pcm.length * 2, true);
+		for (let i = 0; i < pcm.length; i++) {
+			const s = Math.max(-1, Math.min(1, pcm[i]));
+			v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7fff, true);
+		}
+		return new Blob([buf], { type: 'audio/wav' });
+	}
+
+	async function transcribe(blob) {
+		rec.disabled = true; file.disabled = true; copy.disabled = true;
+		try {
+			say('Preparing audio…');
+			const wav = await toWav(blob);
+			say('Transcribing on NVIDIA…');
+			const res = await fetch('/api/stt', { method: 'POST', headers: { 'Content-Type': 'audio/wav' }, body: wav });
+			let data = {};
+			try { data = await res.json(); } catch (e) {}
+			if (res.status === 429) throw new Error('Too many requests. Wait a minute and try again.');
+			if (!res.ok) throw new Error(data.error || 'Request failed (' + res.status + ').');
+			text.value = data.text || '';
+			copy.disabled = !text.value;
+			say(text.value ? 'Done.' : 'No speech detected.', text.value ? 'ok' : '');
+		} catch (e) {
+			say(e.message || 'Could not read that audio.', 'err');
+		} finally {
+			rec.disabled = !window.isSecureContext || !window.MediaRecorder;
+			file.disabled = false;
+			file.value = '';
+		}
+	}
+
+	file.addEventListener('change', () => { if (file.files[0]) transcribe(file.files[0]); });
+
+	rec.addEventListener('click', async () => {
+		if (recorder) { recorder.stop(); return; }
+		let stream;
+		try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+		catch (e) { say('Microphone permission was denied.', 'err'); return; }
+		const chunks = [];
+		recorder = new MediaRecorder(stream);
+		recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+		recorder.onstop = () => {
+			clearTimeout(stopTimer);
+			stream.getTracks().forEach((t) => t.stop());
+			rec.classList.remove('on'); rec.innerHTML = '&#9679; Record';
+			const blob = new Blob(chunks, { type: recorder.mimeType });
+			recorder = null;
+			transcribe(blob);
+		};
+		recorder.start();
+		rec.classList.add('on'); rec.innerHTML = '&#9632; Stop';
+		say('Recording… press Stop when you are done.');
+		stopTimer = setTimeout(() => recorder && recorder.stop(), MAX_SECONDS * 1000);
+	});
+
+	copy.addEventListener('click', async () => {
+		try { await navigator.clipboard.writeText(text.value); say('Copied.', 'ok'); }
+		catch (e) { text.select(); say('Press Ctrl+C to copy.'); }
+	});
+})();
+</script>
+</body>
+</html>
