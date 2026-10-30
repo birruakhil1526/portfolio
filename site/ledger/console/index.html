@@ -5,18 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ledger Console</title>
 <meta name="robots" content="noindex">
-<meta name="theme-color" content="#07090c">
+<meta name="theme-color" content="#0c0a09">
 <script>try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2307090c'/><path d='M16 20h32M16 32h32M16 44h20' stroke='%237cf0c5' stroke-width='5' stroke-linecap='round'/><circle cx='46' cy='44' r='6' fill='%23ff5a3c'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230c0a09'/><path d='M16 20h32M16 32h32M16 44h20' stroke='%23ff8a3d' stroke-width='5' stroke-linecap='round'/><circle cx='46' cy='44' r='6' fill='%23ffcf5c'/></svg>">
 <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin>
 <style>
 @font-face { font-family: 'Geist'; font-style: normal; font-weight: 400 800; font-display: swap; src: url(/fonts/geist.woff2) format('woff2'); }
 @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/geist-mono.woff2) format('woff2'); }
 :root {
-	--bg: #07090c; --bg-2: #0b0e13; --panel: #0e1218; --panel-2: #131922; --line: #1a212b; --line-2: #242d39;
-	--text: #e9eef4; --muted: #95a1b0; --dim: #5d6878; --ink: #7cf0c5; --ink-soft: rgba(124, 240, 197, .12);
-	--red: #ff5a3c; --red-soft: rgba(255, 90, 60, .13); --amber: #ffb547; --amber-soft: rgba(255, 181, 71, .13); --blue: #8fb3ff;
+	--bg: #0c0a09; --bg-2: #110e0c; --panel: #151210; --panel-2: #1c1815; --line: #26211d; --line-2: #342d27;
+	--text: #f6efe7; --muted: #b3a89c; --dim: #786d62; --ink: #ff8a3d; --ink-soft: rgba(255, 138, 61, .12);
+	--red: #ff4d6d; --red-soft: rgba(255, 77, 109, .13); --amber: #ffcf5c; --amber-soft: rgba(255, 207, 92, .12); --blue: #e8c4a0;
 	--shadow: 0 30px 80px -30px rgba(0, 0, 0, .7);
 	--sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -24,9 +24,9 @@
 	color-scheme: dark;
 }
 :root[data-theme="light"] {
-	--bg: #f5f2ea; --bg-2: #efebe1; --panel: #fffdf8; --panel-2: #f8f4ec; --line: #e3dccd; --line-2: #d6cdba;
-	--text: #17140f; --muted: #625b4f; --dim: #978e7e; --ink: #0b8a5f; --ink-soft: rgba(11, 138, 95, .1);
-	--red: #d33a1f; --red-soft: rgba(211, 58, 31, .09); --amber: #a8680f; --amber-soft: rgba(168, 104, 15, .1); --blue: #2f5fc9;
+	--bg: #faf6f0; --bg-2: #f3ede4; --panel: #fffdf9; --panel-2: #f7f1e8; --line: #ebe2d5; --line-2: #ddd0bf;
+	--text: #1a1410; --muted: #6b5f53; --dim: #998b7c; --ink: #c2410c; --ink-soft: rgba(194, 65, 12, .09);
+	--red: #be123c; --red-soft: rgba(190, 18, 60, .08); --amber: #a16207; --amber-soft: rgba(161, 98, 7, .1); --blue: #8a5a3b;
 	--shadow: 0 30px 70px -35px rgba(60, 45, 20, .35);
 	color-scheme: light;
 }

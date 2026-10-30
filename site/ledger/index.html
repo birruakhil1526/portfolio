@@ -8,9 +8,9 @@
 <meta property="og:title" content="Ledger · Lookalike domains, caught at the padlock">
 <meta property="og:description" content="Every padlock is announced. Ledger reads every announcement and flags lookalikes of your brand.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#07090c">
+<meta name="theme-color" content="#0c0a09">
 <script>try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2307090c'/><path d='M16 20h32M16 32h32M16 44h20' stroke='%237cf0c5' stroke-width='5' stroke-linecap='round'/><circle cx='46' cy='44' r='6' fill='%23ff5a3c'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230c0a09'/><path d='M16 20h32M16 32h32M16 44h20' stroke='%23ff8a3d' stroke-width='5' stroke-linecap='round'/><circle cx='46' cy='44' r='6' fill='%23ffcf5c'/></svg>">
 <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -18,22 +18,22 @@
 @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/geist-mono.woff2) format('woff2'); }
 
 :root {
-	--bg: #07090c;
-	--bg-2: #0b0e13;
-	--panel: #0e1218;
-	--panel-2: #131922;
-	--line: #1a212b;
-	--line-2: #242d39;
-	--text: #e9eef4;
-	--muted: #95a1b0;
-	--dim: #5d6878;
-	--ink: #7cf0c5;
-	--ink-soft: rgba(124, 240, 197, .12);
-	--red: #ff5a3c;
-	--red-soft: rgba(255, 90, 60, .13);
-	--amber: #ffb547;
-	--amber-soft: rgba(255, 181, 71, .13);
-	--blue: #8fb3ff;
+	--bg: #0c0a09;
+	--bg-2: #110e0c;
+	--panel: #151210;
+	--panel-2: #1c1815;
+	--line: #26211d;
+	--line-2: #342d27;
+	--text: #f6efe7;
+	--muted: #b3a89c;
+	--dim: #786d62;
+	--ink: #ff8a3d;
+	--ink-soft: rgba(255, 138, 61, .12);
+	--red: #ff4d6d;
+	--red-soft: rgba(255, 77, 109, .13);
+	--amber: #ffcf5c;
+	--amber-soft: rgba(255, 207, 92, .12);
+	--blue: #e8c4a0;
 	--shadow: 0 30px 80px -30px rgba(0, 0, 0, .7);
 	--sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -42,22 +42,22 @@
 	color-scheme: dark;
 }
 :root[data-theme="light"] {
-	--bg: #f5f2ea;
-	--bg-2: #efebe1;
-	--panel: #fffdf8;
-	--panel-2: #f8f4ec;
-	--line: #e3dccd;
-	--line-2: #d6cdba;
-	--text: #17140f;
-	--muted: #625b4f;
-	--dim: #978e7e;
-	--ink: #0b8a5f;
-	--ink-soft: rgba(11, 138, 95, .1);
-	--red: #d33a1f;
-	--red-soft: rgba(211, 58, 31, .09);
-	--amber: #a8680f;
-	--amber-soft: rgba(168, 104, 15, .1);
-	--blue: #2f5fc9;
+	--bg: #faf6f0;
+	--bg-2: #f3ede4;
+	--panel: #fffdf9;
+	--panel-2: #f7f1e8;
+	--line: #ebe2d5;
+	--line-2: #ddd0bf;
+	--text: #1a1410;
+	--muted: #6b5f53;
+	--dim: #998b7c;
+	--ink: #c2410c;
+	--ink-soft: rgba(194, 65, 12, .09);
+	--red: #be123c;
+	--red-soft: rgba(190, 18, 60, .08);
+	--amber: #a16207;
+	--amber-soft: rgba(161, 98, 7, .1);
+	--blue: #8a5a3b;
 	--shadow: 0 30px 70px -35px rgba(60, 45, 20, .35);
 	color-scheme: light;
 }
@@ -70,7 +70,7 @@ body {
 }
 a { color: inherit; }
 button, input { font: inherit; color: inherit; }
-::selection { background: var(--ink); color: var(--bg); }
+::selection { background: var(--ink); color: #120a04; }
 .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
 .mono { font-family: var(--mono); }
 .serif { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; }
@@ -79,10 +79,10 @@ button, input { font: inherit; color: inherit; }
 
 /* ---------- nav ---------- */
 .nav {
-	position: fixed; inset: 0 0 auto; z-index: 50; transition: background .3s, border-color .3s, backdrop-filter .3s;
+	position: fixed; inset: 0 0 auto; z-index: 50; transition: background .3s, border-color .3s;
 	border-bottom: 1px solid transparent;
 }
-.nav.solid { background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); border-color: var(--line); }
+.nav.solid { background: color-mix(in srgb, var(--bg) 94%, transparent); border-color: var(--line); }
 .nav .wrap { display: flex; align-items: center; gap: 22px; height: 64px; }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 650; letter-spacing: -.02em; font-size: 18px; }
 .brand svg { width: 26px; height: 26px; }
@@ -95,9 +95,10 @@ button, input { font: inherit; color: inherit; }
 	border: 1px solid var(--line-2); background: var(--panel); font-size: 12.5px; color: var(--muted); white-space: nowrap;
 }
 .pill b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
-.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 0 var(--ink); animation: ping 2s infinite; }
-.dot.off { background: var(--dim); animation: none; }
-@keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ink) 60%, transparent); } 80%, 100% { box-shadow: 0 0 0 8px transparent; } }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); position: relative; flex: none; }
+.dot::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: var(--ink); animation: ping 2s var(--ease) infinite; }
+.dot.off { background: var(--dim); } .dot.off::after { display: none; }
+@keyframes ping { 0% { transform: scale(1); opacity: .6; } 80%, 100% { transform: scale(3.2); opacity: 0; } }
 .icon-btn {
 	width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; border: 1px solid var(--line-2);
 	background: var(--panel); cursor: pointer; color: var(--muted); transition: color .2s, border-color .2s;
@@ -123,8 +124,8 @@ button, input { font: inherit; color: inherit; }
 .hero::before {
 	content: ""; position: absolute; inset: 0; z-index: -2;
 	background:
-		radial-gradient(900px 500px at 78% 30%, color-mix(in srgb, var(--ink) 9%, transparent), transparent 70%),
-		radial-gradient(700px 400px at 10% 90%, color-mix(in srgb, var(--blue) 7%, transparent), transparent 70%);
+		radial-gradient(900px 500px at 78% 30%, color-mix(in srgb, var(--ink) 7%, transparent), transparent 70%),
+		radial-gradient(700px 400px at 10% 90%, color-mix(in srgb, var(--amber) 4%, transparent), transparent 70%);
 }
 .hero::after {
 	content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5;
@@ -142,7 +143,8 @@ button, input { font: inherit; color: inherit; }
 h1 {
 	font-size: clamp(2.5rem, 5.3vw, 4.7rem); line-height: .98; letter-spacing: -.045em; font-weight: 640; margin: 22px 0 0;
 }
-h1 .serif { display: block; color: var(--ink); font-size: 1.04em; letter-spacing: -.03em; margin-top: .06em; }
+h1 .serif { display: block; font-size: 1.04em; letter-spacing: -.03em; margin-top: .06em; padding-bottom: .08em; color: var(--ink);
+	background: linear-gradient(100deg, var(--ink) 10%, var(--amber) 55%, var(--ink) 95%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .lede { font-size: clamp(1.02rem, 1.4vw, 1.18rem); color: var(--muted); max-width: 33em; margin: 26px 0 0; }
 .lede b { color: var(--text); font-weight: 550; }
 
@@ -196,7 +198,7 @@ h2 .serif { color: var(--ink); }
 .card-head h3 { margin: 0; font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -.01em; }
 .card-head .right { margin-left: auto; display: flex; gap: 10px; align-items: center; font-family: var(--mono); font-size: 12px; }
 
-.paper { position: relative; height: 532px; overflow: hidden;
+.paper { position: relative; height: 532px; overflow: hidden; contain: strict;
 	background-image: linear-gradient(to bottom, transparent 43px, var(--line) 43px, var(--line) 44px);
 	background-size: 100% 44px; background-position: 0 0;
 }
@@ -204,13 +206,13 @@ h2 .serif { color: var(--ink); }
 .paper::after { content: ""; position: absolute; inset: auto 0 0; height: 90px; background: linear-gradient(transparent, var(--panel)); z-index: 2; pointer-events: none; }
 .cols { display: grid; grid-template-columns: 82px minmax(0, 1fr) 150px; height: 40px; align-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); border-bottom: 1px solid var(--line-2); }
 .cols span:first-child { padding-left: 18px; }
-#rows { will-change: transform; }
+#rows { will-change: transform; contain: layout paint; }
 .row {
 	display: grid; grid-template-columns: 82px minmax(0, 1fr) 150px; height: 44px; align-items: center;
 	font-size: 13.5px; position: relative;
 }
 .row.enter { animation: rowIn .7s var(--ease) both; }
-@keyframes rowIn { from { opacity: 0; filter: blur(4px); } to { opacity: 1; filter: none; } }
+@keyframes rowIn { from { opacity: 0; } }
 .row .t { padding-left: 18px; font-family: var(--mono); font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; }
 .row .d { padding: 0 16px; font-family: var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .row .d .more { color: var(--dim); font-size: 11.5px; margin-left: 6px; }
@@ -327,7 +329,7 @@ h2 .serif { color: var(--ink); }
 .reasons li { display: grid; grid-template-columns: 96px minmax(0, 1fr) 36px; gap: 12px; align-items: center; font-size: 13.5px; padding: 10px 12px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); animation: rise .5s var(--ease) both; }
 .reasons .k { font-family: var(--mono); font-size: 11.5px; color: var(--amber); text-transform: uppercase; letter-spacing: .05em; }
 .reasons .p { font-family: var(--mono); font-size: 12px; text-align: right; color: var(--muted); }
-.reasons .clear { grid-template-columns: 1fr; color: var(--ink); background: var(--ink-soft); border-color: transparent; }
+.reasons .clear { grid-template-columns: 1fr; color: var(--text); background: var(--panel-2); border-color: var(--line-2); }
 .dial-card { padding: 26px 22px; display: grid; justify-items: center; align-content: start; gap: 6px; text-align: center; }
 .dial { width: 200px; height: 200px; position: relative; }
 .dial svg { width: 100%; height: 100%; rotate: -90deg; }
@@ -343,13 +345,16 @@ h2 .serif { color: var(--ink); }
 .value { padding: 28px; border-radius: 20px; border: 1px solid var(--line); background: var(--panel); position: relative; overflow: hidden; transition: transform .5s var(--ease), border-color .3s; }
 .value:hover { transform: translateY(-4px); border-color: var(--line-2); }
 .value::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--ink) 50%, transparent), transparent 40%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity .3s; pointer-events: none; }
-.value:hover::after { opacity: 1; }
+@media (hover: hover) { .value:hover::after { opacity: 1; } }
 .value .n { font-family: var(--mono); font-size: 12px; color: var(--ink); }
 .value h4 { font-size: 21px; letter-spacing: -.02em; margin: 6px 0 10px; font-weight: 600; }
 .value .art + .n { margin-top: 22px; }
 .value p { margin: 0; color: var(--muted); font-size: 15px; }
 .value .art { height: 120px; margin: -6px -8px 0; border-bottom: 1px solid var(--line); display: grid; place-items: center; }
 .value .art svg { width: 100%; height: 100%; }
+.value .pulse { transform-box: fill-box; transform-origin: center; animation: pulse 2s ease-in-out infinite; }
+.idle, .idle *, .idle::after { animation-play-state: paused !important; }
+@keyframes pulse { 50% { transform: scale(1.35); } }
 
 /* ---------- cta ---------- */
 .cta { margin: 0 auto; padding: clamp(50px, 8vw, 90px); border-radius: 28px; border: 1px solid var(--line-2); background: radial-gradient(600px 300px at 50% 0%, var(--ink-soft), transparent 70%), var(--panel); text-align: center; position: relative; overflow: hidden; }
@@ -396,6 +401,7 @@ footer a { color: var(--muted); }
 	.reasons li { grid-template-columns: 1fr 36px; }
 	.reasons .k { grid-column: 1 / -1; }
 	.scroll-cue { display: none; }
+	.cap-x { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
 	*, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
@@ -449,10 +455,10 @@ footer a { color: var(--muted); }
 		</div>
 		<div class="loom-box" aria-hidden="true">
 			<canvas id="loom"></canvas>
-			<div class="loom-cap"><span>each dot: one real certificate</span><span>trees sealed <b id="k-trees">0</b></span></div>
+			<div class="loom-cap"><span>each dot: one real certificate<span class="cap-x">, hashed up into a root</span></span><span>roots sealed <b id="k-trees">0</b></span></div>
 		</div>
 	</div>
-	<div class="scroll-cue" aria-hidden="true"></div>
+	<div class="scroll-cue" data-idle aria-hidden="true"></div>
 </header>
 
 <main>
@@ -595,9 +601,9 @@ footer a { color: var(--muted); }
 			<div class="eyebrow">What you get</div>
 			<h2>From padlock to takedown, <span class="serif">in one place.</span></h2>
 		</div>
-		<div class="values">
+		<div class="values" data-idle>
 			<div class="value rv" style="--d:0s">
-				<div class="art"><svg viewBox="0 0 300 120" fill="none"><g stroke="var(--line-2)"><path d="M20 30h260M20 60h260M20 90h260"/></g><circle cx="70" cy="60" r="5" fill="var(--dim)"/><circle cx="130" cy="60" r="5" fill="var(--dim)"/><circle cx="190" cy="60" r="7" fill="var(--ink)"><animate attributeName="r" values="6;9;6" dur="2s" repeatCount="indefinite"/></circle><text x="190" y="40" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--muted)">seconds</text></svg></div>
+				<div class="art"><svg viewBox="0 0 300 120" fill="none"><g stroke="var(--line-2)"><path d="M20 30h260M20 60h260M20 90h260"/></g><circle cx="70" cy="60" r="5" fill="var(--dim)"/><circle cx="130" cy="60" r="5" fill="var(--dim)"/><circle class="pulse" cx="190" cy="60" r="6.5" fill="var(--ink)"/><text x="190" y="40" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--muted)">seconds</text></svg></div>
 				<div class="n">01</div><h4>See it first</h4><p>Ledger reads the logs as they're written, so a lookalike shows up minutes after its certificate, not days after the first complaint.</p>
 			</div>
 			<div class="value rv" style="--d:.1s">
@@ -658,7 +664,8 @@ $('#theme').addEventListener('click', () => {
 	loom.recolor();
 });
 const nav = $('#nav');
-addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 20), { passive: true });
+let solid = false;
+addEventListener('scroll', () => { const on = scrollY > 20; if (on !== solid) nav.classList.toggle('solid', solid = on); }, { passive: true });
 
 /* ---------- reveal on scroll ---------- */
 const io = new IntersectionObserver(es => es.forEach(e => {
@@ -678,11 +685,15 @@ function playRace() {
 }
 
 /* glow that follows the pointer on value cards */
-document.querySelectorAll('.value').forEach(v => v.addEventListener('pointermove', e => {
-	const r = v.getBoundingClientRect();
-	v.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-	v.style.setProperty('--my', (e.clientY - r.top) + 'px');
-}));
+document.querySelectorAll('.value').forEach(v => {
+	let r = null, raf = 0, x = 0, y = 0;
+	v.addEventListener('pointerenter', () => { r = v.getBoundingClientRect(); });
+	v.addEventListener('pointermove', e => {
+		x = e.clientX; y = e.clientY;
+		if (!r || raf) return;
+		raf = requestAnimationFrame(() => { raf = 0; v.style.setProperty('--mx', (x - r.left) + 'px'); v.style.setProperty('--my', (y - r.top) + 'px'); });
+	});
+});
 
 /* ---------- counters that roll to their value ---------- */
 const tweens = new Map();
@@ -707,15 +718,17 @@ function roll(el, to, fmtFn = fmt, ms = 900) {
 /* ---------- the loom: certificates woven into Merkle trees ---------- */
 const loom = (() => {
 	const cv = $('#loom'), ctx = cv.getContext('2d');
-	const LEAVES = 32, LEVELS = 6;
-	let W = 0, H = 0, dpr = 1, colors = {}, running = false, visible = true;
-	let leaves = [], nodes = [], parts = [], labels = [], filled = 0, sealing = 0, sealedAt = 0, trees = 0, root = '';
+	const LEAVES = 16, LEVELS = 5, CLIMB = 380, SEAL = 1100, RISE = 750;
+	let W = 0, H = 0, dpr = 1, pad = 14, chainY = 0, colors = {}, running = false, visible = true, font = '', ghost = null;
+	let nodes = [], leaves = [], parts = [], labels = [], bursts = [], chain = [], filled = 0, sealing = 0, trees = 0;
 	const queue = [];
 
 	function recolor() {
 		const cs = getComputedStyle(document.documentElement);
-		colors = { ink: cs.getPropertyValue('--ink').trim(), red: cs.getPropertyValue('--red').trim(), amber: cs.getPropertyValue('--amber').trim(),
-			line: cs.getPropertyValue('--line-2').trim(), dim: cs.getPropertyValue('--dim').trim(), text: cs.getPropertyValue('--text').trim(), panel: cs.getPropertyValue('--panel').trim() };
+		const v = k => cs.getPropertyValue(k).trim();
+		colors = { ink: v('--ink'), red: v('--red'), amber: v('--amber'), line: v('--line-2'), dim: v('--dim'), muted: v('--muted'), text: v('--text'), panel: v('--panel'), panel2: v('--panel-2') };
+		font = v('--mono');
+		paintGhost();
 		if (reduce) drawStatic();
 	}
 	function layout() {
@@ -724,153 +737,240 @@ const loom = (() => {
 		W = r.width; H = r.height;
 		cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
 		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-		const pad = Math.max(14, W * .04), top = H * .1, bottom = H * .78;
+		pad = Math.max(14, W * .04); chainY = H * .07;
+		const top = H * .27, bottom = H * .86;
+		const old = nodes;
 		nodes = [];
 		for (let l = 0; l < LEVELS; l++) {
 			const n = LEAVES >> l, row = [];
 			for (let i = 0; i < n; i++) {
 				const x = l === 0 ? pad + (W - pad * 2) * (i + .5) / n : (nodes[l - 1][i * 2].x + nodes[l - 1][i * 2 + 1].x) / 2;
 				const y = bottom - (bottom - top) * Math.pow(l / (LEVELS - 1), .9);
-				const old = nodes.length === l && leaves.length ? null : null;
-				row.push({ x, y, on: 0, a: 0, kind: 0 });
+				row.push(Object.assign({ on: 0, born: 0, kind: 0 }, old[l]?.[i], { x, y }));
 			}
 			nodes.push(row);
 		}
 		leaves = nodes[0];
-		for (let i = 0; i < filled; i++) leaves[i].on = 1, leaves[i].a = 1;
-		settle();
+		paintGhost();
 		if (reduce) drawStatic();
 	}
-	function settle() {
-		for (let l = 1; l < LEVELS; l++) nodes[l].forEach((n, i) => { const on = nodes[l - 1][i * 2].on && nodes[l - 1][i * 2 + 1].on; if (on && !n.on) { n.on = 1; n.born = performance.now(); } });
+	// the empty tree never changes between resizes: draw it once, blit it every frame
+	function paintGhost() {
+		if (!W || !nodes.length) return;
+		ghost = ghost || document.createElement('canvas');
+		ghost.width = cv.width; ghost.height = cv.height;
+		const g = ghost.getContext('2d');
+		g.setTransform(dpr, 0, 0, dpr, 0, 0);
+		g.lineWidth = 1; g.setLineDash([2, 5]); g.strokeStyle = colors.line;
+		g.beginPath();
+		eachEdge((c, n) => { g.moveTo(c.x, c.y); curve(g, c, n, 1); });
+		g.stroke();
+		g.setLineDash([]); g.fillStyle = colors.panel; g.strokeStyle = colors.line;
+		for (let l = 1; l < LEVELS; l++) nodes[l].forEach(n => { g.beginPath(); g.arc(n.x, n.y, radius(l), 0, 7); g.fill(); g.stroke(); });
+		g.fillStyle = colors.line;
+		g.beginPath(); leaves.forEach(n => { g.moveTo(n.x + 2.5, n.y); g.arc(n.x, n.y, 2.5, 0, 7); }); g.fill();
+		const root = nodes[LEVELS - 1][0];
+		g.fillStyle = colors.dim; g.font = '10.5px ' + font; g.textAlign = 'center';
+		g.fillText('ROOT', root.x, root.y - 16);
 	}
-	function hex() { let s = ''; for (let i = 0; i < 8; i++) s += (Math.random() * 16 | 0).toString(16); return s; }
+	const radius = l => l === LEVELS - 1 ? 8 : 3 + l * .7;
+	function eachEdge(fn) { for (let l = 1; l < LEVELS; l++) nodes[l].forEach((n, i) => { fn(nodes[l - 1][i * 2], n, l); fn(nodes[l - 1][i * 2 + 1], n, l); }); }
+	// edge from child c towards parent n, cut at fraction k
+	function curve(g, c, n, k) {
+		const mx = c.x + (n.x - c.x) * k, my = c.y + (n.y - c.y) * k;
+		g.bezierCurveTo(c.x, c.y + (my - c.y) * .6, mx, my - (my - c.y) * .2, mx, my);
+		return [mx, my];
+	}
+	// a node counts as present once its edges have finished climbing to it
+	const ready = (n, l, now) => n.on && (l === 0 || now - n.born >= CLIMB);
+	function settle(now) {
+		for (let l = 1; l < LEVELS; l++) nodes[l].forEach((n, i) => {
+			if (n.on) return;
+			const a = nodes[l - 1][i * 2], b = nodes[l - 1][i * 2 + 1];
+			if (ready(a, l - 1, now) && ready(b, l - 1, now)) { n.on = 1; n.born = now; n.kind = Math.max(a.kind, b.kind); }
+		});
+		const root = nodes[LEVELS - 1][0];
+		if (!sealing && ready(root, LEVELS - 1, now)) {
+			sealing = now; trees++;
+			$('#k-trees').textContent = fmt(trees);
+			bursts.push({ x: root.x, y: root.y, t0: now, r: 46, dur: 900 });
+			chain.unshift({ n: trees, hash: hex(), t0: now, x0: root.x, y0: root.y });
+			if (chain.length > 8) chain.pop();
+		}
+	}
+	function hex() { let s = ''; for (let i = 0; i < 6; i++) s += (Math.random() * 16 | 0).toString(16); return s; }
 
 	function push(ev) { if (queue.length < 40) queue.push(ev); else if (ev.kind) queue.splice(queue.length - 1, 1, ev); }
 	function launch(ev) {
 		if (filled >= LEAVES || sealing) return false;
-		const leaf = leaves[filled];
-		leaf.target = 1; leaf.kind = ev.kind || 0;
-		const slot = filled++;
-		parts.push({ slot, x0: leaf.x + (Math.random() - .5) * W * .5, y0: -10, t0: performance.now(), dur: 900 + Math.random() * 500, kind: ev.kind || 0, label: ev.kind ? ev.d : null });
+		const leaf = leaves[filled++];
+		parts.push({ leaf, x0: leaf.x + (Math.random() - .5) * W * .5, y0: -10, t0: performance.now(), dur: 800 + Math.random() * 450, kind: ev.kind || 0, label: ev.kind ? ev.d : null });
 		return true;
 	}
+	const colOf = k => k === 2 ? colors.red : k === 1 ? colors.amber : colors.ink;
+	const ease = k => 1 - Math.pow(1 - k, 3);
 	let lastLaunch = 0;
 	function frame(now) {
 		if (!running) return;
 		requestAnimationFrame(frame);
-		if (queue.length && now - lastLaunch > Math.max(45, 260 - queue.length * 12)) { if (launch(queue[0])) queue.shift(); lastLaunch = now; }
+		if (queue.length && now - lastLaunch > Math.max(40, 220 - queue.length * 10)) { if (launch(queue[0])) queue.shift(); lastLaunch = now; }
+		settle(now);
 		ctx.clearRect(0, 0, W, H);
-		const sealK = sealing ? Math.min(1, (now - sealing) / 900) : 0;
-		const fade = sealing ? 1 - sealK : 1;
-		ctx.globalAlpha = fade;
-		// the empty tree, faint, so there is always a shape to fill
-		ctx.lineWidth = 1; ctx.setLineDash([2, 5]); ctx.strokeStyle = colors.line; ctx.globalAlpha = .55;
+		if (ghost) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.drawImage(ghost, 0, 0); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+		const sealK = sealing ? Math.min(1, (now - sealing) / SEAL) : 0;
+		const fade = sealing ? 1 - ease(Math.max(0, sealK - .35) / .65) : 1;
+
+		// finished edges: one orange path
+		ctx.lineWidth = 1.6; ctx.strokeStyle = colors.ink; ctx.globalAlpha = .75 * fade;
 		ctx.beginPath();
-		for (let l = 1; l < LEVELS; l++) nodes[l].forEach((n, i) => { for (const c of [nodes[l - 1][i * 2], nodes[l - 1][i * 2 + 1]]) { ctx.moveTo(c.x, c.y); ctx.bezierCurveTo(c.x, c.y + (n.y - c.y) * .6, n.x, n.y - (n.y - c.y) * .2, n.x, n.y); } });
-		ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = fade;
-		// edges
-		ctx.lineWidth = 1;
-		for (let l = 1; l < LEVELS; l++) nodes[l].forEach((n, i) => {
+		const sparks = [];
+		eachEdge((c, n, l) => {
 			if (!n.on) return;
-			const k = Math.min(1, (now - n.born) / 500);
-			for (const c of [nodes[l - 1][i * 2], nodes[l - 1][i * 2 + 1]]) {
-				ctx.strokeStyle = colors.line;
-				ctx.beginPath(); ctx.moveTo(c.x, c.y);
-				const mx = c.x + (n.x - c.x) * k, my = c.y + (n.y - c.y) * k;
-				ctx.bezierCurveTo(c.x, c.y + (my - c.y) * .6, mx, my - (my - c.y) * .2, mx, my);
-				ctx.stroke();
-			}
+			const k = Math.min(1, (now - n.born) / CLIMB);
+			ctx.moveTo(c.x, c.y);
+			const tip = curve(ctx, c, n, ease(k));
+			if (k < 1) sparks.push(tip);
 		});
-		// nodes
-		for (let l = 0; l < LEVELS; l++) nodes[l].forEach(n => {
-			if (l === 0) {
-				ctx.fillStyle = colors.line; ctx.beginPath(); ctx.arc(n.x, n.y, 2, 0, 7); ctx.fill();
-				if (!n.on) return;
-				n.a = Math.min(1, n.a + .06);
-				const col = n.kind === 2 ? colors.red : n.kind === 1 ? colors.amber : colors.ink;
-				ctx.fillStyle = col; ctx.globalAlpha = fade * n.a;
-				ctx.beginPath(); ctx.arc(n.x, n.y, n.kind ? 4.5 : 3, 0, 7); ctx.fill();
-				if (n.kind) { ctx.strokeStyle = col; ctx.globalAlpha = fade * .35; ctx.beginPath(); ctx.arc(n.x, n.y, 9 + Math.sin(now / 200) * 2, 0, 7); ctx.stroke(); }
-				ctx.globalAlpha = fade;
-				return;
-			}
+		ctx.stroke();
+		// sparks at the tips of edges still climbing
+		ctx.globalAlpha = fade; ctx.fillStyle = colors.ink;
+		ctx.beginPath(); sparks.forEach(([x, y]) => { ctx.moveTo(x + 2.2, y); ctx.arc(x, y, 2.2, 0, 7); }); ctx.fill();
+
+		// leaves
+		leaves.forEach(n => {
 			if (!n.on) return;
-			const k = Math.min(1, (now - n.born) / 500);
-			const r = l === LEVELS - 1 ? 7 : 2.6 + l * .5;
-			ctx.fillStyle = colors.panel; ctx.strokeStyle = l === LEVELS - 1 ? colors.ink : colors.dim;
-			ctx.lineWidth = l === LEVELS - 1 ? 2 : 1.2;
-			ctx.beginPath(); ctx.arc(n.x, n.y, r * (k < 1 ? 1 + (1 - k) * .8 : 1), 0, 7); ctx.fill(); ctx.stroke();
-			if (l === LEVELS - 1) {
-				ctx.lineWidth = 1;
-				ctx.globalAlpha = fade * (.25 + .2 * Math.sin(now / 300));
-				ctx.beginPath(); ctx.arc(n.x, n.y, 16 + 4 * Math.sin(now / 300), 0, 7); ctx.stroke();
-				ctx.globalAlpha = fade;
-				ctx.fillStyle = colors.dim; ctx.font = '11px ' + getComputedStyle(document.body).getPropertyValue('--mono');
-				ctx.textAlign = 'center'; ctx.fillText('root ' + root, n.x, n.y - 24);
-			}
+			ctx.fillStyle = colOf(n.kind); ctx.globalAlpha = fade;
+			ctx.beginPath(); ctx.arc(n.x, n.y, n.kind ? 5 : 3.6, 0, 7); ctx.fill();
+			if (n.kind) { ctx.strokeStyle = colOf(n.kind); ctx.globalAlpha = fade * .35; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(n.x, n.y, 9 + Math.sin(now / 200) * 2, 0, 7); ctx.stroke(); }
 		});
+		// inner nodes: pop in once their edges arrive
+		for (let l = 1; l < LEVELS; l++) nodes[l].forEach(n => {
+			if (!ready(n, l, now)) return;
+			const k = Math.min(1, (now - n.born - CLIMB) / 320);
+			const r = radius(l) * (1 + (1 - ease(k)) * .9);
+			ctx.globalAlpha = fade;
+			ctx.fillStyle = l === LEVELS - 1 ? colors.ink : colOf(n.kind);
+			ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, 7); ctx.fill();
+			if (k < 1) { ctx.strokeStyle = colors.ink; ctx.lineWidth = 1.2; ctx.globalAlpha = fade * (1 - k) * .7; ctx.beginPath(); ctx.arc(n.x, n.y, r + (10 + l * 3) * ease(k), 0, 7); ctx.stroke(); }
+		});
+
+		// expanding rings
+		ctx.lineWidth = 1.2; ctx.strokeStyle = colors.ink;
+		for (let i = bursts.length - 1; i >= 0; i--) {
+			const b = bursts[i], k = (now - b.t0) / b.dur;
+			if (k >= 1) { bursts.splice(i, 1); continue; }
+			ctx.globalAlpha = (1 - k) * .7;
+			ctx.beginPath(); ctx.arc(b.x, b.y, 4 + b.r * ease(k), 0, 7); ctx.stroke();
+		}
 		ctx.globalAlpha = 1;
+
 		// falling certificates
 		for (let i = parts.length - 1; i >= 0; i--) {
-			const p = parts[i], leaf = leaves[p.slot];
-			const k = Math.min(1, (now - p.t0) / p.dur), e = 1 - Math.pow(1 - k, 3);
+			const p = parts[i], leaf = p.leaf;
+			const k = Math.min(1, (now - p.t0) / p.dur), e = ease(k);
 			const x = p.x0 + (leaf.x - p.x0) * e, y = p.y0 + (leaf.y - p.y0) * e;
-			const col = p.kind === 2 ? colors.red : p.kind === 1 ? colors.amber : colors.ink;
-			const g = ctx.createLinearGradient(x, y - 26, x, y);
-			g.addColorStop(0, 'transparent'); g.addColorStop(1, col);
-			ctx.strokeStyle = g; ctx.lineWidth = p.kind ? 2 : 1.4;
-			ctx.beginPath(); ctx.moveTo(x - (leaf.x - p.x0) * .04, y - 26); ctx.lineTo(x, y); ctx.stroke();
+			const col = colOf(p.kind), tx = (leaf.x - p.x0) * .04;
+			ctx.strokeStyle = col; ctx.lineWidth = p.kind ? 2 : 1.4;
+			ctx.globalAlpha = .18; ctx.beginPath(); ctx.moveTo(x - tx, y - 26); ctx.lineTo(x - tx / 2, y - 13); ctx.stroke();
+			ctx.globalAlpha = .5; ctx.beginPath(); ctx.moveTo(x - tx / 2, y - 13); ctx.lineTo(x, y); ctx.stroke();
+			ctx.globalAlpha = 1;
 			ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, p.kind ? 3.2 : 2, 0, 7); ctx.fill();
 			if (k >= 1) {
 				parts.splice(i, 1);
-				leaf.on = 1; leaf.a = .2; settle();
+				leaf.on = 1; leaf.kind = p.kind; leaf.born = now;
 				if (p.label) labels.push({ x: leaf.x, y: leaf.y, text: p.label, kind: p.kind, t0: now });
-				if (filled >= LEAVES && !parts.length) { sealing = now; root = hex(); trees++; $('#k-trees').textContent = fmt(trees); }
 			}
 		}
+		drawChain(now);
 		// labels for lookalikes
 		for (let i = labels.length - 1; i >= 0; i--) {
 			const lb = labels[i], age = now - lb.t0;
 			if (age > 3800) { labels.splice(i, 1); continue; }
 			const a = Math.min(1, age / 250) * Math.min(1, (3800 - age) / 500);
-			ctx.font = '600 12px ' + getComputedStyle(document.body).getPropertyValue('--mono');
+			ctx.font = '600 12px ' + font;
 			const txt = lb.text.length > 30 ? lb.text.slice(0, 29) + '…' : lb.text;
 			const tw = ctx.measureText(txt).width + 18;
-			const x = Math.max(4, Math.min(W - tw - 4, lb.x - tw / 2)), y = lb.y + 18 + (1 - Math.min(1, age / 400)) * 8;
+			const x = Math.max(4, Math.min(W - tw - 4, lb.x - tw / 2)), y = Math.min(H - 30, lb.y + 14) + (1 - Math.min(1, age / 400)) * 8;
 			ctx.globalAlpha = a;
-			ctx.fillStyle = colors.panel; ctx.strokeStyle = lb.kind === 2 ? colors.red : colors.amber; ctx.lineWidth = 1.2;
+			ctx.fillStyle = colors.panel; ctx.strokeStyle = colOf(lb.kind); ctx.lineWidth = 1.2;
 			ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, tw, 24, 6) : ctx.rect(x, y, tw, 24); ctx.fill(); ctx.stroke();
-			ctx.fillStyle = lb.kind === 2 ? colors.red : colors.amber; ctx.textAlign = 'left'; ctx.fillText(txt, x + 9, y + 16);
+			ctx.fillStyle = colOf(lb.kind); ctx.textAlign = 'left'; ctx.fillText(txt, x + 9, y + 16);
 			ctx.globalAlpha = 1;
 		}
 		if (sealing && sealK >= 1) {
 			sealing = 0; filled = 0;
-			nodes.forEach(r => r.forEach(n => { n.on = 0; n.a = 0; n.kind = 0; }));
+			nodes.forEach(r => r.forEach(n => { n.on = 0; n.kind = 0; }));
 		}
+	}
+	// sealed roots, newest on the right, each pointing at the one before: the ledger itself
+	function drawChain(now) {
+		ctx.font = '11px ' + font; ctx.textAlign = 'left';
+		const gap = 16, h = 24;
+		let x = W - pad;
+		// the slot being filled now
+		const next = `root #${trees + 1}  ${filled}/${LEAVES}`;
+		const nw = ctx.measureText(next).width + 20;
+		x -= nw;
+		ctx.globalAlpha = 1; ctx.setLineDash([3, 3]); ctx.strokeStyle = colors.line; ctx.lineWidth = 1;
+		ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, chainY - h / 2, nw, h, 7) : ctx.rect(x, chainY - h / 2, nw, h); ctx.stroke(); ctx.setLineDash([]);
+		ctx.fillStyle = colors.dim; ctx.fillText(next, x + 10, chainY + 4);
+		// progress underline
+		ctx.fillStyle = colors.ink; ctx.globalAlpha = .8; ctx.fillRect(x + 8, chainY + h / 2 - 3, (nw - 16) * filled / LEAVES, 1.5);
+		for (const c of chain) {
+			const age = now - c.t0;
+			const txt = `#${c.n} ${c.hash}`;
+			const w = ctx.measureText(txt).width + 20;
+			const slide = ease(Math.min(1, age / 600));
+			const nx = x - gap - w;
+			const px = x + (nx - x) * slide;  // slides in from the "next" slot
+			if (px + w < 0) break;
+			ctx.globalAlpha = Math.min(1, Math.max(0, (px + w) / (pad + w)));
+			// link to the newer block
+			ctx.strokeStyle = colors.ink; ctx.lineWidth = 1; ctx.globalAlpha *= .6;
+			ctx.beginPath(); ctx.moveTo(px + w, chainY); ctx.lineTo(x, chainY); ctx.stroke();
+			ctx.globalAlpha /= .6;
+			const fresh = c === chain[0] && age < 1400;
+			ctx.fillStyle = fresh ? colors.ink : colors.panel2; ctx.strokeStyle = fresh ? colors.ink : colors.line;
+			ctx.beginPath(); ctx.roundRect ? ctx.roundRect(px, chainY - h / 2, w, h, 7) : ctx.rect(px, chainY - h / 2, w, h); ctx.fill(); ctx.stroke();
+			ctx.fillStyle = fresh ? colors.panel : colors.muted; ctx.fillText(txt, px + 10, chainY + 4);
+			// the root climbing up into its block
+			if (age < RISE) {
+				const k = ease(age / RISE), tx = px + w / 2, ty = chainY;
+				ctx.globalAlpha = 1 - k * .5; ctx.fillStyle = colors.ink;
+				ctx.beginPath(); ctx.arc(c.x0 + (tx - c.x0) * k, c.y0 + (ty - c.y0) * k, 6 - k * 3, 0, 7); ctx.fill();
+			}
+			x = px;
+		}
+		ctx.globalAlpha = 1;
 	}
 	function drawStatic() {
 		if (!W) return;
 		ctx.clearRect(0, 0, W, H);
-		nodes.forEach((r, l) => r.forEach((n, i) => {
-			if (l) { ctx.strokeStyle = colors.line; for (const c of [nodes[l - 1][i * 2], nodes[l - 1][i * 2 + 1]]) { ctx.beginPath(); ctx.moveTo(c.x, c.y); ctx.lineTo(n.x, n.y); ctx.stroke(); } }
-			ctx.fillStyle = l ? colors.dim : (i === 13 ? colors.red : colors.ink); ctx.beginPath(); ctx.arc(n.x, n.y, l === LEVELS - 1 ? 6 : 3, 0, 7); ctx.fill();
-		}));
+		ctx.strokeStyle = colors.ink; ctx.globalAlpha = .5; ctx.lineWidth = 1.2;
+		ctx.beginPath(); eachEdge((c, n) => { ctx.moveTo(c.x, c.y); curve(ctx, c, n, 1); }); ctx.stroke();
+		ctx.globalAlpha = 1;
+		nodes.forEach((r, l) => r.forEach((n, i) => { ctx.fillStyle = !l && i === 6 ? colors.red : colors.ink; ctx.beginPath(); ctx.arc(n.x, n.y, l ? radius(l) : 3, 0, 7); ctx.fill(); }));
 	}
 	function setRunning(on) {
 		if (reduce) return;
 		if (on && !running) { running = true; requestAnimationFrame(frame); }
 		if (!on) running = false;
 	}
+	function reset() {
+		queue.length = 0; parts.length = 0; labels.length = 0; bursts.length = 0; filled = 0; sealing = 0;
+		nodes.forEach(r => r.forEach(n => { n.on = 0; n.kind = 0; }));
+	}
 	new ResizeObserver(layout).observe(cv);
 	new IntersectionObserver(([e]) => { visible = e.isIntersecting; setRunning(visible && !document.hidden); }).observe(cv);
 	document.addEventListener('visibilitychange', () => setRunning(visible && !document.hidden));
-	recolor(); root = hex();
-	return { push, recolor };
+	recolor();
+	return { push, recolor, reset };
 })();
 
 /* ---------- live feed ---------- */
 const rowsEl = $('#rows'), ROW = 44, MAX_ROWS = 14;
+let paperOn = false;
+new IntersectionObserver(([e]) => { paperOn = e.isIntersecting; }).observe($('.paper'));
 const pending = [];
 let es = null, lastEvent = 0, watchToken = null, watchUntil = 0;
 
@@ -882,10 +982,11 @@ function rowHTML(c, hit) {
 function addRow(c, hit) {
 	$('#rows-empty')?.remove();
 	const el = document.createElement('div');
-	el.className = 'row enter' + (hit ? ' hit' + (hit.sev === 'high' ? '' : ' med') : '');
+	const anim = !reduce && paperOn && !document.hidden;
+	el.className = 'row' + (anim ? ' enter' : '') + (hit ? ' hit' + (hit.sev === 'high' ? '' : ' med') : '');
 	el.innerHTML = rowHTML(c, hit);
 	rowsEl.prepend(el);
-	if (!reduce) rowsEl.animate([{ transform: `translateY(-${ROW}px)` }, { transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.22,1,.36,1)' });
+	if (anim) rowsEl.animate([{ transform: `translateY(-${ROW}px)` }, { transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.22,1,.36,1)' });
 	while (rowsEl.children.length > MAX_ROWS) rowsEl.lastElementChild.remove();
 }
 // pace rows so the eye can follow, faster when the queue builds up
@@ -897,8 +998,16 @@ function addRow(c, hit) {
 
 function onCert(c) {
 	lastEvent = Date.now();
+	// in a background tab nothing is drawn: keep only what fits on screen when the visitor returns
+	if (document.hidden) { pending.push({ c }); if (pending.length > MAX_ROWS) pending.shift(); return; }
 	if (pending.length < 30) pending.push({ c });
 	loom.push({ d: c.d, kind: 0 });
+}
+function clearFeed() {
+	pending.length = 0;
+	rowsEl.replaceChildren();
+	if (!$('#rows-empty')) rowsEl.insertAdjacentHTML('afterend', '<div class="empty" id="rows-empty">Opening the logs…</div>');
+	loom.reset();
 }
 function onHit(h, mine) {
 	lastEvent = Date.now();
@@ -1060,7 +1169,7 @@ async function runLab() {
 	if (seq !== labSeq) return;
 	renderTiles(j);
 	const sc = j.score, arc = $('#arc'), C = 540.35;
-	const col = j.severity === 'high' ? 'var(--red)' : j.severity === 'medium' ? 'var(--amber)' : j.severity === 'low' ? 'var(--muted)' : 'var(--ink)';
+	const col = j.severity === 'high' ? 'var(--red)' : j.severity === 'medium' ? 'var(--amber)' : j.severity === 'low' ? 'var(--muted)' : 'var(--text)';
 	arc.style.stroke = col;
 	arc.style.strokeDashoffset = C * (1 - sc / 100);
 	roll($('#dial-n'), sc, String, 1100);
@@ -1116,7 +1225,21 @@ function renderTiles(j) {
 /* ---------- go ---------- */
 loadInitial();
 connect();
-runLab();
+// the lab calls the API: score the sample only when the visitor gets near it
+new IntersectionObserver(([e], o) => { if (e.isIntersecting) { o.disconnect(); runLab(); } }, { rootMargin: '400px 0px' }).observe($('#lab'));
+// pause infinite animations while off screen (SVG ones are not composited and cost a layout every frame)
+const idleIO = new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle('idle', !e.isIntersecting)));
+document.querySelectorAll('[data-idle]').forEach(el => { el.classList.add('idle'); idleIO.observe(el); });
+// coming back from the back/forward cache restores a frozen page: start fresh
+addEventListener('pageshow', e => { if (!e.persisted) return; clearFeed(); watchToken = null; $('#mywatch').classList.remove('on'); loadInitial(); connect(); });
+addEventListener('pagehide', () => es && es.close());
+// after a long time away, the queued rows are history: drop them instead of replaying them
+let hiddenAt = 0;
+document.addEventListener('visibilitychange', () => {
+	if (document.hidden) { hiddenAt = Date.now(); return; }
+	if (hiddenAt && Date.now() - hiddenAt > 60000) { clearFeed(); loadInitial(); }
+	if (!es || es.readyState === 2) connect();
+});
 // if nothing arrives, say so instead of pretending
 setInterval(() => { if (lastEvent && Date.now() - lastEvent > 20000) setLive(false, 'waiting for logs'); }, 5000);
 })();
