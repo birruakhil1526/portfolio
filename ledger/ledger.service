@@ -1,0 +1,27 @@
+[Unit]
+Description=Ledger, Certificate Transparency lookalike monitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart=/usr/bin/python3 /opt/ledger/ledger.py
+Environment=LEDGER_DB=/var/lib/ledger/ledger.db PYTHONUNBUFFERED=1
+DynamicUser=yes
+StateDirectory=ledger
+Restart=always
+RestartSec=5
+# a small VM shares this with nginx: keep Ledger well inside its share
+MemoryMax=280M
+CPUQuota=70%
+Nice=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

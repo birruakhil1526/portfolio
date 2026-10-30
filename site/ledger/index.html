@@ -1,0 +1,1125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledger · Lookalike domains, caught at the padlock</title>
+<meta name="description" content="Every HTTPS certificate is written to public Certificate Transparency logs within seconds. Ledger reads those logs live and flags lookalikes of your brand before the phishing starts.">
+<meta property="og:title" content="Ledger · Lookalike domains, caught at the padlock">
+<meta property="og:description" content="Every padlock is announced. Ledger reads every announcement and flags lookalikes of your brand.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#07090c">
+<script>try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2307090c'/><path d='M16 20h32M16 32h32M16 44h20' stroke='%237cf0c5' stroke-width='5' stroke-linecap='round'/><circle cx='46' cy='44' r='6' fill='%23ff5a3c'/></svg>">
+<link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: 'Geist'; font-style: normal; font-weight: 400 800; font-display: swap; src: url(/fonts/geist.woff2) format('woff2'); }
+@font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/geist-mono.woff2) format('woff2'); }
+
+:root {
+	--bg: #07090c;
+	--bg-2: #0b0e13;
+	--panel: #0e1218;
+	--panel-2: #131922;
+	--line: #1a212b;
+	--line-2: #242d39;
+	--text: #e9eef4;
+	--muted: #95a1b0;
+	--dim: #5d6878;
+	--ink: #7cf0c5;
+	--ink-soft: rgba(124, 240, 197, .12);
+	--red: #ff5a3c;
+	--red-soft: rgba(255, 90, 60, .13);
+	--amber: #ffb547;
+	--amber-soft: rgba(255, 181, 71, .13);
+	--blue: #8fb3ff;
+	--shadow: 0 30px 80px -30px rgba(0, 0, 0, .7);
+	--sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+	--serif: ui-serif, 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+	--ease: cubic-bezier(.22, 1, .36, 1);
+	color-scheme: dark;
+}
+:root[data-theme="light"] {
+	--bg: #f5f2ea;
+	--bg-2: #efebe1;
+	--panel: #fffdf8;
+	--panel-2: #f8f4ec;
+	--line: #e3dccd;
+	--line-2: #d6cdba;
+	--text: #17140f;
+	--muted: #625b4f;
+	--dim: #978e7e;
+	--ink: #0b8a5f;
+	--ink-soft: rgba(11, 138, 95, .1);
+	--red: #d33a1f;
+	--red-soft: rgba(211, 58, 31, .09);
+	--amber: #a8680f;
+	--amber-soft: rgba(168, 104, 15, .1);
+	--blue: #2f5fc9;
+	--shadow: 0 30px 70px -35px rgba(60, 45, 20, .35);
+	color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+	margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans);
+	font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden;
+}
+a { color: inherit; }
+button, input { font: inherit; color: inherit; }
+::selection { background: var(--ink); color: var(--bg); }
+.wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
+.mono { font-family: var(--mono); }
+.serif { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 6px; }
+
+/* ---------- nav ---------- */
+.nav {
+	position: fixed; inset: 0 0 auto; z-index: 50; transition: background .3s, border-color .3s, backdrop-filter .3s;
+	border-bottom: 1px solid transparent;
+}
+.nav.solid { background: color-mix(in srgb, var(--bg) 78%, transparent); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4); border-color: var(--line); }
+.nav .wrap { display: flex; align-items: center; gap: 22px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 650; letter-spacing: -.02em; font-size: 18px; }
+.brand svg { width: 26px; height: 26px; }
+.nav-links { display: flex; gap: 22px; margin-left: 18px; font-size: 14px; color: var(--muted); }
+.nav-links a { text-decoration: none; transition: color .2s; }
+.nav-links a:hover { color: var(--text); }
+.nav-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.pill {
+	display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; border-radius: 99px;
+	border: 1px solid var(--line-2); background: var(--panel); font-size: 12.5px; color: var(--muted); white-space: nowrap;
+}
+.pill b { color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); box-shadow: 0 0 0 0 var(--ink); animation: ping 2s infinite; }
+.dot.off { background: var(--dim); animation: none; }
+@keyframes ping { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ink) 60%, transparent); } 80%, 100% { box-shadow: 0 0 0 8px transparent; } }
+.icon-btn {
+	width: 34px; height: 34px; display: grid; place-items: center; border-radius: 10px; border: 1px solid var(--line-2);
+	background: var(--panel); cursor: pointer; color: var(--muted); transition: color .2s, border-color .2s;
+}
+.icon-btn:hover { color: var(--text); border-color: var(--dim); }
+.icon-btn svg { width: 16px; height: 16px; }
+:root[data-theme="light"] .moon, :root:not([data-theme="light"]) .sun { display: none; }
+
+/* ---------- buttons ---------- */
+.btn {
+	--b: var(--text); display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 46px; padding: 0 20px;
+	border-radius: 12px; border: 1px solid var(--line-2); background: var(--panel); text-decoration: none; cursor: pointer;
+	font-weight: 550; font-size: 15px; transition: transform .25s var(--ease), border-color .2s, background .2s;
+}
+.btn:hover { transform: translateY(-1px); border-color: var(--dim); }
+.btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn.primary:hover { background: color-mix(in srgb, var(--text) 88%, var(--ink)); }
+.btn svg { width: 16px; height: 16px; transition: transform .3s var(--ease); }
+.btn:hover svg { transform: translateX(3px); }
+
+/* ---------- hero ---------- */
+.hero { position: relative; min-height: clamp(640px, 100svh, 980px); display: flex; align-items: center; padding: 110px 0 70px; overflow: hidden; isolation: isolate; }
+.hero::before {
+	content: ""; position: absolute; inset: 0; z-index: -2;
+	background:
+		radial-gradient(900px 500px at 78% 30%, color-mix(in srgb, var(--ink) 9%, transparent), transparent 70%),
+		radial-gradient(700px 400px at 10% 90%, color-mix(in srgb, var(--blue) 7%, transparent), transparent 70%);
+}
+.hero::after {
+	content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5;
+	background-image: linear-gradient(var(--line) 1px, transparent 1px);
+	background-size: 100% 44px;
+	mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 75%);
+	-webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 30%, transparent 75%);
+}
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.eyebrow {
+	display: inline-flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 12px; letter-spacing: .08em;
+	text-transform: uppercase; color: var(--muted);
+}
+.eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--ink); }
+h1 {
+	font-size: clamp(2.5rem, 5.3vw, 4.7rem); line-height: .98; letter-spacing: -.045em; font-weight: 640; margin: 22px 0 0;
+}
+h1 .serif { display: block; color: var(--ink); font-size: 1.04em; letter-spacing: -.03em; margin-top: .06em; }
+.lede { font-size: clamp(1.02rem, 1.4vw, 1.18rem); color: var(--muted); max-width: 33em; margin: 26px 0 0; }
+.lede b { color: var(--text); font-weight: 550; }
+
+.watch {
+	margin-top: 34px; display: flex; align-items: center; gap: 6px; padding: 6px; max-width: 520px;
+	border: 1px solid var(--line-2); border-radius: 16px; background: color-mix(in srgb, var(--panel) 85%, transparent);
+	box-shadow: var(--shadow); transition: border-color .25s, box-shadow .25s;
+}
+.watch:focus-within { border-color: color-mix(in srgb, var(--ink) 55%, var(--line-2)); box-shadow: 0 0 0 4px var(--ink-soft), var(--shadow); }
+.watch .pre { font-family: var(--mono); color: var(--dim); font-size: 14px; padding-left: 12px; }
+.watch input { flex: 1; min-width: 0; border: 0; background: none; outline: none; height: 44px; font-family: var(--mono); font-size: 15px; }
+.watch input::placeholder { color: var(--dim); }
+.watch .btn { height: 44px; border-radius: 11px; flex: none; }
+.hint { font-size: 13px; color: var(--dim); margin-top: 12px; }
+.hint button { background: none; border: 0; padding: 0; color: var(--muted); text-decoration: underline dotted; text-underline-offset: 3px; cursor: pointer; font-family: var(--mono); font-size: 12.5px; }
+.hint button:hover { color: var(--ink); }
+.err { color: var(--red); font-size: 13.5px; margin-top: 10px; min-height: 1em; }
+
+.kpis { display: flex; gap: 34px; margin-top: 40px; flex-wrap: wrap; }
+.kpi .n { font-family: var(--mono); font-size: 26px; font-weight: 500; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.kpi .l { font-size: 12.5px; color: var(--dim); margin-top: 2px; }
+
+.loom-box { position: relative; aspect-ratio: 1 / .92; width: 100%; }
+#loom { position: absolute; inset: 0; width: 100%; height: 100%; }
+.loom-cap {
+	position: absolute; left: 0; right: 0; bottom: -6px; display: flex; justify-content: space-between; gap: 12px;
+	font-family: var(--mono); font-size: 11.5px; color: var(--dim);
+}
+.loom-cap b { color: var(--muted); font-weight: 500; }
+
+.scroll-cue { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); width: 22px; height: 34px; border: 1.5px solid var(--line-2); border-radius: 12px; }
+.scroll-cue::after { content: ""; position: absolute; left: 50%; top: 7px; width: 3px; height: 7px; margin-left: -1.5px; border-radius: 2px; background: var(--muted); animation: cue 1.8s var(--ease) infinite; }
+@keyframes cue { 0% { opacity: 0; transform: translateY(-3px); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateY(10px); } }
+
+/* ---------- sections ---------- */
+section { position: relative; }
+.sec { padding: clamp(80px, 12vw, 150px) 0; }
+.sec-head { max-width: 760px; }
+h2 { font-size: clamp(2rem, 4.3vw, 3.4rem); line-height: 1.04; letter-spacing: -.035em; font-weight: 620; margin: 18px 0 0; }
+h2 .serif { color: var(--ink); }
+.sec-head p { color: var(--muted); font-size: 1.08rem; margin: 20px 0 0; max-width: 40em; }
+
+/* reveal on scroll */
+.rv { opacity: 0; transform: translateY(26px); transition: opacity .9s var(--ease), transform .9s var(--ease); transition-delay: var(--d, 0s); }
+.rv.in { opacity: 1; transform: none; }
+
+/* ---------- live ledger ---------- */
+.live-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 22px; margin-top: 54px; align-items: start; }
+.card { border: 1px solid var(--line); background: var(--panel); border-radius: 20px; box-shadow: var(--shadow); overflow: hidden; }
+.card-head { display: flex; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+.card-head h3 { margin: 0; font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -.01em; }
+.card-head .right { margin-left: auto; display: flex; gap: 10px; align-items: center; font-family: var(--mono); font-size: 12px; }
+
+.paper { position: relative; height: 532px; overflow: hidden;
+	background-image: linear-gradient(to bottom, transparent 43px, var(--line) 43px, var(--line) 44px);
+	background-size: 100% 44px; background-position: 0 0;
+}
+.paper::before { content: ""; position: absolute; top: 0; bottom: 0; left: 82px; width: 1px; background: color-mix(in srgb, var(--red) 45%, transparent); z-index: 1; }
+.paper::after { content: ""; position: absolute; inset: auto 0 0; height: 90px; background: linear-gradient(transparent, var(--panel)); z-index: 2; pointer-events: none; }
+.cols { display: grid; grid-template-columns: 82px minmax(0, 1fr) 150px; height: 40px; align-items: center; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); border-bottom: 1px solid var(--line-2); }
+.cols span:first-child { padding-left: 18px; }
+#rows { will-change: transform; }
+.row {
+	display: grid; grid-template-columns: 82px minmax(0, 1fr) 150px; height: 44px; align-items: center;
+	font-size: 13.5px; position: relative;
+}
+.row.enter { animation: rowIn .7s var(--ease) both; }
+@keyframes rowIn { from { opacity: 0; filter: blur(4px); } to { opacity: 1; filter: none; } }
+.row .t { padding-left: 18px; font-family: var(--mono); font-size: 12px; color: var(--dim); font-variant-numeric: tabular-nums; }
+.row .d { padding: 0 16px; font-family: var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row .d .more { color: var(--dim); font-size: 11.5px; margin-left: 6px; }
+.row .i { color: var(--muted); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 16px; }
+.row.hit { background: linear-gradient(90deg, var(--red-soft), transparent 80%); }
+.row.hit .d { color: var(--red); }
+.row.hit.med { background: linear-gradient(90deg, var(--amber-soft), transparent 80%); }
+.row.hit.med .d { color: var(--amber); }
+.stamp {
+	position: absolute; right: 14px; top: 50%; translate: 0 -50%; font-family: var(--mono); font-size: 10.5px; font-weight: 600; letter-spacing: .08em;
+	color: var(--red); border: 1.5px solid currentColor; border-radius: 6px; padding: 3px 7px; background: var(--panel); rotate: -4deg;
+	animation: stamp .55s cubic-bezier(.2, 1.6, .4, 1) both; z-index: 3;
+}
+.row.med .stamp { color: var(--amber); }
+@keyframes stamp { from { opacity: 0; scale: 2.2; rotate: -14deg; } to { opacity: 1; scale: 1; rotate: -4deg; } }
+.paper .empty { position: absolute; inset: 40px 0 0; display: grid; place-items: center; color: var(--dim); font-size: 14px; z-index: 3; }
+
+.side { display: grid; gap: 22px; }
+.mywatch { display: none; border-color: color-mix(in srgb, var(--ink) 40%, var(--line)); }
+.mywatch.on { display: block; animation: rise .7s var(--ease) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+.mywatch .body { padding: 18px 20px 20px; }
+.mywatch .big { font-family: var(--mono); font-size: 24px; letter-spacing: -.02em; }
+.mywatch .meta { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.mywatch .bar { height: 3px; background: var(--line); border-radius: 3px; margin-top: 14px; overflow: hidden; }
+.mywatch .bar i { display: block; height: 100%; background: var(--ink); transform-origin: left; transition: transform 1s linear; }
+.list { list-style: none; margin: 0; padding: 0; }
+.list li { padding: 12px 20px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: center; }
+.list li.new { animation: flash 1.6s var(--ease); }
+@keyframes flash { 0% { background: var(--red-soft); } 100% { background: transparent; } }
+.list .d { font-family: var(--mono); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.list .m { font-size: 12px; color: var(--dim); display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1px; }
+.list .m a { color: var(--muted); text-decoration: none; }
+.list .m a:hover { color: var(--ink); }
+.tag { font-family: var(--mono); font-size: 10.5px; padding: 1px 6px; border-radius: 5px; background: var(--panel-2); border: 1px solid var(--line-2); color: var(--muted); }
+.ring { width: 34px; height: 34px; position: relative; }
+.ring svg { width: 100%; height: 100%; rotate: -90deg; }
+.ring span { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--mono); font-size: 11px; font-weight: 600; }
+.list .none { display: block; color: var(--dim); font-size: 13.5px; padding: 18px 20px; }
+.scroll-list { max-height: 332px; overflow-y: auto; scrollbar-width: thin; }
+
+.issuers { padding: 14px 20px 18px; display: grid; gap: 10px; }
+.iss { display: grid; grid-template-columns: 120px minmax(0, 1fr) 44px; gap: 12px; align-items: center; font-size: 12.5px; }
+.iss .nm { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.iss .tr { height: 6px; border-radius: 6px; background: var(--line); overflow: hidden; }
+.iss .tr i { display: block; height: 100%; border-radius: 6px; background: var(--ink); transform-origin: left; transition: transform 1.2s var(--ease); }
+.iss:nth-child(2) .tr i { background: var(--blue); } .iss:nth-child(3) .tr i { background: var(--amber); }
+.iss:nth-child(n+4) .tr i { background: var(--dim); }
+.iss .pc { font-family: var(--mono); color: var(--dim); text-align: right; font-size: 11.5px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 20px 18px; }
+.chip { font-family: var(--mono); font-size: 12px; padding: 4px 10px; border: 1px solid var(--line-2); border-radius: 99px; color: var(--muted); }
+
+/* ---------- timeline (problem) ---------- */
+.race { margin-top: 60px; display: grid; gap: 18px; }
+.lane { border: 1px solid var(--line); background: var(--panel); border-radius: 20px; padding: 26px 26px 30px; position: relative; overflow: hidden; }
+.lane h4 { margin: 0; font-size: 14px; font-weight: 600; display: flex; gap: 10px; align-items: center; }
+.lane h4 small { font-weight: 400; color: var(--dim); font-size: 13px; }
+.track { position: relative; height: 2px; background: var(--line-2); margin: 52px 6px 46px; }
+.track .fill { position: absolute; inset: 0; transform-origin: left; transform: scaleX(0); background: var(--dim); }
+.lane.ours .track .fill { background: var(--ink); }
+.ev { position: absolute; top: 50%; translate: -50% -50%; display: grid; justify-items: center; }
+.ev i { width: 12px; height: 12px; border-radius: 50%; background: var(--panel); border: 2px solid var(--dim); transition: background .3s, border-color .3s, scale .3s; }
+.ev span { position: absolute; top: 18px; font-size: 12px; color: var(--dim); white-space: nowrap; text-align: center; line-height: 1.35; }
+.ev span.up { top: auto; bottom: 18px; }
+.ev.on i { background: var(--dim); }
+.ev.bad.on i { background: var(--red); border-color: var(--red); scale: 1.25; }
+.ev.good.on i { background: var(--ink); border-color: var(--ink); scale: 1.35; box-shadow: 0 0 0 6px var(--ink-soft); }
+.ev.good span, .ev.bad span { color: var(--text); font-weight: 550; }
+.race.play .fill { animation: fill 3.2s var(--ease) forwards; }
+.race.play .lane.ours .fill { animation-duration: 3.2s; }
+@keyframes fill { to { transform: scaleX(1); } }
+
+/* ---------- pipeline ---------- */
+.pipe { margin-top: 64px; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; counter-reset: s; position: relative; }
+.pipe::before { content: ""; position: absolute; left: 4%; right: 4%; top: 46px; height: 1px; background: linear-gradient(90deg, transparent, var(--line-2) 10%, var(--line-2) 90%, transparent); }
+.step { position: relative; padding: 0 6px; }
+.step .ic {
+	width: 92px; height: 92px; border-radius: 26px; display: grid; place-items: center; background: var(--panel); border: 1px solid var(--line-2);
+	position: relative; z-index: 1; transition: border-color .4s, transform .5s var(--ease);
+}
+.step .ic svg { width: 44px; height: 44px; overflow: visible; }
+.step:hover .ic { border-color: var(--ink); transform: translateY(-4px) rotate(-2deg); }
+.step h5 { margin: 22px 0 6px; font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.step h5::before { counter-increment: s; content: "0" counter(s); font-family: var(--mono); font-size: 11.5px; color: var(--ink); margin-right: 9px; font-weight: 500; }
+.step p { margin: 0; font-size: 14px; color: var(--muted); line-height: 1.55; }
+.draw path, .draw rect, .draw circle, .draw line, .draw polyline { stroke-dasharray: 1; stroke-dashoffset: 1; }
+.in .draw path, .in .draw rect, .in .draw circle, .in .draw line, .in .draw polyline { animation: draw 1.4s var(--ease) forwards; animation-delay: calc(var(--d, 0s) + .2s); }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* ---------- lab ---------- */
+.lab { margin-top: 54px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 22px; }
+.lab-in { padding: 22px; display: grid; gap: 14px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 12px; color: var(--dim); font-family: var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+.field input { width: 100%; min-width: 0; height: 50px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--bg-2); padding: 0 16px; font-family: var(--mono); font-size: 16px; outline: none; transition: border-color .2s, box-shadow .2s; }
+.field input:focus { border-color: color-mix(in srgb, var(--ink) 55%, var(--line-2)); box-shadow: 0 0 0 4px var(--ink-soft); }
+.lab-row { display: grid; grid-template-columns: minmax(0, 1fr) 200px; gap: 12px; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.presets button { font-family: var(--mono); font-size: 12px; padding: 5px 10px; border-radius: 8px; border: 1px solid var(--line-2); background: var(--panel-2); cursor: pointer; color: var(--muted); transition: color .2s, border-color .2s; }
+.presets button:hover { color: var(--text); border-color: var(--dim); }
+.tiles { display: flex; flex-wrap: wrap; gap: 4px; min-height: 76px; padding: 18px 22px 8px; border-top: 1px solid var(--line); }
+.tile { width: 30px; height: 40px; position: relative; }
+.tile b { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--mono); font-weight: 500; font-size: 17px; border-radius: 7px; background: var(--panel-2); border: 1px solid var(--line-2); }
+.tile.swapped b { background: var(--red-soft); color: var(--red); border-color: color-mix(in srgb, var(--red) 50%, transparent); }
+.tile.sub b:first-child { color: var(--dim); }
+.tile.suf b:first-child { color: var(--muted); background: transparent; border-style: dashed; }
+.tile.dot-t { width: 12px; } .tile.dot-t b { border: 0; background: none; color: var(--dim); }
+.tile.hl b:first-child { border-color: color-mix(in srgb, var(--amber) 60%, transparent); color: var(--amber); background: var(--amber-soft); }
+.tile.pop { animation: pop .5s var(--ease) both; }
+@keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.9); } }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; padding: 6px 22px 18px; font-size: 12px; color: var(--dim); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.reasons { list-style: none; margin: 0; padding: 0 22px 22px; display: grid; gap: 8px; }
+.reasons li { display: grid; grid-template-columns: 96px minmax(0, 1fr) 36px; gap: 12px; align-items: center; font-size: 13.5px; padding: 10px 12px; border-radius: 10px; background: var(--panel-2); border: 1px solid var(--line); animation: rise .5s var(--ease) both; }
+.reasons .k { font-family: var(--mono); font-size: 11.5px; color: var(--amber); text-transform: uppercase; letter-spacing: .05em; }
+.reasons .p { font-family: var(--mono); font-size: 12px; text-align: right; color: var(--muted); }
+.reasons .clear { grid-template-columns: 1fr; color: var(--ink); background: var(--ink-soft); border-color: transparent; }
+.dial-card { padding: 26px 22px; display: grid; justify-items: center; align-content: start; gap: 6px; text-align: center; }
+.dial { width: 200px; height: 200px; position: relative; }
+.dial svg { width: 100%; height: 100%; rotate: -90deg; }
+.dial .arc { transition: stroke-dashoffset 1.2s var(--ease), stroke .4s; }
+.dial .v { position: absolute; inset: 0; display: grid; place-content: center; }
+.dial .v b { font-family: var(--mono); font-size: 54px; font-weight: 500; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.dial .v small { font-size: 12px; color: var(--dim); margin-top: 4px; }
+.verdict { font-size: 18px; font-weight: 600; letter-spacing: -.01em; margin-top: 6px; }
+.verdict-sub { font-size: 13px; color: var(--muted); max-width: 26ch; }
+
+/* ---------- value ---------- */
+.values { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 54px; }
+.value { padding: 28px; border-radius: 20px; border: 1px solid var(--line); background: var(--panel); position: relative; overflow: hidden; transition: transform .5s var(--ease), border-color .3s; }
+.value:hover { transform: translateY(-4px); border-color: var(--line-2); }
+.value::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 0%), color-mix(in srgb, var(--ink) 50%, transparent), transparent 40%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity .3s; pointer-events: none; }
+.value:hover::after { opacity: 1; }
+.value .n { font-family: var(--mono); font-size: 12px; color: var(--ink); }
+.value h4 { font-size: 21px; letter-spacing: -.02em; margin: 6px 0 10px; font-weight: 600; }
+.value .art + .n { margin-top: 22px; }
+.value p { margin: 0; color: var(--muted); font-size: 15px; }
+.value .art { height: 120px; margin: -6px -8px 0; border-bottom: 1px solid var(--line); display: grid; place-items: center; }
+.value .art svg { width: 100%; height: 100%; }
+
+/* ---------- cta ---------- */
+.cta { margin: 0 auto; padding: clamp(50px, 8vw, 90px); border-radius: 28px; border: 1px solid var(--line-2); background: radial-gradient(600px 300px at 50% 0%, var(--ink-soft), transparent 70%), var(--panel); text-align: center; position: relative; overflow: hidden; }
+.cta h2 { margin-inline: auto; max-width: 16em; }
+.cta p { color: var(--muted); max-width: 34em; margin: 18px auto 30px; }
+.cta .row-btn { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.who { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+
+footer { padding: 60px 0 50px; color: var(--dim); font-size: 13px; }
+footer .wrap { display: flex; gap: 20px; justify-content: space-between; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 28px; }
+footer a { color: var(--muted); }
+
+/* ---------- toast ---------- */
+.toast { position: fixed; z-index: 60; left: 50%; bottom: 22px; translate: -50% 0; display: flex; gap: 12px; align-items: center; max-width: calc(100% - 32px); padding: 12px 16px; border-radius: 14px; border: 1px solid color-mix(in srgb, var(--red) 50%, var(--line-2)); background: var(--panel); box-shadow: var(--shadow); font-size: 13.5px; transition: transform .5s var(--ease), opacity .5s; transform: translateY(130%); opacity: 0; }
+.toast.on { transform: none; opacity: 1; }
+.toast .d { font-family: var(--mono); color: var(--red); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- responsive ---------- */
+@media (max-width: 1000px) {
+	.hero .wrap { grid-template-columns: 1fr; }
+	.loom-box { max-width: 560px; margin: 10px auto 0; width: 100%; }
+	.live-grid, .lab { grid-template-columns: 1fr; }
+	.pipe { grid-template-columns: 1fr 1fr; row-gap: 40px; }
+	.pipe::before { display: none; }
+	.values { grid-template-columns: 1fr; }
+	.nav-links { display: none; }
+}
+@media (max-width: 620px) {
+	.nav .pill .lbl { display: none; }
+	.kpis { gap: 22px; }
+	.kpi .n { font-size: 21px; }
+	.cols, .row { grid-template-columns: 64px minmax(0, 1fr); }
+	.paper::before { left: 64px; }
+	.cols span:last-child, .row .i { display: none; }
+	.row .t { padding-left: 12px; font-size: 11px; }
+	.row .d { padding-right: 90px; font-size: 12.5px; }
+	.lab-row { grid-template-columns: 1fr; }
+	.pipe { grid-template-columns: 1fr; }
+	.iss { grid-template-columns: 96px minmax(0, 1fr) 40px; }
+	.ev span { font-size: 10.5px; }
+	.track { margin-inline: 14px; }
+	.watch .pre { display: none; }
+	.watch .btn span { display: none; }
+	.reasons li { grid-template-columns: 1fr 36px; }
+	.reasons .k { grid-column: 1 / -1; }
+	.scroll-cue { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+	.rv { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+	<div class="wrap">
+		<a class="brand" href="#top" aria-label="Ledger home">
+			<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--panel-2)" stroke="var(--line-2)"/><path d="M16 21h32M16 32h32M16 43h18" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round"/><circle cx="45" cy="43" r="5.5" fill="var(--red)"/></svg>
+			Ledger
+		</a>
+		<div class="nav-links">
+			<a href="#live">Live</a>
+			<a href="#problem">Why</a>
+			<a href="#how">How it works</a>
+			<a href="#lab">Lookalike lab</a>
+		</div>
+		<div class="nav-right">
+			<span class="pill" title="Certificates read per second, after removing duplicates across logs"><span class="dot off" id="live-dot"></span><b id="nav-rate">–</b><span class="lbl">certs / sec</span></span>
+			<button class="icon-btn" id="theme" aria-label="Toggle light and dark">
+				<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+				<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+			</button>
+		</div>
+	</div>
+</nav>
+
+<header class="hero" id="top">
+	<div class="wrap">
+		<div>
+			<div class="eyebrow">Certificate Transparency, read live</div>
+			<h1>Every padlock is announced.<span class="serif">We read every announcement.</span></h1>
+			<p class="lede">A phishing site needs HTTPS to look real, and every HTTPS certificate is written to <b>public logs</b> within seconds of being issued. Ledger reads those logs as they grow and flags <b>lookalikes of your brand</b>, often before the first scam message goes out.</p>
+			<form class="watch" id="watch-form" autocomplete="off">
+				<span class="pre">watch:</span>
+				<label class="sr" for="watch-in">Brand to watch</label>
+				<input id="watch-in" name="term" maxlength="32" placeholder="your brand, e.g. acmebank" spellcheck="false" autocapitalize="off">
+				<button class="btn primary" type="submit"><span>Start watching</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+			</form>
+			<div class="err" id="watch-err" role="status"></div>
+			<div class="hint">Free, no sign-up, lasts 30 minutes. Try <button type="button" data-try="paypal">paypal</button>, <button type="button" data-try="netflix">netflix</button> or <button type="button" data-try="binance">binance</button>.</div>
+			<div class="kpis">
+				<div class="kpi"><div class="n" id="k-today">–</div><div class="l">certificates read today</div></div>
+				<div class="kpi"><div class="n" id="k-delay">–</div><div class="l">median, logged → read</div></div>
+				<div class="kpi"><div class="n" id="k-hits">–</div><div class="l">lookalikes flagged today</div></div>
+			</div>
+		</div>
+		<div class="loom-box" aria-hidden="true">
+			<canvas id="loom"></canvas>
+			<div class="loom-cap"><span>each dot: one real certificate</span><span>trees sealed <b id="k-trees">0</b></span></div>
+		</div>
+	</div>
+	<div class="scroll-cue" aria-hidden="true"></div>
+</header>
+
+<main>
+<section class="sec" id="live">
+	<div class="wrap">
+		<div class="sec-head rv">
+			<div class="eyebrow">The ledger, live</div>
+			<h2>Certificates being issued <span class="serif">right now.</span></h2>
+			<p>A sample of the certificates Ledger is reading from Let's Encrypt and Google's logs at this moment. When one imitates a brand being watched, it gets stamped.</p>
+		</div>
+		<div class="live-grid">
+			<div class="card rv" style="--d:.1s">
+				<div class="card-head"><h3>Incoming</h3><span>sampled from every log</span><div class="right"><span class="dot off" id="feed-dot"></span><span id="feed-state">connecting</span></div></div>
+				<div class="cols"><span>Logged</span><span style="padding-left:16px">Hostname</span><span>Issued by</span></div>
+				<div class="paper"><div id="rows"></div><div class="empty" id="rows-empty">Opening the logs…</div></div>
+			</div>
+			<div class="side">
+				<div class="card mywatch" id="mywatch">
+					<div class="card-head"><h3>Your watch</h3><div class="right"><span id="mw-left">30:00</span></div></div>
+					<div class="body">
+						<div class="big" id="mw-term">–</div>
+						<div class="meta" id="mw-meta">–</div>
+						<div class="bar"><i id="mw-bar"></i></div>
+					</div>
+					<ul class="list scroll-list" id="mw-list"></ul>
+				</div>
+				<div class="card rv" style="--d:.2s">
+					<div class="card-head"><h3>Caught recently</h3><div class="right" id="caught-count"></div></div>
+					<ul class="list scroll-list" id="caught"><li class="none">Loading…</li></ul>
+					<div class="chips" id="watching-chips"></div>
+				</div>
+				<div class="card rv" style="--d:.3s">
+					<div class="card-head"><h3>Who's issuing</h3><div class="right">since start</div></div>
+					<div class="issuers" id="issuers"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="sec" id="problem" style="padding-top:0">
+	<div class="wrap">
+		<div class="sec-head rv">
+			<div class="eyebrow">The problem</div>
+			<h2>Brands find out about phishing <span class="serif">from their customers.</span></h2>
+			<p>A lookalike domain costs a few dollars and gets a padlock for free in seconds. By the time a customer reports it, the scam SMS has already gone out and money has already moved. Takedowns start when the damage is done.</p>
+		</div>
+		<div class="race rv" id="race">
+			<div class="lane">
+				<h4>Without Ledger <small>the brand learns last</small></h4>
+				<div class="track"><div class="fill"></div>
+					<div class="ev" style="left:0%"><i></i><span>Certificate<br>issued</span></div>
+					<div class="ev" style="left:18%"><i></i><span class="up">Site<br>goes live</span></div>
+					<div class="ev" style="left:40%"><i></i><span>Scam SMS<br>sent</span></div>
+					<div class="ev" style="left:62%"><i></i><span class="up">Customers<br>lose money</span></div>
+					<div class="ev bad" style="left:84%"><i></i><span>Complaint reaches<br>the brand</span></div>
+					<div class="ev" style="left:100%"><i></i><span class="up">Takedown<br>begins</span></div>
+				</div>
+			</div>
+			<div class="lane ours">
+				<h4>With Ledger <small>the brand learns first</small></h4>
+				<div class="track"><div class="fill" style="animation-duration:.9s"></div>
+					<div class="ev" style="left:0%"><i></i><span>Certificate<br>issued</span></div>
+					<div class="ev good" style="left:7%"><i></i><span class="up">Ledger alert, <b class="mono" id="race-delay">~30 s</b> later</span></div>
+					<div class="ev" style="left:22%"><i></i><span>Takedown request<br>sent</span></div>
+					<div class="ev" style="left:40%"><i></i><span class="up">Scam SMS?<br>Site is already down</span></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="sec" id="how" style="padding-top:0">
+	<div class="wrap">
+		<div class="sec-head rv">
+			<div class="eyebrow">How it works</div>
+			<h2>The padlock is the <span class="serif">tell.</span></h2>
+			<p>Browsers only trust a certificate if it has been written to public Certificate Transparency logs. Phishers can't skip that step, so every lookalike with a padlock shows up there first.</p>
+		</div>
+		<div class="pipe">
+			<div class="step rv" style="--d:0s">
+				<div class="ic draw"><svg viewBox="0 0 44 44" fill="none" stroke="var(--text)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="19" width="26" height="19" rx="4" pathLength="1"/><path d="M15 19v-5a7 7 0 0 1 14 0v5" pathLength="1"/><circle cx="22" cy="28" r="2.4" stroke="var(--ink)" pathLength="1"/></svg></div>
+				<h5>Issued</h5><p>Someone gets a certificate for a domain from Let's Encrypt, Google, Sectigo or any public CA.</p>
+			</div>
+			<div class="step rv" style="--d:.12s">
+				<div class="ic draw"><svg viewBox="0 0 44 44" fill="none" stroke="var(--text)" stroke-width="1.6" stroke-linecap="round"><path d="M22 8v8M22 16l-9 9M22 16l9 9M13 25l-4 9M13 25l4 9M31 25l-4 9M31 25l4 9" pathLength="1"/><circle cx="22" cy="7" r="2.6" stroke="var(--ink)" pathLength="1"/></svg></div>
+				<h5>Logged</h5><p>The CA must write it into public, append-only logs (Merkle trees) before browsers will trust it.</p>
+			</div>
+			<div class="step rv" style="--d:.24s">
+				<div class="ic draw"><svg viewBox="0 0 44 44" fill="none" stroke="var(--text)" stroke-width="1.6" stroke-linecap="round"><path d="M8 13h28M8 22h28M8 31h16" pathLength="1"/><path d="M30 28l4 4 6-8" stroke="var(--ink)" pathLength="1"/></svg></div>
+				<h5>Read</h5><p>Ledger tails the busiest logs as they grow, usually within a minute of each entry being written.</p>
+			</div>
+			<div class="step rv" style="--d:.36s">
+				<div class="ic draw"><svg viewBox="0 0 44 44" fill="none" stroke="var(--text)" stroke-width="1.6" stroke-linecap="round"><circle cx="19" cy="19" r="10" pathLength="1"/><path d="M27 27l9 9" pathLength="1"/><path d="M15 19h8" stroke="var(--red)" pathLength="1"/></svg></div>
+				<h5>Judged</h5><p>Every hostname is checked for homoglyphs, digit swaps, typos and your name inside someone else's domain.</p>
+			</div>
+			<div class="step rv" style="--d:.48s">
+				<div class="ic draw"><svg viewBox="0 0 44 44" fill="none" stroke="var(--text)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M10 30V18a12 12 0 0 1 24 0v12l3 4H7z" pathLength="1"/><path d="M18 38a4 4 0 0 0 8 0" stroke="var(--red)" pathLength="1"/></svg></div>
+				<h5>Acted on</h5><p>You get an alert with the reasons, the certificate record and a takedown request written for you.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="sec" id="lab" style="padding-top:0">
+	<div class="wrap">
+		<div class="sec-head rv">
+			<div class="eyebrow">Lookalike lab</div>
+			<h2>See how Ledger <span class="serif">reads a domain.</span></h2>
+			<p>Type any hostname and a brand. Ledger folds look-alike letters back to plain ones, splits off the part someone actually registered, and explains every point of the score. No black box.</p>
+		</div>
+		<div class="lab rv">
+			<div class="card">
+				<div class="lab-in">
+					<div class="lab-row">
+						<div class="field"><label for="lab-d">Hostname</label><input id="lab-d" value="раypal-login-verify.com" spellcheck="false" autocapitalize="off"></div>
+						<div class="field"><label for="lab-b">Brand</label><input id="lab-b" value="paypal" spellcheck="false" autocapitalize="off"></div>
+					</div>
+					<div class="presets" id="presets"></div>
+				</div>
+				<div class="tiles" id="tiles" aria-live="polite"></div>
+				<div class="legend"><span><i style="background:var(--panel-2);border:1px solid var(--line-2)"></i>registered name</span><span><i style="border:1px dashed var(--muted)"></i>suffix</span><span><i style="background:var(--red-soft);border:1px solid var(--red)"></i>disguised letter, folded</span><span><i style="background:var(--amber-soft);border:1px solid var(--amber)"></i>brand found</span></div>
+				<ul class="reasons" id="reasons"></ul>
+			</div>
+			<div class="card dial-card">
+				<div class="dial">
+					<svg viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="none" stroke="var(--line)" stroke-width="10"/><circle class="arc" id="arc" cx="100" cy="100" r="86" fill="none" stroke="var(--ink)" stroke-width="10" stroke-linecap="round" stroke-dasharray="540.35" stroke-dashoffset="540.35"/></svg>
+					<div class="v"><b id="dial-n">0</b><small>out of 100</small></div>
+				</div>
+				<div class="verdict" id="verdict">–</div>
+				<div class="verdict-sub" id="verdict-sub"></div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="sec" id="value" style="padding-top:0">
+	<div class="wrap">
+		<div class="sec-head rv">
+			<div class="eyebrow">What you get</div>
+			<h2>From padlock to takedown, <span class="serif">in one place.</span></h2>
+		</div>
+		<div class="values">
+			<div class="value rv" style="--d:0s">
+				<div class="art"><svg viewBox="0 0 300 120" fill="none"><g stroke="var(--line-2)"><path d="M20 30h260M20 60h260M20 90h260"/></g><circle cx="70" cy="60" r="5" fill="var(--dim)"/><circle cx="130" cy="60" r="5" fill="var(--dim)"/><circle cx="190" cy="60" r="7" fill="var(--ink)"><animate attributeName="r" values="6;9;6" dur="2s" repeatCount="indefinite"/></circle><text x="190" y="40" text-anchor="middle" font-family="var(--mono)" font-size="11" fill="var(--muted)">seconds</text></svg></div>
+				<div class="n">01</div><h4>See it first</h4><p>Ledger reads the logs as they're written, so a lookalike shows up minutes after its certificate, not days after the first complaint.</p>
+			</div>
+			<div class="value rv" style="--d:.1s">
+				<div class="art"><svg viewBox="0 0 300 120" fill="none" font-family="var(--mono)" font-size="15"><text x="58" y="68" fill="var(--muted)">p</text><text x="74" y="68" fill="var(--red)">а</text><text x="90" y="68" fill="var(--muted)">ypal</text><path d="M140 63h30" stroke="var(--dim)" stroke-dasharray="3 4"/><path d="M166 58l6 5-6 5" stroke="var(--dim)"/><text x="186" y="68" fill="var(--ink)">paypal</text><text x="74" y="94" fill="var(--dim)" font-size="10">U+0430</text></svg></div>
+				<div class="n">02</div><h4>Every match explained</h4><p>Each alert says why: which letter was swapped, how many keystrokes it is from your name, what scam words it carries. Your team can triage in seconds.</p>
+			</div>
+			<div class="value rv" style="--d:.2s">
+				<div class="art"><svg viewBox="0 0 300 120" fill="none"><rect x="90" y="18" width="120" height="86" rx="10" stroke="var(--line-2)" fill="var(--panel-2)"/><path d="M106 40h88M106 54h70M106 68h80M106 82h50" stroke="var(--dim)" stroke-linecap="round"/><g transform="translate(196 84) rotate(-8)"><rect x="-30" y="-12" width="60" height="24" rx="5" stroke="var(--red)" stroke-width="1.6"/><text x="0" y="4" text-anchor="middle" font-family="var(--mono)" font-size="10" font-weight="700" fill="var(--red)">FILED</text></g></svg></div>
+				<div class="n">03</div><h4>Takedown, drafted</h4><p>One click gives you an abuse report with the certificate record and evidence attached, plus webhooks into Slack, Discord or your SOC.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="sec" style="padding-top:0">
+	<div class="wrap">
+		<div class="cta rv">
+			<div class="eyebrow" style="justify-content:center">Early access</div>
+			<h2>Guard your brand from <span class="serif">the first padlock.</span></h2>
+			<p>Ledger is in early access for banks, NBFCs, payment apps and anyone whose customers get phished. Tell us your brand and the domains you own, and we'll start watching today.</p>
+			<div class="row-btn">
+				<a class="btn primary" href="mailto:birruakhil1526@gmail.com?subject=Ledger%20early%20access">Request early access <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+				<a class="btn" href="#top" data-focus-watch>Try it on your brand</a>
+			</div>
+			<div class="who"><span class="chip">Banks &amp; NBFCs</span><span class="chip">Payment apps</span><span class="chip">Crypto exchanges</span><span class="chip">E-commerce</span><span class="chip">Insurers</span></div>
+		</div>
+	</div>
+</section>
+</main>
+
+<footer>
+	<div class="wrap">
+		<span>Ledger reads public Certificate Transparency logs: Let's Encrypt Sycamore &amp; Willow, Google Argon, Cloudflare Nimbus. A match is a lookalike, not a verdict.</span>
+		<span><a href="/">Built by Akhil Birru</a> · <a href="/ledger/console/">Console</a></span>
+	</div>
+</footer>
+
+<div class="toast" id="toast" role="status"><span>Lookalike</span><span class="d" id="toast-d"></span></div>
+
+<script>
+(() => {
+'use strict';
+const API = '/ledger/api';
+const $ = (s, r = document) => r.querySelector(s);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => n == null ? '–' : Number(n).toLocaleString('en-IN');
+const clock = t => new Date(t).toLocaleTimeString('en-GB', { hour12: false });
+const ago = t => { const s = Math.max(0, (Date.now() - t) / 1000); return s < 60 ? Math.round(s) + 's ago' : s < 3600 ? Math.round(s / 60) + 'm ago' : s < 86400 ? Math.round(s / 3600) + 'h ago' : Math.round(s / 86400) + 'd ago'; };
+const shortIssuer = s => (s || 'Unknown CA').replace(/,? (Inc\.?|LLC|Ltd\.?|Limited|S\.p\.A\.|GmbH|Corporation)$/i, '').replace('Google Trust Services', 'Google Trust').replace("Let's Encrypt", "Let's Encrypt");
+const sevColor = s => s === 'high' ? 'var(--red)' : s === 'medium' ? 'var(--amber)' : 'var(--muted)';
+
+/* ---------- theme + nav ---------- */
+$('#theme').addEventListener('click', () => {
+	const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+	document.documentElement.dataset.theme = next;
+	try { localStorage.setItem('theme', next); } catch (e) {}
+	loom.recolor();
+});
+const nav = $('#nav');
+addEventListener('scroll', () => nav.classList.toggle('solid', scrollY > 20), { passive: true });
+
+/* ---------- reveal on scroll ---------- */
+const io = new IntersectionObserver(es => es.forEach(e => {
+	if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); if (e.target.id === 'race') e.target.classList.add('play'), playRace(); }
+}), { threshold: .18, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+/* the race: light each event as its line reaches it */
+function playRace() {
+	document.querySelectorAll('#race .lane').forEach((lane, li) => {
+		const dur = li ? 900 : 3200;
+		lane.querySelectorAll('.ev').forEach(ev => {
+			const at = parseFloat(ev.style.left) / 100;
+			setTimeout(() => ev.classList.add('on'), reduce ? 0 : 200 + at * dur);
+		});
+	});
+}
+
+/* glow that follows the pointer on value cards */
+document.querySelectorAll('.value').forEach(v => v.addEventListener('pointermove', e => {
+	const r = v.getBoundingClientRect();
+	v.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+	v.style.setProperty('--my', (e.clientY - r.top) + 'px');
+}));
+
+/* ---------- counters that roll to their value ---------- */
+const tweens = new Map();
+function roll(el, to, fmtFn = fmt, ms = 900) {
+	if (to == null) return;
+	const from = tweens.get(el)?.val ?? 0;
+	if (reduce || from === to) { el.textContent = fmtFn(to); tweens.set(el, { val: to }); return; }
+	const t0 = performance.now();
+	const st = { val: from };
+	tweens.set(el, st);
+	const step = now => {
+		if (tweens.get(el) !== st) return;
+		const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
+		const v = from + (to - from) * e;
+		el.textContent = fmtFn(k < 1 ? Math.round(v) : to);
+		if (k < 1) requestAnimationFrame(step); else st.val = to;
+	};
+	requestAnimationFrame(step);
+	st.val = to;
+}
+
+/* ---------- the loom: certificates woven into Merkle trees ---------- */
+const loom = (() => {
+	const cv = $('#loom'), ctx = cv.getContext('2d');
+	const LEAVES = 32, LEVELS = 6;
+	let W = 0, H = 0, dpr = 1, colors = {}, running = false, visible = true;
+	let leaves = [], nodes = [], parts = [], labels = [], filled = 0, sealing = 0, sealedAt = 0, trees = 0, root = '';
+	const queue = [];
+
+	function recolor() {
+		const cs = getComputedStyle(document.documentElement);
+		colors = { ink: cs.getPropertyValue('--ink').trim(), red: cs.getPropertyValue('--red').trim(), amber: cs.getPropertyValue('--amber').trim(),
+			line: cs.getPropertyValue('--line-2').trim(), dim: cs.getPropertyValue('--dim').trim(), text: cs.getPropertyValue('--text').trim(), panel: cs.getPropertyValue('--panel').trim() };
+		if (reduce) drawStatic();
+	}
+	function layout() {
+		const r = cv.getBoundingClientRect();
+		dpr = Math.min(devicePixelRatio || 1, 2);
+		W = r.width; H = r.height;
+		cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+		ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+		const pad = Math.max(14, W * .04), top = H * .1, bottom = H * .78;
+		nodes = [];
+		for (let l = 0; l < LEVELS; l++) {
+			const n = LEAVES >> l, row = [];
+			for (let i = 0; i < n; i++) {
+				const x = l === 0 ? pad + (W - pad * 2) * (i + .5) / n : (nodes[l - 1][i * 2].x + nodes[l - 1][i * 2 + 1].x) / 2;
+				const y = bottom - (bottom - top) * Math.pow(l / (LEVELS - 1), .9);
+				const old = nodes.length === l && leaves.length ? null : null;
+				row.push({ x, y, on: 0, a: 0, kind: 0 });
+			}
+			nodes.push(row);
+		}
+		leaves = nodes[0];
+		for (let i = 0; i < filled; i++) leaves[i].on = 1, leaves[i].a = 1;
+		settle();
+		if (reduce) drawStatic();
+	}
+	function settle() {
+		for (let l = 1; l < LEVELS; l++) nodes[l].forEach((n, i) => { const on = nodes[l - 1][i * 2].on && nodes[l - 1][i * 2 + 1].on; if (on && !n.on) { n.on = 1; n.born = performance.now(); } });
+	}
+	function hex() { let s = ''; for (let i = 0; i < 8; i++) s += (Math.random() * 16 | 0).toString(16); return s; }
+
+	function push(ev) { if (queue.length < 40) queue.push(ev); else if (ev.kind) queue.splice(queue.length - 1, 1, ev); }
+	function launch(ev) {
+		if (filled >= LEAVES || sealing) return false;
+		const leaf = leaves[filled];
+		leaf.target = 1; leaf.kind = ev.kind || 0;
+		const slot = filled++;
+		parts.push({ slot, x0: leaf.x + (Math.random() - .5) * W * .5, y0: -10, t0: performance.now(), dur: 900 + Math.random() * 500, kind: ev.kind || 0, label: ev.kind ? ev.d : null });
+		return true;
+	}
+	let lastLaunch = 0;
+	function frame(now) {
+		if (!running) return;
+		requestAnimationFrame(frame);
+		if (queue.length && now - lastLaunch > Math.max(45, 260 - queue.length * 12)) { if (launch(queue[0])) queue.shift(); lastLaunch = now; }
+		ctx.clearRect(0, 0, W, H);
+		const sealK = sealing ? Math.min(1, (now - sealing) / 900) : 0;
+		const fade = sealing ? 1 - sealK : 1;
+		ctx.globalAlpha = fade;
+		// the empty tree, faint, so there is always a shape to fill
+		ctx.lineWidth = 1; ctx.setLineDash([2, 5]); ctx.strokeStyle = colors.line; ctx.globalAlpha = .55;
+		ctx.beginPath();
+		for (let l = 1; l < LEVELS; l++) nodes[l].forEach((n, i) => { for (const c of [nodes[l - 1][i * 2], nodes[l - 1][i * 2 + 1]]) { ctx.moveTo(c.x, c.y); ctx.bezierCurveTo(c.x, c.y + (n.y - c.y) * .6, n.x, n.y - (n.y - c.y) * .2, n.x, n.y); } });
+		ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = fade;
+		// edges
+		ctx.lineWidth = 1;
+		for (let l = 1; l < LEVELS; l++) nodes[l].forEach((n, i) => {
+			if (!n.on) return;
+			const k = Math.min(1, (now - n.born) / 500);
+			for (const c of [nodes[l - 1][i * 2], nodes[l - 1][i * 2 + 1]]) {
+				ctx.strokeStyle = colors.line;
+				ctx.beginPath(); ctx.moveTo(c.x, c.y);
+				const mx = c.x + (n.x - c.x) * k, my = c.y + (n.y - c.y) * k;
+				ctx.bezierCurveTo(c.x, c.y + (my - c.y) * .6, mx, my - (my - c.y) * .2, mx, my);
+				ctx.stroke();
+			}
+		});
+		// nodes
+		for (let l = 0; l < LEVELS; l++) nodes[l].forEach(n => {
+			if (l === 0) {
+				ctx.fillStyle = colors.line; ctx.beginPath(); ctx.arc(n.x, n.y, 2, 0, 7); ctx.fill();
+				if (!n.on) return;
+				n.a = Math.min(1, n.a + .06);
+				const col = n.kind === 2 ? colors.red : n.kind === 1 ? colors.amber : colors.ink;
+				ctx.fillStyle = col; ctx.globalAlpha = fade * n.a;
+				ctx.beginPath(); ctx.arc(n.x, n.y, n.kind ? 4.5 : 3, 0, 7); ctx.fill();
+				if (n.kind) { ctx.strokeStyle = col; ctx.globalAlpha = fade * .35; ctx.beginPath(); ctx.arc(n.x, n.y, 9 + Math.sin(now / 200) * 2, 0, 7); ctx.stroke(); }
+				ctx.globalAlpha = fade;
+				return;
+			}
+			if (!n.on) return;
+			const k = Math.min(1, (now - n.born) / 500);
+			const r = l === LEVELS - 1 ? 7 : 2.6 + l * .5;
+			ctx.fillStyle = colors.panel; ctx.strokeStyle = l === LEVELS - 1 ? colors.ink : colors.dim;
+			ctx.lineWidth = l === LEVELS - 1 ? 2 : 1.2;
+			ctx.beginPath(); ctx.arc(n.x, n.y, r * (k < 1 ? 1 + (1 - k) * .8 : 1), 0, 7); ctx.fill(); ctx.stroke();
+			if (l === LEVELS - 1) {
+				ctx.lineWidth = 1;
+				ctx.globalAlpha = fade * (.25 + .2 * Math.sin(now / 300));
+				ctx.beginPath(); ctx.arc(n.x, n.y, 16 + 4 * Math.sin(now / 300), 0, 7); ctx.stroke();
+				ctx.globalAlpha = fade;
+				ctx.fillStyle = colors.dim; ctx.font = '11px ' + getComputedStyle(document.body).getPropertyValue('--mono');
+				ctx.textAlign = 'center'; ctx.fillText('root ' + root, n.x, n.y - 24);
+			}
+		});
+		ctx.globalAlpha = 1;
+		// falling certificates
+		for (let i = parts.length - 1; i >= 0; i--) {
+			const p = parts[i], leaf = leaves[p.slot];
+			const k = Math.min(1, (now - p.t0) / p.dur), e = 1 - Math.pow(1 - k, 3);
+			const x = p.x0 + (leaf.x - p.x0) * e, y = p.y0 + (leaf.y - p.y0) * e;
+			const col = p.kind === 2 ? colors.red : p.kind === 1 ? colors.amber : colors.ink;
+			const g = ctx.createLinearGradient(x, y - 26, x, y);
+			g.addColorStop(0, 'transparent'); g.addColorStop(1, col);
+			ctx.strokeStyle = g; ctx.lineWidth = p.kind ? 2 : 1.4;
+			ctx.beginPath(); ctx.moveTo(x - (leaf.x - p.x0) * .04, y - 26); ctx.lineTo(x, y); ctx.stroke();
+			ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, p.kind ? 3.2 : 2, 0, 7); ctx.fill();
+			if (k >= 1) {
+				parts.splice(i, 1);
+				leaf.on = 1; leaf.a = .2; settle();
+				if (p.label) labels.push({ x: leaf.x, y: leaf.y, text: p.label, kind: p.kind, t0: now });
+				if (filled >= LEAVES && !parts.length) { sealing = now; root = hex(); trees++; $('#k-trees').textContent = fmt(trees); }
+			}
+		}
+		// labels for lookalikes
+		for (let i = labels.length - 1; i >= 0; i--) {
+			const lb = labels[i], age = now - lb.t0;
+			if (age > 3800) { labels.splice(i, 1); continue; }
+			const a = Math.min(1, age / 250) * Math.min(1, (3800 - age) / 500);
+			ctx.font = '600 12px ' + getComputedStyle(document.body).getPropertyValue('--mono');
+			const txt = lb.text.length > 30 ? lb.text.slice(0, 29) + '…' : lb.text;
+			const tw = ctx.measureText(txt).width + 18;
+			const x = Math.max(4, Math.min(W - tw - 4, lb.x - tw / 2)), y = lb.y + 18 + (1 - Math.min(1, age / 400)) * 8;
+			ctx.globalAlpha = a;
+			ctx.fillStyle = colors.panel; ctx.strokeStyle = lb.kind === 2 ? colors.red : colors.amber; ctx.lineWidth = 1.2;
+			ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, tw, 24, 6) : ctx.rect(x, y, tw, 24); ctx.fill(); ctx.stroke();
+			ctx.fillStyle = lb.kind === 2 ? colors.red : colors.amber; ctx.textAlign = 'left'; ctx.fillText(txt, x + 9, y + 16);
+			ctx.globalAlpha = 1;
+		}
+		if (sealing && sealK >= 1) {
+			sealing = 0; filled = 0;
+			nodes.forEach(r => r.forEach(n => { n.on = 0; n.a = 0; n.kind = 0; }));
+		}
+	}
+	function drawStatic() {
+		if (!W) return;
+		ctx.clearRect(0, 0, W, H);
+		nodes.forEach((r, l) => r.forEach((n, i) => {
+			if (l) { ctx.strokeStyle = colors.line; for (const c of [nodes[l - 1][i * 2], nodes[l - 1][i * 2 + 1]]) { ctx.beginPath(); ctx.moveTo(c.x, c.y); ctx.lineTo(n.x, n.y); ctx.stroke(); } }
+			ctx.fillStyle = l ? colors.dim : (i === 13 ? colors.red : colors.ink); ctx.beginPath(); ctx.arc(n.x, n.y, l === LEVELS - 1 ? 6 : 3, 0, 7); ctx.fill();
+		}));
+	}
+	function setRunning(on) {
+		if (reduce) return;
+		if (on && !running) { running = true; requestAnimationFrame(frame); }
+		if (!on) running = false;
+	}
+	new ResizeObserver(layout).observe(cv);
+	new IntersectionObserver(([e]) => { visible = e.isIntersecting; setRunning(visible && !document.hidden); }).observe(cv);
+	document.addEventListener('visibilitychange', () => setRunning(visible && !document.hidden));
+	recolor(); root = hex();
+	return { push, recolor };
+})();
+
+/* ---------- live feed ---------- */
+const rowsEl = $('#rows'), ROW = 44, MAX_ROWS = 14;
+const pending = [];
+let es = null, lastEvent = 0, watchToken = null, watchUntil = 0;
+
+function rowHTML(c, hit) {
+	const more = c.n > 1 ? `<span class="more">+${c.n - 1}</span>` : '';
+	const stamp = hit ? `<span class="stamp">${hit.sev === 'high' ? 'LOOKALIKE' : 'SUSPECT'} · ${hit.s}</span>` : '';
+	return `<span class="t">${clock(c.t)}</span><span class="d" title="${esc(c.d)}">${esc(c.d)}${more}</span><span class="i">${hit ? esc(hit.b) + ' · ' + esc(hit.r?.[0]?.kind || '') : esc(shortIssuer(c.i))}</span>${stamp}`;
+}
+function addRow(c, hit) {
+	$('#rows-empty')?.remove();
+	const el = document.createElement('div');
+	el.className = 'row enter' + (hit ? ' hit' + (hit.sev === 'high' ? '' : ' med') : '');
+	el.innerHTML = rowHTML(c, hit);
+	rowsEl.prepend(el);
+	if (!reduce) rowsEl.animate([{ transform: `translateY(-${ROW}px)` }, { transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.22,1,.36,1)' });
+	while (rowsEl.children.length > MAX_ROWS) rowsEl.lastElementChild.remove();
+}
+// pace rows so the eye can follow, faster when the queue builds up
+(function pump() {
+	const c = pending.shift();
+	if (c) addRow(c.c, c.hit);
+	setTimeout(pump, pending.length > 10 ? 140 : pending.length > 3 ? 260 : 420);
+})();
+
+function onCert(c) {
+	lastEvent = Date.now();
+	if (pending.length < 30) pending.push({ c });
+	loom.push({ d: c.d, kind: 0 });
+}
+function onHit(h, mine) {
+	lastEvent = Date.now();
+	pending.unshift({ c: { d: h.d, t: h.t, i: h.i, n: 1 }, hit: h });
+	loom.push({ d: h.d, kind: h.sev === 'high' ? 2 : 1 });
+	if (mine) addWatchHit(h, true);
+	else addCaught(h, true);
+	toast(h);
+}
+let toastT;
+function toast(h) {
+	$('#toast-d').textContent = h.d + ' → ' + h.b;
+	$('#toast').classList.add('on');
+	clearTimeout(toastT); toastT = setTimeout(() => $('#toast').classList.remove('on'), 4200);
+}
+
+function setLive(on, text) {
+	for (const id of ['live-dot', 'feed-dot']) $('#' + id).classList.toggle('off', !on);
+	$('#feed-state').textContent = text;
+}
+function applyStats(s) {
+	roll($('#nav-rate'), s.rate, v => Number(v).toFixed(v < 10 ? 1 : 0), 600);
+	roll($('#k-today'), s.today);
+	roll($('#k-hits'), s.hits_today);
+	if (s.delay != null) { $('#k-delay').textContent = s.delay < 90 ? Math.round(s.delay) + ' s' : Math.round(s.delay / 60) + ' min'; $('#race-delay').textContent = '~' + (s.delay < 90 ? Math.round(s.delay) + ' s' : Math.round(s.delay / 60) + ' min'); }
+}
+function connect() {
+	if (es) es.close();
+	es = new EventSource(API + '/stream' + (watchToken ? '?w=' + watchToken : ''));
+	es.addEventListener('open', () => setLive(true, 'live'));
+	es.addEventListener('error', () => setLive(false, 'reconnecting'));
+	es.addEventListener('stats', e => { setLive(true, 'live'); applyStats(JSON.parse(e.data)); });
+	es.addEventListener('cert', e => onCert(JSON.parse(e.data)));
+	es.addEventListener('hit', e => onHit(JSON.parse(e.data), false));
+	es.addEventListener('watch', e => onHit(JSON.parse(e.data), true));
+}
+
+/* ---------- side panels ---------- */
+function ring(score, sev) {
+	const c = 2 * Math.PI * 14, off = c * (1 - score / 100);
+	return `<div class="ring"><svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="14" fill="none" stroke="var(--line-2)" stroke-width="3"/><circle cx="17" cy="17" r="14" fill="none" stroke="${sevColor(sev)}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${off}"/></svg><span style="color:${sevColor(sev)}">${score}</span></div>`;
+}
+function hitLI(h, fresh) {
+	const li = document.createElement('li');
+	if (fresh) li.className = 'new';
+	const kinds = [...new Set((h.r || []).map(r => r.kind))].slice(0, 2).map(k => `<span class="tag">${esc(k)}</span>`).join('');
+	li.innerHTML = `${ring(h.s, h.sev)}<div style="min-width:0"><div class="d" title="${esc(h.d)}">${esc(h.d)}</div><div class="m"><span>${esc(h.b)}</span>${kinds}<span data-t="${h.t}">${ago(h.t)}</span><a href="https://crt.sh/?q=${encodeURIComponent(h.d)}" target="_blank" rel="noopener noreferrer">crt.sh ↗</a></div></div>`;
+	return li;
+}
+let caught = 0;
+function addCaught(h, fresh) {
+	const ul = $('#caught');
+	ul.querySelector('.none')?.remove();
+	ul.prepend(hitLI(h, fresh));
+	while (ul.children.length > 40) ul.lastElementChild.remove();
+	caught++;
+}
+async function loadInitial() {
+	try {
+		const [stats, hits] = await Promise.all([fetch(API + '/stats').then(r => r.json()), fetch(API + '/hits?limit=25').then(r => r.json())]);
+		applyStats(stats);
+		const ul = $('#caught'); ul.innerHTML = '';
+		if (!hits.length) ul.innerHTML = '<li class="none">Nothing yet today. Lookalikes appear here the moment they are logged.</li>';
+		hits.reverse().forEach(h => addCaught(h, false));
+		$('#watching-chips').innerHTML = '<span class="chip" style="border:0;padding-left:0">watching</span>' + stats.brands.map(b => `<span class="chip">${esc(b.label)}</span>`).join('');
+		issuers(stats.issuers);
+	} catch (e) {
+		$('#caught').innerHTML = '<li class="none">The monitor is offline right now. Try again in a minute.</li>';
+		setLive(false, 'offline');
+	}
+}
+function issuers(list) {
+	if (!list?.length) return;
+	const total = list.reduce((a, b) => a + b.n, 0);
+	const box = $('#issuers');
+	if (box.children.length !== list.length) box.innerHTML = list.map(() => '<div class="iss"><span class="nm"></span><span class="tr"><i style="transform:scaleX(0)"></i></span><span class="pc"></span></div>').join('');
+	list.forEach((it, i) => {
+		const row = box.children[i];
+		row.querySelector('.nm').textContent = shortIssuer(it.name);
+		row.querySelector('.pc').textContent = Math.round(it.n / total * 100) + '%';
+		requestAnimationFrame(() => row.querySelector('i').style.transform = `scaleX(${it.n / list[0].n})`);
+	});
+}
+setInterval(() => { document.querySelectorAll('[data-t]').forEach(el => el.textContent = ago(+el.dataset.t)); }, 15000);
+setInterval(() => { if (document.hidden) return; fetch(API + '/stats').then(r => r.json()).then(s => issuers(s.issuers)).catch(() => {}); }, 20000);
+
+/* ---------- visitor watch ---------- */
+const form = $('#watch-form'), inp = $('#watch-in');
+async function startWatch(term) {
+	$('#watch-err').textContent = '';
+	const btn = form.querySelector('button');
+	btn.disabled = true;
+	try {
+		const r = await fetch(API + '/watch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ term }) });
+		const j = await r.json();
+		if (!r.ok) throw new Error(j.error || 'Could not start the watch.');
+		watchToken = j.token; watchUntil = j.expires * 1000;
+		const box = $('#mywatch'); box.classList.add('on');
+		$('#mw-term').textContent = j.term;
+		const mins = Math.max(1, Math.round(j.window / 60));
+		$('#mw-meta').textContent = `Searched ${fmt(j.scanned)} hostnames from the last ${mins} min: ${j.backfill.length ? j.backfill.length + ' lookalike' + (j.backfill.length > 1 ? 's' : '') + ' found' : 'none yet'}. Watching new ones live.`;
+		const ul = $('#mw-list'); ul.innerHTML = '';
+		if (!j.backfill.length) ul.innerHTML = '<li class="none">New matches will appear here the moment their certificate is logged.</li>';
+		j.backfill.slice().reverse().forEach(h => addWatchHit(h, false));
+		connect();
+		document.getElementById('live').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+	} catch (e) {
+		$('#watch-err').textContent = e.message;
+	} finally { btn.disabled = false; }
+}
+function addWatchHit(h, fresh) {
+	const ul = $('#mw-list');
+	ul.querySelector('.none')?.remove();
+	ul.prepend(hitLI(h, fresh));
+}
+setInterval(() => {
+	if (!watchToken) return;
+	const left = Math.max(0, watchUntil - Date.now());
+	$('#mw-left').textContent = String(Math.floor(left / 60000)).padStart(2, '0') + ':' + String(Math.floor(left / 1000) % 60).padStart(2, '0');
+	$('#mw-bar').style.transform = `scaleX(${left / 1800000})`;
+	if (!left) { watchToken = null; $('#mw-meta').textContent = 'This watch has ended. Start another, or ask us to watch for real.'; connect(); }
+}, 1000);
+form.addEventListener('submit', e => { e.preventDefault(); if (inp.value.trim()) startWatch(inp.value.trim()); else inp.focus(); });
+document.querySelectorAll('[data-try]').forEach(b => b.addEventListener('click', () => { inp.value = b.dataset.try; startWatch(b.dataset.try); }));
+document.querySelector('[data-focus-watch]').addEventListener('click', () => setTimeout(() => inp.focus({ preventScroll: true }), 600));
+
+/* ---------- lookalike lab ---------- */
+const PRESETS = [
+	['раypal-login-verify.com', 'paypal', 'Cyrillic letters'],
+	['paypa1-secure.vercel.app', 'paypal', 'digit swap'],
+	['netflx-billing-update.com', 'netflix', 'typo'],
+	['acrnebank-kyc.in', 'acmebank', 'rn → m'],
+	['metamask-wallet-restore.app', 'metamask', 'brand inside'],
+	['papal-history.org', 'paypal', 'innocent'],
+];
+const presetsEl = $('#presets');
+PRESETS.forEach(([d, b, l]) => {
+	const btn = document.createElement('button');
+	btn.type = 'button'; btn.textContent = l;
+	btn.addEventListener('click', () => { $('#lab-d').value = d; $('#lab-b').value = b; runLab(); });
+	presetsEl.append(btn);
+});
+let labTimer, labSeq = 0;
+['#lab-d', '#lab-b'].forEach(s => $(s).addEventListener('input', () => { clearTimeout(labTimer); labTimer = setTimeout(runLab, 380); }));
+
+async function runLab() {
+	const d = $('#lab-d').value.trim(), b = $('#lab-b').value.trim();
+	if (!d || !b) return;
+	const seq = ++labSeq;
+	let j;
+	try {
+		const r = await fetch(API + '/score?d=' + encodeURIComponent(d) + '&b=' + encodeURIComponent(b));
+		j = await r.json();
+		if (!r.ok) throw new Error(j.error);
+	} catch (e) {
+		$('#verdict').textContent = 'Lab offline'; $('#verdict-sub').textContent = e.message || 'The monitor is not reachable right now.';
+		return;
+	}
+	if (seq !== labSeq) return;
+	renderTiles(j);
+	const sc = j.score, arc = $('#arc'), C = 540.35;
+	const col = j.severity === 'high' ? 'var(--red)' : j.severity === 'medium' ? 'var(--amber)' : j.severity === 'low' ? 'var(--muted)' : 'var(--ink)';
+	arc.style.stroke = col;
+	arc.style.strokeDashoffset = C * (1 - sc / 100);
+	roll($('#dial-n'), sc, String, 1100);
+	$('#dial-n').style.color = col;
+	$('#verdict').textContent = { high: 'High-risk lookalike', medium: 'Likely lookalike', low: 'Worth a look', clear: 'Looks clear' }[j.severity];
+	$('#verdict').style.color = col;
+	$('#verdict-sub').textContent = j.severity === 'clear' ? `Nothing here imitates "${j.brand}".` : `Imitates "${j.brand}" (assuming ${j.brand}.com is the real one).`;
+	const ul = $('#reasons');
+	ul.innerHTML = j.reasons.length ? j.reasons.map((r, i) => `<li style="animation-delay:${.35 + i * .09}s"><span class="k">${esc(r.kind)}</span><span>${esc(r.detail)}</span><span class="p">${r.points}</span></li>`).join('')
+		: `<li class="clear" style="animation-delay:.3s">No homoglyphs, digit swaps, typos or brand name inside the registered part. Ledger wouldn't flag this.</li>`;
+}
+function renderTiles(j) {
+	const box = $('#tiles');
+	box.innerHTML = '';
+	const { sub, label, suffix } = j.parts;
+	const sk = j.skeleton;
+	const brand = j.brand;
+	const skLabel = [...label].map(c => [...c.normalize('NFKD')][0]).join('');
+	const flatSkel = sk.split('.').slice(sub ? sub.split('.').length : 0)[0] || '';
+	const bi = flatSkel.indexOf(brand);
+	let i = 0;
+	const add = (ch, cls, back) => {
+		const t = document.createElement('span');
+		t.className = 'tile pop ' + cls;
+		t.style.animationDelay = (i++ * 22) + 'ms';
+		t.innerHTML = `<b>${esc(ch)}</b>`;
+		box.append(t);
+		if (back) {
+			const face = t.firstChild;
+			t.title = `${ch} is U+${ch.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')}, not the Latin ${back}`;
+			setTimeout(() => {
+				const swap = () => { face.textContent = back; t.classList.add('swapped'); };
+				if (reduce) return swap();
+				face.animate([{ transform: 'scaleY(1)' }, { transform: 'scaleY(0)' }], { duration: 170, easing: 'ease-in' }).onfinish = () => {
+					swap();
+					face.animate([{ transform: 'scaleY(0)' }, { transform: 'scaleY(1)' }], { duration: 260, easing: 'cubic-bezier(.2,1.6,.4,1)' });
+				};
+			}, 700 + i * 22);
+		}
+		return t;
+	};
+	if (sub) { [...sub].forEach(c => add(c, c === '.' ? 'dot-t' : 'sub')); add('.', 'dot-t'); }
+	const skChars = [...flatSkel];
+	[...label].forEach((c, k) => {
+		const folded = skChars[k] ?? c;
+		const swapped = c.charCodeAt(0) > 127 && folded !== c;
+		const inBrand = bi >= 0 && k >= bi && k < bi + brand.length;
+		add(c, inBrand && !swapped ? 'hl' : '', swapped ? folded : null);
+	});
+	if (suffix) { add('.', 'dot-t'); [...suffix].forEach(c => add(c, c === '.' ? 'dot-t' : 'suf')); }
+}
+
+/* ---------- go ---------- */
+loadInitial();
+connect();
+runLab();
+// if nothing arrives, say so instead of pretending
+setInterval(() => { if (lastEvent && Date.now() - lastEvent > 20000) setLive(false, 'waiting for logs'); }, 5000);
+})();
+</script>
+</body>
+</html>

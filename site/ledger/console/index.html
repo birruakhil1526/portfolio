@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledger Console</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#07090c">
+<script>try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%2307090c'/><path d='M16 20h32M16 32h32M16 44h20' stroke='%237cf0c5' stroke-width='5' stroke-linecap='round'/><circle cx='46' cy='44' r='6' fill='%23ff5a3c'/></svg>">
+<link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: 'Geist'; font-style: normal; font-weight: 400 800; font-display: swap; src: url(/fonts/geist.woff2) format('woff2'); }
+@font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/geist-mono.woff2) format('woff2'); }
+:root {
+	--bg: #07090c; --bg-2: #0b0e13; --panel: #0e1218; --panel-2: #131922; --line: #1a212b; --line-2: #242d39;
+	--text: #e9eef4; --muted: #95a1b0; --dim: #5d6878; --ink: #7cf0c5; --ink-soft: rgba(124, 240, 197, .12);
+	--red: #ff5a3c; --red-soft: rgba(255, 90, 60, .13); --amber: #ffb547; --amber-soft: rgba(255, 181, 71, .13); --blue: #8fb3ff;
+	--shadow: 0 30px 80px -30px rgba(0, 0, 0, .7);
+	--sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+	--ease: cubic-bezier(.22, 1, .36, 1);
+	color-scheme: dark;
+}
+:root[data-theme="light"] {
+	--bg: #f5f2ea; --bg-2: #efebe1; --panel: #fffdf8; --panel-2: #f8f4ec; --line: #e3dccd; --line-2: #d6cdba;
+	--text: #17140f; --muted: #625b4f; --dim: #978e7e; --ink: #0b8a5f; --ink-soft: rgba(11, 138, 95, .1);
+	--red: #d33a1f; --red-soft: rgba(211, 58, 31, .09); --amber: #a8680f; --amber-soft: rgba(168, 104, 15, .1); --blue: #2f5fc9;
+	--shadow: 0 30px 70px -35px rgba(60, 45, 20, .35);
+	color-scheme: light;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 14px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+button, input, textarea, select { font: inherit; color: inherit; }
+a { color: inherit; }
+.mono { font-family: var(--mono); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 6px; }
+
+header { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 14px; height: 58px; padding: 0 20px; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+.brand { display: flex; align-items: center; gap: 9px; font-weight: 650; letter-spacing: -.02em; font-size: 16px; text-decoration: none; }
+.brand svg { width: 24px; height: 24px; }
+.brand small { font-weight: 450; color: var(--dim); font-size: 13px; margin-left: 2px; }
+.health { margin-left: auto; display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--line-2); background: var(--panel); font-size: 12.5px; color: var(--muted); cursor: pointer; }
+.health b { color: var(--text); font-variant-numeric: tabular-nums; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ink); }
+.dot.warn { background: var(--amber); } .dot.bad { background: var(--red); }
+.ib { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; border: 1px solid var(--line-2); background: var(--panel); cursor: pointer; color: var(--muted); }
+.ib:hover { color: var(--text); }
+.ib svg { width: 15px; height: 15px; }
+:root[data-theme="light"] .moon, :root:not([data-theme="light"]) .sun { display: none; }
+
+.app { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: calc(100vh - 58px); }
+aside { border-right: 1px solid var(--line); padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+aside h6 { margin: 8px 10px 6px; font: 500 11px var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--dim); display: flex; justify-content: space-between; align-items: center; }
+aside h6 button { border: 0; background: none; color: var(--ink); cursor: pointer; font: 500 12px var(--sans); text-transform: none; letter-spacing: 0; }
+.b-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 9px; cursor: pointer; border: 1px solid transparent; transition: background .15s; }
+.b-item:hover { background: var(--panel); }
+.b-item.on { background: var(--panel); border-color: var(--line-2); }
+.b-item .nm { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.b-item .nm small { color: var(--dim); font-family: var(--mono); font-size: 11.5px; margin-left: 6px; }
+.b-item .ct { display: flex; gap: 4px; }
+.cnt { font: 500 11px var(--mono); padding: 1px 6px; border-radius: 99px; background: var(--panel-2); color: var(--muted); border: 1px solid var(--line-2); }
+.cnt.red { color: var(--red); background: var(--red-soft); border-color: transparent; }
+.b-item .edit { opacity: 0; border: 0; background: none; color: var(--dim); cursor: pointer; padding: 0 2px; }
+.b-item:hover .edit { opacity: 1; }
+.b-item .edit:hover { color: var(--text); }
+.private { font-size: 10px; color: var(--dim); border: 1px solid var(--line-2); border-radius: 4px; padding: 0 4px; margin-left: 6px; vertical-align: 1px; }
+
+main { padding: 20px 24px 60px; min-width: 0; }
+.top { display: flex; align-items: end; gap: 14px; flex-wrap: wrap; }
+.top h1 { margin: 0; font-size: 22px; letter-spacing: -.02em; font-weight: 620; }
+.top .sub { color: var(--dim); font-size: 13px; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 18px 0; }
+.stat { border: 1px solid var(--line); background: var(--panel); border-radius: 14px; padding: 14px 16px; }
+.stat .n { font: 500 24px var(--mono); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.stat .l { font-size: 12px; color: var(--dim); }
+.bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+.tabs { display: flex; gap: 2px; padding: 3px; border-radius: 11px; background: var(--panel); border: 1px solid var(--line); overflow-x: auto; max-width: 100%; }
+.tabs button { border: 0; background: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; color: var(--muted); font-size: 13px; white-space: nowrap; }
+.tabs button.on { background: var(--panel-2); color: var(--text); box-shadow: inset 0 0 0 1px var(--line-2); }
+.search { flex: 1; min-width: 180px; height: 36px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--panel); padding: 0 12px; outline: none; font-family: var(--mono); font-size: 13px; }
+.search:focus { border-color: color-mix(in srgb, var(--ink) 50%, var(--line-2)); }
+select { height: 36px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--panel); padding: 0 10px; }
+.btn { height: 36px; padding: 0 14px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--panel); cursor: pointer; display: inline-flex; align-items: center; gap: 7px; text-decoration: none; font-weight: 520; font-size: 13px; white-space: nowrap; }
+.btn:hover { border-color: var(--dim); }
+.btn.primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn.danger { color: var(--red); }
+.btn svg { width: 14px; height: 14px; }
+
+.table { border: 1px solid var(--line); border-radius: 14px; background: var(--panel); overflow: hidden; }
+.tr { display: grid; grid-template-columns: 44px minmax(0, 2.4fr) minmax(0, 1fr) minmax(0, 1.3fr) 110px 104px; gap: 12px; align-items: center; padding: 0 16px; min-height: 52px; border-top: 1px solid var(--line); cursor: pointer; transition: background .15s; }
+.tr:first-child { border-top: 0; }
+.tr:hover { background: var(--panel-2); }
+.tr.head { min-height: 38px; cursor: default; font: 500 10.5px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--dim); background: var(--bg-2); }
+.tr.head:hover { background: var(--bg-2); }
+.tr.fresh { animation: fresh 2.4s var(--ease); }
+@keyframes fresh { from { background: var(--red-soft); } }
+.tr .d { font-family: var(--mono); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tr .d small { display: block; font-family: var(--sans); font-size: 11.5px; color: var(--dim); }
+.tr .muted { color: var(--muted); font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ring { width: 32px; height: 32px; position: relative; }
+.ring svg { width: 100%; height: 100%; rotate: -90deg; }
+.ring span { position: absolute; inset: 0; display: grid; place-items: center; font: 600 10.5px var(--mono); }
+.tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.tag { font: 500 10.5px var(--mono); padding: 1px 6px; border-radius: 5px; background: var(--panel-2); border: 1px solid var(--line-2); color: var(--muted); }
+.st { font: 500 11.5px var(--sans); padding: 2px 9px; border-radius: 99px; border: 1px solid var(--line-2); color: var(--muted); text-transform: capitalize; justify-self: start; }
+.st.new { color: var(--red); background: var(--red-soft); border-color: transparent; }
+.st.reviewing { color: var(--amber); background: var(--amber-soft); border-color: transparent; }
+.st.takedown { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 40%, transparent); }
+.st.resolved { color: var(--ink); background: var(--ink-soft); border-color: transparent; }
+.empty { padding: 50px 20px; text-align: center; color: var(--dim); }
+.pager { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; color: var(--dim); font-size: 12.5px; }
+
+/* drawer */
+.scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); opacity: 0; pointer-events: none; transition: opacity .3s; z-index: 30; }
+.scrim.on { opacity: 1; pointer-events: auto; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(520px, 100%); background: var(--panel); border-left: 1px solid var(--line-2); z-index: 31; transform: translateX(105%); transition: transform .45s var(--ease); display: flex; flex-direction: column; box-shadow: var(--shadow); }
+.drawer.on { transform: none; }
+.dr-head { padding: 18px 20px; border-bottom: 1px solid var(--line); display: flex; gap: 12px; align-items: start; }
+.dr-head .d { font: 500 17px var(--mono); word-break: break-all; }
+.dr-head .ib { margin-left: auto; flex: none; }
+.dr-body { padding: 18px 20px; overflow-y: auto; display: grid; gap: 18px; align-content: start; }
+.kv { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 6px 12px; font-size: 13px; }
+.kv dt { color: var(--dim); } .kv dd { margin: 0; word-break: break-word; }
+.reasons { display: grid; gap: 6px; }
+.reason { display: grid; grid-template-columns: 90px minmax(0, 1fr) 30px; gap: 10px; padding: 9px 11px; border-radius: 9px; background: var(--panel-2); border: 1px solid var(--line); font-size: 13px; }
+.reason .k { font: 500 11px var(--mono); color: var(--amber); text-transform: uppercase; letter-spacing: .04em; padding-top: 2px; }
+.reason .p { font: 12px var(--mono); color: var(--muted); text-align: right; }
+.sec-t { font: 500 11px var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
+.status-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.status-row button { border: 1px solid var(--line-2); background: var(--panel-2); border-radius: 99px; padding: 5px 12px; cursor: pointer; font-size: 12.5px; color: var(--muted); text-transform: capitalize; }
+.status-row button.on { color: var(--bg); background: var(--text); border-color: var(--text); }
+textarea { width: 100%; min-height: 90px; resize: vertical; border-radius: 10px; border: 1px solid var(--line-2); background: var(--bg-2); padding: 10px 12px; outline: none; }
+textarea:focus, .f input:focus { border-color: color-mix(in srgb, var(--ink) 50%, var(--line-2)); }
+.warn-box { font-size: 12.5px; color: var(--muted); background: var(--amber-soft); border-radius: 9px; padding: 9px 11px; }
+
+/* modal */
+dialog { border: 1px solid var(--line-2); border-radius: 18px; background: var(--panel); color: var(--text); padding: 0; width: min(560px, calc(100% - 32px)); box-shadow: var(--shadow); }
+dialog::backdrop { background: rgba(0, 0, 0, .5); backdrop-filter: blur(3px); }
+dialog[open] { animation: pop .35s var(--ease); }
+@keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+.m-head { padding: 18px 20px 4px; font-size: 17px; font-weight: 600; letter-spacing: -.01em; }
+.m-body { padding: 12px 20px; display: grid; gap: 14px; }
+.m-foot { padding: 14px 20px 18px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+.m-foot .left { margin-right: auto; display: flex; gap: 8px; }
+.f { display: grid; gap: 5px; }
+.f label { font-size: 12.5px; color: var(--muted); }
+.f label small { color: var(--dim); }
+.f input { height: 40px; border-radius: 10px; border: 1px solid var(--line-2); background: var(--bg-2); padding: 0 12px; outline: none; }
+.f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.switch { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); cursor: pointer; }
+.switch input { width: 34px; height: 20px; appearance: none; border-radius: 99px; background: var(--line-2); position: relative; cursor: pointer; transition: background .2s; margin: 0; }
+.switch input::after { content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%; background: var(--text); transition: transform .25s var(--ease); }
+.switch input:checked { background: var(--ink); }
+.switch input:checked::after { transform: translateX(14px); background: var(--bg); }
+pre.td { margin: 0; white-space: pre-wrap; font: 12.5px/1.55 var(--mono); background: var(--bg-2); border: 1px solid var(--line); border-radius: 10px; padding: 14px; max-height: 52vh; overflow: auto; }
+.m-err { color: var(--red); font-size: 13px; min-height: 1em; }
+.logs { display: grid; gap: 6px; }
+.lg { display: grid; grid-template-columns: 10px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 9px; background: var(--panel-2); font-size: 13px; }
+.lg small { color: var(--dim); font-family: var(--mono); font-size: 11.5px; }
+
+.toast { position: fixed; z-index: 50; left: 50%; bottom: 20px; translate: -50% 0; padding: 10px 16px; border-radius: 12px; background: var(--text); color: var(--bg); font-size: 13px; font-weight: 520; transition: transform .4s var(--ease), opacity .4s; transform: translateY(140%); opacity: 0; }
+.toast.on { transform: none; opacity: 1; }
+
+@media (max-width: 900px) {
+	.app { grid-template-columns: 1fr; }
+	aside { border-right: 0; border-bottom: 1px solid var(--line); flex-direction: row; flex-wrap: nowrap; overflow-x: auto; padding: 10px 12px; }
+	aside h6 { display: none; }
+	.b-item { flex: none; }
+	.b-item .edit { opacity: 1; }
+	#add-brand-m { display: inline-flex !important; flex: none; }
+	.stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.tr { grid-template-columns: 38px minmax(0, 1fr) 90px; padding: 8px 12px; }
+	.tr > :nth-child(3), .tr > :nth-child(4), .tr > :nth-child(5) { display: none; }
+	main { padding: 16px 16px 50px; }
+	.health .lbl { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<header>
+	<a class="brand" href="/ledger/">
+		<svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--panel-2)" stroke="var(--line-2)"/><path d="M16 21h32M16 32h32M16 43h18" stroke="var(--ink)" stroke-width="4.5" stroke-linecap="round"/><circle cx="45" cy="43" r="5.5" fill="var(--red)"/></svg>
+		Ledger <small>Console</small>
+	</a>
+	<button class="health" id="health" title="Monitor health"><span class="dot" id="h-dot"></span><b id="h-rate">–</b><span class="lbl">certs / sec</span></button>
+	<button class="ib" id="theme" aria-label="Toggle light and dark">
+		<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+		<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+	</button>
+</header>
+
+<div class="app">
+	<aside id="brands">
+		<h6>Brands <button id="add-brand">+ Add</button></h6>
+		<div id="brand-list"></div>
+		<button class="btn" id="add-brand-m" style="display:none">+ Add</button>
+	</aside>
+	<main>
+		<div class="top">
+			<div><h1 id="title">All brands</h1><div class="sub" id="subtitle">Every lookalike Ledger has caught</div></div>
+		</div>
+		<div class="stats">
+			<div class="stat"><div class="n" id="s-open">–</div><div class="l">open</div></div>
+			<div class="stat"><div class="n" id="s-high" style="color:var(--red)">–</div><div class="l">high severity</div></div>
+			<div class="stat"><div class="n" id="s-today">–</div><div class="l">certificates read today</div></div>
+			<div class="stat"><div class="n" id="s-delay">–</div><div class="l">median, logged → read</div></div>
+		</div>
+		<div class="bar">
+			<div class="tabs" id="tabs"></div>
+			<select id="sev" aria-label="Severity"><option value="">Any severity</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select>
+			<input class="search" id="q" placeholder="Search domains…" spellcheck="false">
+			<a class="btn" id="export" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>CSV</a>
+		</div>
+		<div class="table" id="table"></div>
+		<div class="pager"><span id="count"></span><span><button class="btn" id="prev">Newer</button> <button class="btn" id="next">Older</button></span></div>
+	</main>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Lookalike details"></aside>
+
+<dialog id="brand-dlg">
+	<form method="dialog" id="brand-form">
+		<div class="m-head" id="bd-title">Add a brand</div>
+		<div class="m-body">
+			<div class="f2">
+				<div class="f"><label for="bf-label">Name</label><input id="bf-label" placeholder="Acme Bank" required></div>
+				<div class="f"><label for="bf-term">Match term <small>letters, digits</small></label><input id="bf-term" class="mono" placeholder="acmebank" required spellcheck="false"></div>
+			</div>
+			<div class="f"><label for="bf-official">Domains you own <small>one per line, subdomains included</small></label><textarea id="bf-official" class="mono" placeholder="acmebank.com&#10;acmebank.in" spellcheck="false"></textarea></div>
+			<div class="f"><label for="bf-keywords">Extra risky words <small>comma separated, optional</small></label><input id="bf-keywords" class="mono" placeholder="netbanking, creditcard" spellcheck="false"></div>
+			<div class="f"><label for="bf-webhook">Webhook <small>https, Slack or Discord compatible, optional</small></label><input id="bf-webhook" class="mono" placeholder="https://hooks.slack.com/services/…" spellcheck="false"></div>
+			<label class="switch"><input type="checkbox" id="bf-public" checked> Show this brand's catches on the public page</label>
+			<div class="m-err" id="bf-err"></div>
+		</div>
+		<div class="m-foot">
+			<div class="left"><button type="button" class="btn danger" id="bf-delete">Delete</button><button type="button" class="btn" id="bf-test">Test webhook</button></div>
+			<button type="button" class="btn" value="cancel" id="bf-cancel">Cancel</button>
+			<button type="submit" class="btn primary" id="bf-save">Save</button>
+		</div>
+	</form>
+</dialog>
+
+<dialog id="td-dlg">
+	<div class="m-head">Takedown request</div>
+	<div class="m-body"><div class="warn-box">Send to the registrar's and host's abuse contacts (look them up with WHOIS), and to CERT-In at incident@cert-in.org.in for Indian brands.</div><pre class="td" id="td-text"></pre></div>
+	<div class="m-foot"><button class="btn" id="td-close">Close</button><button class="btn primary" id="td-copy">Copy</button></div>
+</dialog>
+
+<dialog id="health-dlg">
+	<div class="m-head">Monitor health</div>
+	<div class="m-body"><div class="logs" id="logs"></div><div class="sub mono" id="h-meta" style="font-size:12px;color:var(--dim)"></div></div>
+	<div class="m-foot"><button class="btn" id="h-close">Close</button></div>
+</dialog>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+'use strict';
+const API = '/ledger/console/api', PUB = '/ledger/api';
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = n => n == null ? '–' : Number(n).toLocaleString('en-IN');
+const ago = t => { if (!t) return '–'; const s = Math.max(0, Date.now() / 1000 - t); return s < 60 ? Math.round(s) + 's ago' : s < 3600 ? Math.round(s / 60) + 'm ago' : s < 86400 ? Math.round(s / 3600) + 'h ago' : Math.round(s / 86400) + 'd ago'; };
+const when = t => new Date(t * 1000).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+const sevColor = s => s === 'high' ? 'var(--red)' : s === 'medium' ? 'var(--amber)' : 'var(--muted)';
+const STATUSES = ['new', 'reviewing', 'takedown', 'resolved', 'dismissed'];
+const TABS = [['open', 'Open'], ['new', 'New'], ['reviewing', 'Reviewing'], ['takedown', 'Takedown'], ['resolved', 'Resolved'], ['dismissed', 'Dismissed'], ['', 'All']];
+const state = { brand: '', status: 'open', severity: '', q: '', offset: 0, limit: 50, brands: [], rows: [], known: new Set(), first: true };
+
+async function api(path, opts = {}) {
+	const r = await fetch(API + path, { headers: { 'Content-Type': 'application/json' }, ...opts });
+	const j = await r.json().catch(() => ({}));
+	if (!r.ok) throw new Error(j.error || j.message || 'Request failed (' + r.status + ')');
+	return j;
+}
+function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('on'), 2400); }
+$('#theme').onclick = () => { const n = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light'; document.documentElement.dataset.theme = n; try { localStorage.setItem('theme', n); } catch (e) {} };
+
+/* ---------- brands ---------- */
+async function loadBrands() {
+	state.brands = await api('/brands');
+	const total = state.brands.reduce((a, b) => ({ open: a.open + b.open, high: a.high + b.high, hits: a.hits + b.hits }), { open: 0, high: 0, hits: 0 });
+	const item = (id, name, term, open, high, pub, editable) => `<div class="b-item${String(state.brand) === String(id) ? ' on' : ''}" data-id="${id}"><span class="nm">${esc(name)}${term ? `<small>${esc(term)}</small>` : ''}${pub === false ? '<span class="private">private</span>' : ''}</span><span class="ct">${high ? `<span class="cnt red">${high}</span>` : ''}<span class="cnt">${open}</span>${editable ? `<button class="edit" data-edit="${id}" aria-label="Edit ${esc(name)}">✎</button>` : ''}</span></div>`;
+	$('#brand-list').innerHTML = item('', 'All brands', '', total.open, total.high, null, false) + state.brands.map(b => item(b.id, b.label, b.term, b.open, b.high, b.public, true)).join('');
+	$('#s-open').textContent = fmt(state.brand ? (state.brands.find(b => b.id == state.brand)?.open ?? 0) : total.open);
+	$('#s-high').textContent = fmt(state.brand ? (state.brands.find(b => b.id == state.brand)?.high ?? 0) : total.high);
+}
+$('#brand-list').addEventListener('click', e => {
+	const ed = e.target.closest('[data-edit]');
+	if (ed) { e.stopPropagation(); return openBrand(state.brands.find(b => b.id == ed.dataset.edit)); }
+	const it = e.target.closest('.b-item');
+	if (!it) return;
+	state.brand = it.dataset.id; state.offset = 0;
+	const b = state.brands.find(x => x.id == state.brand);
+	$('#title').textContent = b ? b.label : 'All brands';
+	$('#subtitle').textContent = b ? `Lookalikes of "${b.term}" · ${b.official.length ? 'owns ' + b.official.slice(0, 3).join(', ') + (b.official.length > 3 ? '…' : '') : 'no official domains set'}` : 'Every lookalike Ledger has caught';
+	loadBrands(); loadHits();
+});
+
+const dlg = $('#brand-dlg');
+let editing = null;
+function openBrand(b) {
+	editing = b || null;
+	$('#bd-title').textContent = b ? 'Edit ' + b.label : 'Add a brand';
+	$('#bf-label').value = b?.label || ''; $('#bf-term').value = b?.term || '';
+	$('#bf-official').value = (b?.official || []).join('\n'); $('#bf-keywords').value = (b?.keywords || []).join(', ');
+	$('#bf-webhook').value = b?.webhook || ''; $('#bf-public').checked = b ? b.public : true;
+	$('#bf-delete').style.display = b ? '' : 'none'; $('#bf-test').style.display = b?.webhook ? '' : 'none';
+	$('#bf-err').textContent = '';
+	dlg.showModal();
+}
+$('#add-brand').onclick = $('#add-brand-m').onclick = () => openBrand(null);
+$('#bf-cancel').onclick = () => dlg.close();
+$('#bf-label').addEventListener('input', () => { if (!editing && !$('#bf-term').dataset.touched) $('#bf-term').value = $('#bf-label').value.toLowerCase().replace(/[^a-z0-9]/g, ''); });
+$('#bf-term').addEventListener('input', () => $('#bf-term').dataset.touched = 1);
+$('#brand-form').addEventListener('submit', async e => {
+	e.preventDefault();
+	try {
+		await api('/brands', { method: 'POST', body: JSON.stringify({
+			id: editing?.id, label: $('#bf-label').value, term: $('#bf-term').value,
+			official: $('#bf-official').value.split(/[\s,]+/), keywords: $('#bf-keywords').value.split(','),
+			webhook: $('#bf-webhook').value, public: $('#bf-public').checked }) });
+		dlg.close(); toast(editing ? 'Saved. New certificates are checked against it now.' : 'Watching. New certificates are checked from now on.');
+		loadBrands();
+	} catch (err) { $('#bf-err').textContent = err.message; }
+});
+$('#bf-delete').onclick = async () => {
+	if (!editing || !confirm(`Stop watching ${editing.label} and delete its ${editing.hits} lookalikes?`)) return;
+	await api('/brands/' + editing.id, { method: 'DELETE' });
+	dlg.close(); if (state.brand == editing.id) state.brand = '';
+	toast('Deleted.'); loadBrands(); loadHits();
+};
+$('#bf-test').onclick = async () => {
+	try { await api(`/brands/${editing.id}/test`, { method: 'POST' }); toast('Test alert delivered.'); }
+	catch (err) { $('#bf-err').textContent = 'Webhook failed: ' + err.message; }
+};
+
+/* ---------- hits ---------- */
+$('#tabs').innerHTML = TABS.map(([v, l]) => `<button data-s="${v}" class="${v === state.status ? 'on' : ''}">${l}</button>`).join('');
+$('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; state.status = b.dataset.s; state.offset = 0; $('#tabs').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); loadHits(); });
+$('#sev').onchange = () => { state.severity = $('#sev').value; state.offset = 0; loadHits(); };
+let qT; $('#q').addEventListener('input', () => { clearTimeout(qT); qT = setTimeout(() => { state.q = $('#q').value.trim(); state.offset = 0; loadHits(); }, 250); });
+$('#prev').onclick = () => { state.offset = Math.max(0, state.offset - state.limit); loadHits(); };
+$('#next').onclick = () => { state.offset += state.limit; loadHits(); };
+
+function query() {
+	const p = new URLSearchParams();
+	if (state.brand) p.set('brand', state.brand);
+	if (state.status) p.set('status', state.status);
+	if (state.severity) p.set('severity', state.severity);
+	if (state.q) p.set('q', state.q);
+	return p;
+}
+function ring(s, sev) {
+	const c = 2 * Math.PI * 13;
+	return `<div class="ring"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="13" fill="none" stroke="var(--line-2)" stroke-width="3"/><circle cx="16" cy="16" r="13" fill="none" stroke="${sevColor(sev)}" stroke-width="3" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - s / 100)}"/></svg><span style="color:${sevColor(sev)}">${s}</span></div>`;
+}
+async function loadHits(silent) {
+	const p = query(); p.set('limit', state.limit); p.set('offset', state.offset);
+	$('#export').href = API + '/export.csv?' + query();
+	let j;
+	try { j = await api('/hits?' + p); } catch (e) { $('#table').innerHTML = `<div class="empty">${esc(e.message)}</div>`; return; }
+	state.rows = j.rows;
+	const head = '<div class="tr head"><span>Score</span><span>Domain</span><span>Brand</span><span>Why</span><span>Seen</span><span>Status</span></div>';
+	if (!j.rows.length) {
+		$('#table').innerHTML = head + `<div class="empty">${state.status === 'open' ? 'Nothing open. New lookalikes land here the moment their certificate is logged.' : 'No lookalikes match these filters.'}</div>`;
+	} else {
+		$('#table').innerHTML = head + j.rows.map(r => {
+			const fresh = !state.first && !state.known.has(r.id);
+			const kinds = [...new Set(r.reasons.map(x => x.kind))].slice(0, 3).map(k => `<span class="tag">${esc(k)}</span>`).join('');
+			return `<div class="tr${fresh ? ' fresh' : ''}" data-id="${r.id}">${ring(r.score, r.severity)}<span class="d" title="${esc(r.domain)}">${esc(r.domain)}<small>${esc(r.issuer || 'Unknown CA')}${r.seen > 1 ? ' · seen ' + r.seen + '×' : ''}</small></span><span class="muted">${esc(r.brand)}</span><span class="tags">${kinds}</span><span class="muted" title="${when(r.first_seen)}">${ago(r.first_seen)}</span><span class="st ${r.status}">${r.status}</span></div>`;
+		}).join('');
+	}
+	j.rows.forEach(r => state.known.add(r.id));
+	state.first = false;
+	$('#count').textContent = j.total ? `${state.offset + 1}–${state.offset + j.rows.length} of ${fmt(j.total)}` : '';
+	$('#prev').disabled = state.offset === 0; $('#next').disabled = state.offset + j.rows.length >= j.total;
+}
+$('#table').addEventListener('click', e => { const tr = e.target.closest('.tr[data-id]'); if (tr) openHit(state.rows.find(r => r.id == tr.dataset.id)); });
+
+/* ---------- drawer ---------- */
+const drawer = $('#drawer'), scrim = $('#scrim');
+function closeDrawer() { drawer.classList.remove('on'); scrim.classList.remove('on'); }
+scrim.onclick = closeDrawer;
+addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+function openHit(h) {
+	if (!h) return;
+	drawer.innerHTML = `
+		<div class="dr-head">${ring(h.score, h.severity)}<div style="min-width:0"><div class="d">${esc(h.domain)}</div><div style="color:var(--dim);font-size:12.5px">${esc(h.brand)} · ${h.severity} · first seen ${when(h.first_seen)}</div></div><button class="ib" id="dr-close" aria-label="Close">✕</button></div>
+		<div class="dr-body">
+			<div><div class="sec-t">Why it was flagged</div><div class="reasons">${h.reasons.map(r => `<div class="reason"><span class="k">${esc(r.kind)}</span><span>${esc(r.detail)}</span><span class="p">${r.points}</span></div>`).join('')}</div></div>
+			<div><div class="sec-t">Certificate</div><dl class="kv">
+				<dt>Issued by</dt><dd>${esc(h.issuer || 'Unknown CA')}</dd>
+				<dt>Logged</dt><dd>${h.logged ? when(h.logged) : '–'}</dd>
+				<dt>CT log</dt><dd>${esc(h.log)} <span class="mono" style="color:var(--dim)">#${esc(h.idx)}</span></dd>
+				<dt>Seen</dt><dd>${h.seen} certificate${h.seen > 1 ? 's' : ''}, last ${ago(h.last_seen)}</dd>
+				<dt>Evidence</dt><dd><a href="https://crt.sh/?q=${encodeURIComponent(h.domain)}" target="_blank" rel="noopener noreferrer">crt.sh record ↗</a></dd>
+			</dl></div>
+			<div class="warn-box">Don't open the domain itself in a normal browser: it may be live phishing. Use a sandbox or a URL scanner.</div>
+			<div><div class="sec-t">Status</div><div class="status-row" id="dr-status">${STATUSES.map(s => `<button data-s="${s}" class="${s === h.status ? 'on' : ''}">${s}</button>`).join('')}</div></div>
+			<div><div class="sec-t">Notes</div><textarea id="dr-note" placeholder="Registrar, ticket numbers, who's on it…">${esc(h.note)}</textarea></div>
+			<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" id="dr-td">Draft takedown</button><button class="btn" id="dr-copy">Copy domain</button></div>
+		</div>`;
+	drawer.classList.add('on'); scrim.classList.add('on');
+	$('#dr-close').onclick = closeDrawer;
+	$('#dr-status').onclick = async e => {
+		const b = e.target.closest('button'); if (!b) return;
+		await api('/hits/' + h.id, { method: 'POST', body: JSON.stringify({ status: b.dataset.s }) });
+		h.status = b.dataset.s;
+		$('#dr-status').querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+		toast('Marked ' + b.dataset.s); loadHits(true); loadBrands();
+		if (b.dataset.s === 'takedown') openTakedown(h);
+	};
+	$('#dr-note').onblur = async () => { if ($('#dr-note').value === (h.note || '')) return; h.note = $('#dr-note').value; await api('/hits/' + h.id, { method: 'POST', body: JSON.stringify({ note: h.note }) }); toast('Note saved'); };
+	$('#dr-td').onclick = () => openTakedown(h);
+	$('#dr-copy').onclick = () => navigator.clipboard.writeText(h.domain).then(() => toast('Copied'));
+}
+async function openTakedown(h) {
+	const j = await api(`/hits/${h.id}/takedown`);
+	$('#td-text').textContent = j.text;
+	$('#td-dlg').showModal();
+}
+$('#td-close').onclick = () => $('#td-dlg').close();
+$('#td-copy').onclick = () => navigator.clipboard.writeText($('#td-text').textContent).then(() => toast('Copied to clipboard'));
+
+/* ---------- health ---------- */
+let lastStats = null;
+async function loadStats() {
+	try {
+		const s = await fetch(PUB + '/stats').then(r => r.json());
+		lastStats = s;
+		$('#h-rate').textContent = s.rate < 10 ? s.rate.toFixed(1) : Math.round(s.rate);
+		$('#s-today').textContent = fmt(s.today);
+		$('#s-delay').textContent = s.delay == null ? '–' : s.delay < 90 ? Math.round(s.delay) + ' s' : Math.round(s.delay / 60) + ' min';
+		const stale = s.logs.filter(l => Date.now() / 1000 - l.last_ok > 300).length;
+		$('#h-dot').className = 'dot' + (stale === s.logs.length ? ' bad' : stale ? ' warn' : '');
+	} catch (e) { $('#h-dot').className = 'dot bad'; $('#h-rate').textContent = 'offline'; }
+}
+$('#health').onclick = () => {
+	const s = lastStats; if (!s) return;
+	$('#logs').innerHTML = s.logs.map(l => { const age = Date.now() / 1000 - l.last_ok, ok = age < 300; return `<div class="lg"><span class="dot${ok ? '' : ' warn'}"></span><span>${esc(l.name)} <small>${l.kind}</small><br><small>read ${fmt(l.read)} · ${l.lag ? fmt(l.lag) + ' behind' : 'at head'}${l.errors ? ' · ' + l.errors + ' errors' : ''}</small></span><small>${l.last_ok ? ago(l.last_ok) : 'never'}</small></div>`; }).join('');
+	$('#h-meta').textContent = `up ${Math.round(s.uptime / 3600 * 10) / 10} h · ${fmt(s.total)} certificates read in all · ${s.viewers} live viewers`;
+	$('#health-dlg').showModal();
+};
+$('#h-close').onclick = () => $('#health-dlg').close();
+
+/* ---------- go ---------- */
+loadBrands().then(loadHits).catch(e => $('#table').innerHTML = `<div class="empty">${esc(e.message)}</div>`);
+loadStats();
+setInterval(() => { if (!document.hidden) { loadStats(); loadBrands(); if (state.offset === 0) loadHits(true); } }, 15000);
+})();
+</script>
+</body>
+</html>
