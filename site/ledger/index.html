@@ -8,9 +8,9 @@
 <meta property="og:title" content="Ledger · Lookalike domains, caught at the padlock">
 <meta property="og:description" content="Every padlock is announced. Ledger reads every announcement and flags lookalikes of your brand.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#0c0a09">
+<meta name="theme-color" content="#060a14">
 <script>try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230c0a09'/><path d='M16 20h32M16 32h32M16 44h20' stroke='%23ff8a3d' stroke-width='5' stroke-linecap='round'/><circle cx='46' cy='44' r='6' fill='%23ffcf5c'/></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%23060a14'/><path d='M16 20h32M16 32h32M16 44h20' stroke='%234c9bff' stroke-width='5' stroke-linecap='round'/><circle cx='46' cy='44' r='6' fill='%23ffb547'/></svg>">
 <link rel="preload" href="/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/geist-mono.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -18,22 +18,23 @@
 @font-face { font-family: 'Geist Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/geist-mono.woff2) format('woff2'); }
 
 :root {
-	--bg: #0c0a09;
-	--bg-2: #110e0c;
-	--panel: #151210;
-	--panel-2: #1c1815;
-	--line: #26211d;
-	--line-2: #342d27;
-	--text: #f6efe7;
-	--muted: #b3a89c;
-	--dim: #786d62;
-	--ink: #ff8a3d;
-	--ink-soft: rgba(255, 138, 61, .12);
+	--bg: #060a14;
+	--bg-2: #0a0f1c;
+	--panel: #0d1324;
+	--panel-2: #121a2e;
+	--line: #1a2338;
+	--line-2: #253150;
+	--text: #e8eefc;
+	--muted: #9aa7c4;
+	--dim: #5f6b89;
+	--ink: #4c9bff;
+	--ink-soft: rgba(76, 155, 255, .13);
 	--red: #ff4d6d;
 	--red-soft: rgba(255, 77, 109, .13);
-	--amber: #ffcf5c;
-	--amber-soft: rgba(255, 207, 92, .12);
-	--blue: #e8c4a0;
+	--amber: #ffb547;
+	--amber-soft: rgba(255, 181, 71, .13);
+	--blue: #7fd8f5;
+	--ink-hi: #9fd4ff;
 	--shadow: 0 30px 80px -30px rgba(0, 0, 0, .7);
 	--sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--mono: 'Geist Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
@@ -42,22 +43,23 @@
 	color-scheme: dark;
 }
 :root[data-theme="light"] {
-	--bg: #faf6f0;
-	--bg-2: #f3ede4;
-	--panel: #fffdf9;
-	--panel-2: #f7f1e8;
-	--line: #ebe2d5;
-	--line-2: #ddd0bf;
-	--text: #1a1410;
-	--muted: #6b5f53;
-	--dim: #998b7c;
-	--ink: #c2410c;
-	--ink-soft: rgba(194, 65, 12, .09);
+	--bg: #f5f7fc;
+	--bg-2: #edf1f8;
+	--panel: #ffffff;
+	--panel-2: #f2f5fb;
+	--line: #e1e7f2;
+	--line-2: #cfd8e8;
+	--text: #0b1220;
+	--muted: #4b5875;
+	--dim: #8390ab;
+	--ink: #1d5fe0;
+	--ink-soft: rgba(29, 95, 224, .09);
 	--red: #be123c;
 	--red-soft: rgba(190, 18, 60, .08);
-	--amber: #a16207;
-	--amber-soft: rgba(161, 98, 7, .1);
-	--blue: #8a5a3b;
+	--amber: #b45309;
+	--amber-soft: rgba(180, 83, 9, .1);
+	--blue: #0284c7;
+	--ink-hi: #0891b2;
 	--shadow: 0 30px 70px -35px rgba(60, 45, 20, .35);
 	color-scheme: light;
 }
@@ -70,7 +72,7 @@ body {
 }
 a { color: inherit; }
 button, input { font: inherit; color: inherit; }
-::selection { background: var(--ink); color: #120a04; }
+::selection { background: var(--ink); color: #fff; }
 .wrap { width: min(1180px, 100% - 32px); margin-inline: auto; }
 .mono { font-family: var(--mono); }
 .serif { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -.01em; }
@@ -125,7 +127,7 @@ button, input { font: inherit; color: inherit; }
 	content: ""; position: absolute; inset: 0; z-index: -2;
 	background:
 		radial-gradient(900px 500px at 78% 30%, color-mix(in srgb, var(--ink) 7%, transparent), transparent 70%),
-		radial-gradient(700px 400px at 10% 90%, color-mix(in srgb, var(--amber) 4%, transparent), transparent 70%);
+		radial-gradient(700px 400px at 10% 90%, color-mix(in srgb, var(--ink-hi) 5%, transparent), transparent 70%);
 }
 .hero::after {
 	content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5;
@@ -144,7 +146,7 @@ h1 {
 	font-size: clamp(2.5rem, 5.3vw, 4.7rem); line-height: .98; letter-spacing: -.045em; font-weight: 640; margin: 22px 0 0;
 }
 h1 .serif { display: block; font-size: 1.04em; letter-spacing: -.03em; margin-top: .06em; padding-bottom: .08em; color: var(--ink);
-	background: linear-gradient(100deg, var(--ink) 10%, var(--amber) 55%, var(--ink) 95%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+	background: linear-gradient(100deg, var(--ink) 10%, var(--ink-hi) 60%, var(--ink) 95%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .lede { font-size: clamp(1.02rem, 1.4vw, 1.18rem); color: var(--muted); max-width: 33em; margin: 26px 0 0; }
 .lede b { color: var(--text); font-weight: 550; }
 
@@ -233,10 +235,16 @@ h2 .serif { color: var(--ink); }
 .side { display: grid; gap: 22px; }
 .mywatch { display: none; border-color: color-mix(in srgb, var(--ink) 40%, var(--line)); }
 .mywatch.on { display: block; animation: rise .7s var(--ease) both; }
+.mywatch:focus { outline: none; }
+.mywatch.flash { animation: rise .7s var(--ease) both, ring 1.8s .3s var(--ease); }
+@keyframes ring { 0%, 60% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--ink) 45%, transparent), var(--shadow); } 100% { box-shadow: 0 0 0 4px transparent, var(--shadow); } }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
 .mywatch .body { padding: 18px 20px 20px; }
 .mywatch .big { font-family: var(--mono); font-size: 24px; letter-spacing: -.02em; }
 .mywatch .meta { color: var(--muted); font-size: 13px; margin-top: 4px; }
+.mywatch .scan { display: none; height: 6px; margin-top: 14px; border-radius: 6px; background: var(--line); overflow: hidden; position: relative; }
+.mywatch .scan.on { display: block; }
+.mywatch .scan i { position: absolute; inset: 0; background: linear-gradient(90deg, var(--ink), var(--ink-hi)); transform-origin: left; transition: transform .35s var(--ease); }
 .mywatch .bar { height: 3px; background: var(--line); border-radius: 3px; margin-top: 14px; overflow: hidden; }
 .mywatch .bar i { display: block; height: 100%; background: var(--ink); transform-origin: left; transition: transform 1s linear; }
 .list { list-style: none; margin: 0; padding: 0; }
@@ -455,7 +463,7 @@ footer a { color: var(--muted); }
 		</div>
 		<div class="loom-box" aria-hidden="true">
 			<canvas id="loom"></canvas>
-			<div class="loom-cap"><span>each dot: one real certificate<span class="cap-x">, hashed up into a root</span></span><span>roots sealed <b id="k-trees">0</b></span></div>
+			<div class="loom-cap"><span>each dot: one real certificate<span class="cap-x">; 16 hash into one root</span></span><span>roots sealed <b id="k-trees">0</b></span></div>
 		</div>
 	</div>
 	<div class="scroll-cue" data-idle aria-hidden="true"></div>
@@ -476,11 +484,12 @@ footer a { color: var(--muted); }
 				<div class="paper"><div id="rows"></div><div class="empty" id="rows-empty">Opening the logs…</div></div>
 			</div>
 			<div class="side">
-				<div class="card mywatch" id="mywatch">
+				<div class="card mywatch" id="mywatch" tabindex="-1" aria-live="polite">
 					<div class="card-head"><h3>Your watch</h3><div class="right"><span id="mw-left">30:00</span></div></div>
 					<div class="body">
 						<div class="big" id="mw-term">–</div>
 						<div class="meta" id="mw-meta">–</div>
+						<div class="scan" id="mw-scan"><i id="mw-scan-i"></i></div>
 						<div class="bar"><i id="mw-bar"></i></div>
 					</div>
 					<ul class="list scroll-list" id="mw-list"></ul>
@@ -794,17 +803,18 @@ const loom = (() => {
 			sealing = now; trees++;
 			$('#k-trees').textContent = fmt(trees);
 			bursts.push({ x: root.x, y: root.y, t0: now, r: 46, dur: 900 });
-			chain.unshift({ n: trees, hash: hex(), t0: now, x0: root.x, y0: root.y });
+			chain.unshift({ n: trees, hash: fnv(leaves.map(l => l.d).join('\n')), t0: now, x0: root.x, y0: root.y });
 			if (chain.length > 8) chain.pop();
 		}
 	}
-	function hex() { let s = ''; for (let i = 0; i < 6; i++) s += (Math.random() * 16 | 0).toString(16); return s; }
+	// FNV-1a over the 16 hostnames: the root really is a fingerprint of the certificates under it
+	function fnv(str) { let h = 0x811c9dc5; for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 0x01000193); return (h >>> 0).toString(16).padStart(8, '0').slice(0, 6); }
 
 	function push(ev) { if (queue.length < 40) queue.push(ev); else if (ev.kind) queue.splice(queue.length - 1, 1, ev); }
 	function launch(ev) {
 		if (filled >= LEAVES || sealing) return false;
 		const leaf = leaves[filled++];
-		parts.push({ leaf, x0: leaf.x + (Math.random() - .5) * W * .5, y0: -10, t0: performance.now(), dur: 800 + Math.random() * 450, kind: ev.kind || 0, label: ev.kind ? ev.d : null });
+		parts.push({ leaf, d: ev.d, x0: leaf.x + (Math.random() - .5) * W * .5, y0: -10, t0: performance.now(), dur: 800 + Math.random() * 450, kind: ev.kind || 0, label: ev.kind ? ev.d : null });
 		return true;
 	}
 	const colOf = k => k === 2 ? colors.red : k === 1 ? colors.amber : colors.ink;
@@ -877,7 +887,7 @@ const loom = (() => {
 			ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, y, p.kind ? 3.2 : 2, 0, 7); ctx.fill();
 			if (k >= 1) {
 				parts.splice(i, 1);
-				leaf.on = 1; leaf.kind = p.kind; leaf.born = now;
+				leaf.on = 1; leaf.kind = p.kind; leaf.born = now; leaf.d = p.d;
 				if (p.label) labels.push({ x: leaf.x, y: leaf.y, text: p.label, kind: p.kind, t0: now });
 			}
 		}
@@ -908,12 +918,15 @@ const loom = (() => {
 		const gap = 16, h = 24;
 		let x = W - pad;
 		// the slot being filled now
-		const next = `root #${trees + 1}  ${filled}/${LEAVES}`;
+		const next = `next root  ${filled}/${LEAVES} certs`;
 		const nw = ctx.measureText(next).width + 20;
 		x -= nw;
 		ctx.globalAlpha = 1; ctx.setLineDash([3, 3]); ctx.strokeStyle = colors.line; ctx.lineWidth = 1;
 		ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, chainY - h / 2, nw, h, 7) : ctx.rect(x, chainY - h / 2, nw, h); ctx.stroke(); ctx.setLineDash([]);
 		ctx.fillStyle = colors.dim; ctx.fillText(next, x + 10, chainY + 4);
+		ctx.textAlign = 'right'; ctx.font = '10.5px ' + font;
+		ctx.fillText(trees ? 'ROOTS SEALED SINCE YOU ARRIVED' : 'EVERY 16 CERTIFICATES SEAL ONE ROOT', W - pad, chainY - 22);
+		ctx.textAlign = 'left'; ctx.font = '11px ' + font;
 		// progress underline
 		ctx.fillStyle = colors.ink; ctx.globalAlpha = .8; ctx.fillRect(x + 8, chainY + h / 2 - 3, (nw - 16) * filled / LEAVES, 1.5);
 		for (const c of chain) {
@@ -922,9 +935,9 @@ const loom = (() => {
 			const w = ctx.measureText(txt).width + 20;
 			const slide = ease(Math.min(1, age / 600));
 			const nx = x - gap - w;
-			const px = x + (nx - x) * slide;  // slides in from the "next" slot
+			const px = nx + (1 - slide) * 24;  // eases in beside the "next" slot
 			if (px + w < 0) break;
-			ctx.globalAlpha = Math.min(1, Math.max(0, (px + w) / (pad + w)));
+			ctx.globalAlpha = Math.min(1, Math.max(0, (px + w) / (pad + w))) * slide;
 			// link to the newer block
 			ctx.strokeStyle = colors.ink; ctx.lineWidth = 1; ctx.globalAlpha *= .6;
 			ctx.beginPath(); ctx.moveTo(px + w, chainY); ctx.lineTo(x, chainY); ctx.stroke();
@@ -1042,7 +1055,8 @@ function connect() {
 	es.addEventListener('stats', e => { setLive(true, 'live'); applyStats(JSON.parse(e.data)); });
 	es.addEventListener('cert', e => onCert(JSON.parse(e.data)));
 	es.addEventListener('hit', e => onHit(JSON.parse(e.data), false));
-	es.addEventListener('watch', e => onHit(JSON.parse(e.data), true));
+	es.addEventListener('watch', e => { const h = JSON.parse(e.data); h.old ? addWatchHit(h) : onHit(h, true); });
+	es.addEventListener('scan', e => onScan(JSON.parse(e.data)));
 }
 
 /* ---------- side panels ---------- */
@@ -1092,7 +1106,9 @@ function issuers(list) {
 	});
 }
 setInterval(() => { document.querySelectorAll('[data-t]').forEach(el => el.textContent = ago(+el.dataset.t)); }, 15000);
-setInterval(() => { if (document.hidden) return; fetch(API + '/stats').then(r => r.json()).then(s => issuers(s.issuers)).catch(() => {}); }, 20000);
+let issuersOn = false;
+new IntersectionObserver(([e]) => { issuersOn = e.isIntersecting; }).observe($('#issuers'));
+setInterval(() => { if (document.hidden || !issuersOn) return; fetch(API + '/stats').then(r => r.json()).then(s => issuers(s.issuers)).catch(() => {}); }, 30000);
 
 /* ---------- visitor watch ---------- */
 const form = $('#watch-form'), inp = $('#watch-in');
@@ -1100,28 +1116,48 @@ async function startWatch(term) {
 	$('#watch-err').textContent = '';
 	const btn = form.querySelector('button');
 	btn.disabled = true;
+	// open the card and take the visitor there straight away: the comparison plays out in it
+	const box = $('#mywatch'), ul = $('#mw-list');
+	box.classList.add('on');
+	$('#mw-term').textContent = term.toLowerCase();
+	$('#mw-meta').textContent = 'Starting the comparison…';
+	$('#mw-scan').classList.add('on'); $('#mw-scan-i').style.transform = 'scaleX(0)';
+	ul.innerHTML = '<li class="none">Comparing your brand against every recent hostname…</li>';
+	box.classList.remove('flash'); void box.offsetWidth; box.classList.add('flash');
+	box.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+	box.focus({ preventScroll: true });
 	try {
 		const r = await fetch(API + '/watch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ term }) });
 		const j = await r.json();
 		if (!r.ok) throw new Error(j.error || 'Could not start the watch.');
 		watchToken = j.token; watchUntil = j.expires * 1000;
-		const box = $('#mywatch'); box.classList.add('on');
+		watchScan = { total: j.total, mins: Math.max(1, Math.round(j.window / 60)), found: 0 };
 		$('#mw-term').textContent = j.term;
-		const mins = Math.max(1, Math.round(j.window / 60));
-		$('#mw-meta').textContent = `Searched ${fmt(j.scanned)} hostnames from the last ${mins} min: ${j.backfill.length ? j.backfill.length + ' lookalike' + (j.backfill.length > 1 ? 's' : '') + ' found' : 'none yet'}. Watching new ones live.`;
-		const ul = $('#mw-list'); ul.innerHTML = '';
-		if (!j.backfill.length) ul.innerHTML = '<li class="none">New matches will appear here the moment their certificate is logged.</li>';
-		j.backfill.slice().reverse().forEach(h => addWatchHit(h, false));
+		$('#mw-meta').textContent = `Comparing against ${fmt(j.total)} hostnames from the last ${watchScan.mins} min…`;
 		connect();
-		document.getElementById('live').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
 	} catch (e) {
 		$('#watch-err').textContent = e.message;
+		$('#mw-meta').textContent = e.message; $('#mw-scan').classList.remove('on');
+		ul.innerHTML = '';
 	} finally { btn.disabled = false; }
+}
+let watchScan = null;
+function onScan(s) {
+	if (!watchScan) return;
+	$('#mw-scan-i').style.transform = `scaleX(${s.total ? s.done / s.total : 1})`;
+	const found = s.found ? `${s.found} lookalike${s.found > 1 ? 's' : ''} so far` : 'none so far';
+	if (!s.end) { $('#mw-meta').textContent = `Compared ${fmt(s.done)} of ${fmt(s.total)} recent hostnames: ${found}.`; return; }
+	$('#mw-meta').textContent = `Compared all ${fmt(s.total)} hostnames from the last ${watchScan.mins} min: ${s.found ? s.found + ' lookalike' + (s.found > 1 ? 's' : '') + ' found' : 'none found'}. Watching new ones live.`;
+	setTimeout(() => $('#mw-scan').classList.remove('on'), 600);
+	const ul = $('#mw-list');
+	if (!ul.querySelector('li:not(.none)')) ul.innerHTML = '<li class="none">New matches will appear here the moment their certificate is logged.</li>';
+	watchScan = null;
 }
 function addWatchHit(h, fresh) {
 	const ul = $('#mw-list');
 	ul.querySelector('.none')?.remove();
-	ul.prepend(hitLI(h, fresh));
+	// the comparison reports newest first, so older matches go underneath; live ones go on top
+	if (h.old) ul.append(hitLI(h, true)); else ul.prepend(hitLI(h, fresh));
 }
 setInterval(() => {
 	if (!watchToken) return;
@@ -1234,9 +1270,15 @@ document.querySelectorAll('[data-idle]').forEach(el => { el.classList.add('idle'
 addEventListener('pageshow', e => { if (!e.persisted) return; clearFeed(); watchToken = null; $('#mywatch').classList.remove('on'); loadInitial(); connect(); });
 addEventListener('pagehide', () => es && es.close());
 // after a long time away, the queued rows are history: drop them instead of replaying them
-let hiddenAt = 0;
+let hiddenAt = 0, hangup = 0;
 document.addEventListener('visibilitychange', () => {
-	if (document.hidden) { hiddenAt = Date.now(); return; }
+	if (document.hidden) {
+		hiddenAt = Date.now();
+		// nobody is looking: stop the stream instead of downloading certificates nobody will see
+		hangup = setTimeout(() => { es?.close(); setLive(false, 'paused'); }, 30000);
+		return;
+	}
+	clearTimeout(hangup);
 	if (hiddenAt && Date.now() - hiddenAt > 60000) { clearFeed(); loadInitial(); }
 	if (!es || es.readyState === 2) connect();
 });

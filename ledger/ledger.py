@@ -39,7 +39,7 @@ RECENT = 150_000        # hostnames kept in memory for instant backfill (about 2
 MAX_STREAMS = 150       # concurrent browsers on the live stream
 TRIAL_TTL = 30 * 60     # a visitor's watch lasts half an hour
 MAX_TRIALS = 60
-FIREHOSE_PER_SEC = 14   # sampled certificates pushed to each browser
+FIREHOSE_PER_SEC = 8    # sampled certificates pushed to each browser (the page shows ~7 rows a second at most)
 
 SEED = [
 	("paypal", "PayPal", ["paypal.com", "paypal.me", "paypalobjects.com", "paypal-community.com"]),
@@ -165,6 +165,10 @@ class Hub:
 
 	def count(self):
 		return len(self.clients)
+
+	def has_trial(self, trial):
+		with self.lock:
+			return any(c.trial == trial for c in self.clients)
 
 	def broadcast(self, event, data, trial=None):
 		with self.lock:
@@ -374,20 +378,34 @@ class Ledger:
 			brand = match.Brand(term.replace("-", ""), label=term)
 			self.trials[token] = {"brand": brand, "ip": ip, "expires": t + TRIAL_TTL}
 			snapshot = list(self.recent)
-		found, seen = [], set()
-		for logged, h, issuer, logname in reversed(snapshot):
+		# scoring the whole buffer takes seconds: answer now, stream the comparison to the visitor's page
+		threading.Thread(target=self.backfill, args=(token, brand, term, snapshot), daemon=True, name="backfill").start()
+		window = int(t - snapshot[0][0]) if snapshot else 0
+		return {"token": token, "term": term, "expires": int(t + TRIAL_TTL), "total": len(snapshot), "window": window}
+
+	def backfill(self, token, brand, term, snapshot):
+		"""Compare a new watch against recent hostnames, sending progress and matches to its stream."""
+		for _ in range(80):                 # the page opens its stream right after the POST
+			if self.hub.has_trial(token):
+				break
+			time.sleep(.1)
+		total, found, seen = len(snapshot), 0, set()
+		send = lambda ev, data: self.hub.broadcast(ev, data, trial=token)
+		for done, (logged, h, issuer, logname) in enumerate(reversed(snapshot), 1):
+			if done % 5000 == 0:
+				send("scan", {"done": done, "total": total, "found": found})
+				time.sleep(0)               # let the log readers in between chunks
 			if h in seen:
 				continue
 			pts, reasons = match.score(h, brand)
 			if pts >= match.MIN_SCORE:
 				seen.add(h)
-				found.append({"d": h, "b": term, "s": pts, "sev": match.severity(pts), "r": reasons,
-				              "i": issuer, "l": logname, "t": int(logged * 1000)})
-				if len(found) >= 60:
+				found += 1
+				send("watch", {"d": h, "b": term, "s": pts, "sev": match.severity(pts), "r": reasons,
+				               "i": issuer, "l": logname, "t": int(logged * 1000), "old": 1})
+				if found >= 60:
 					break
-		window = int(t - snapshot[0][0]) if snapshot else 0
-		return {"token": token, "term": term, "expires": int(t + TRIAL_TTL), "backfill": found,
-		        "scanned": len(snapshot), "window": window}
+		send("scan", {"done": total, "total": total, "found": found, "end": 1})
 
 	def webhook(self, brand, hit):
 		text = (f"Ledger: {hit['sev'].upper()} lookalike of {brand['label']}: {hit['d']} "
